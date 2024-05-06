@@ -8,22 +8,24 @@ use core::fmt::Write;
 use ledger_crypto_helpers::common::{try_option, Address, HexSlice};
 use ledger_crypto_helpers::eddsa::{ed25519_public_key_bytes, eddsa_sign, with_public_keys};
 use ledger_crypto_helpers::hasher::{Blake2b, Hasher, HexHash};
+use ledger_device_sdk::io::{StatusWords, SyscallError};
 use ledger_log::trace;
 use ledger_parser_combinators::async_parser::*;
 use ledger_parser_combinators::bcs::async_parser::*;
 use ledger_parser_combinators::interp::*;
 use ledger_prompts_ui::{final_accept_prompt, ScrollerError};
-use nanos_sdk::io::SyscallError;
 
 use core::convert::TryFrom;
 use core::future::Future;
 
 type SuiAddressRaw = [u8; SUI_ADDRESS_LENGTH];
 
-pub struct SuiPubKeyAddress(nanos_sdk::ecc::ECPublicKey<65, 'E'>, SuiAddressRaw);
+pub struct SuiPubKeyAddress(ledger_device_sdk::ecc::ECPublicKey<65, 'E'>, SuiAddressRaw);
 
-impl Address<SuiPubKeyAddress, nanos_sdk::ecc::ECPublicKey<65, 'E'>> for SuiPubKeyAddress {
-    fn get_address(key: &nanos_sdk::ecc::ECPublicKey<65, 'E'>) -> Result<Self, SyscallError> {
+impl Address<SuiPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>> for SuiPubKeyAddress {
+    fn get_address(
+        key: &ledger_device_sdk::ecc::ECPublicKey<65, 'E'>,
+    ) -> Result<Self, SyscallError> {
         let key_bytes = ed25519_public_key_bytes(key);
         let mut tmp = ArrayVec::<u8, 33>::new();
         let _ = tmp.try_push(0); // SIGNATURE_SCHEME_TO_FLAG['ED25519']
@@ -49,18 +51,19 @@ pub type BipParserImplT =
 pub const BIP_PATH_PARSER: BipParserImplT = SubInterp(DefaultInterp);
 
 // Need a path of length 5, as make_bip32_path panics with smaller paths
-pub const BIP32_PREFIX: [u32; 5] = nanos_sdk::ecc::make_bip32_path(b"m/44'/784'/123'/0'/0'");
+pub const BIP32_PREFIX: [u32; 5] =
+    ledger_device_sdk::ecc::make_bip32_path(b"m/44'/784'/123'/0'/0'");
 
 pub async fn get_address_apdu(io: HostIO, prompt: bool) {
     let input = match io.get_params::<1>() {
         Some(v) => v,
-        None => reject().await,
+        None => reject(SyscallError::InvalidParameter as u16).await,
     };
 
     let path = BIP_PATH_PARSER.parse(&mut input[0].clone()).await;
 
     if !path.starts_with(&BIP32_PREFIX[0..2]) {
-        reject::<()>().await;
+        reject::<()>(SyscallError::InvalidParameter as u16).await;
     }
 
     let mut rv = ArrayVec::<u8, 220>::new();
@@ -85,10 +88,9 @@ pub async fn get_address_apdu(io: HostIO, prompt: bool) {
             Some(())
         }())
     })
-    .ok()
-    .is_none()
+    .is_err()
     {
-        reject::<()>().await;
+        reject::<()>(StatusWords::UserCancelled as u16).await;
     }
 
     io.result_final(&rv).await;
@@ -159,13 +161,25 @@ impl<BS: Clone + Readable> AsyncParser<CallArgSchema, BS> for DefaultInterp {
                             )
                             .await;
                         }
-                        _ => reject_on(core::file!(), core::line!()).await,
+                        _ => {
+                            reject_on(
+                                core::file!(),
+                                core::line!(),
+                                SyscallError::NotSupported as u16,
+                            )
+                            .await
+                        }
                     }
                     CallArg::ObjectArg
                 }
                 _ => {
                     trace!("CallArgSchema: Unknown enum: {}", enum_variant);
-                    reject_on(core::file!(), core::line!()).await
+                    reject_on(
+                        core::file!(),
+                        core::line!(),
+                        SyscallError::NotSupported as u16,
+                    )
+                    .await
                 }
             }
         }
@@ -221,7 +235,12 @@ impl<BS: Clone + Readable> AsyncParser<CommandSchema, BS> for DefaultInterp {
                 }
                 _ => {
                     trace!("CommandSchema: Unknown enum: {}", enum_variant);
-                    reject_on(core::file!(), core::line!()).await
+                    reject_on(
+                        core::file!(),
+                        core::line!(),
+                        SyscallError::NotSupported as u16,
+                    )
+                    .await
                 }
             }
         }
@@ -273,7 +292,14 @@ impl<BS: Clone + Readable> AsyncParser<ArgumentSchema, BS> for DefaultInterp {
                             .await,
                     )
                 }
-                _ => reject_on(core::file!(), core::line!()).await,
+                _ => {
+                    reject_on(
+                        core::file!(),
+                        core::line!(),
+                        SyscallError::NotSupported as u16,
+                    )
+                    .await
+                }
             }
         }
     }
@@ -314,13 +340,27 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<ProgrammableTransacti
                                 recipient_index = Some(i);
                             }
                             // Reject on multiple RecipientAddress(s)
-                            _ => reject_on(core::file!(), core::line!()).await,
+                            _ => {
+                                reject_on(
+                                    core::file!(),
+                                    core::line!(),
+                                    SyscallError::NotSupported as u16,
+                                )
+                                .await
+                            }
                         },
                         CallArg::Amount(amt) =>
                         {
                             #[allow(clippy::single_match)]
                             match amounts.try_push((amt, i)) {
-                                Err(_) => reject_on(core::file!(), core::line!()).await,
+                                Err(_) => {
+                                    reject_on(
+                                        core::file!(),
+                                        core::line!(),
+                                        SyscallError::NotSupported as u16,
+                                    )
+                                    .await
+                                }
                                 _ => {}
                             }
                         }
@@ -330,7 +370,12 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<ProgrammableTransacti
             }
 
             if recipient_index.is_none() || amounts.is_empty() {
-                reject_on::<()>(core::file!(), core::line!()).await;
+                reject_on::<()>(
+                    core::file!(),
+                    core::line!(),
+                    SyscallError::NotSupported as u16,
+                )
+                .await;
             }
 
             let mut verified_recipient = false;
@@ -350,23 +395,47 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<ProgrammableTransacti
                         Command::TransferObject(_nested_results, recipient_input) => {
                             if verified_recipient {
                                 // Reject more than one TransferObject(s)
-                                reject_on::<()>(core::file!(), core::line!()).await;
+                                reject_on::<()>(
+                                    core::file!(),
+                                    core::line!(),
+                                    SyscallError::NotSupported as u16,
+                                )
+                                .await;
                             }
                             match recipient_input {
                                 Argument::Input(inp_index) => {
                                     if Some(inp_index as u32) != recipient_index {
                                         trace!("TransferObject recipient mismatch");
-                                        reject_on::<()>(core::file!(), core::line!()).await;
+                                        reject_on::<()>(
+                                            core::file!(),
+                                            core::line!(),
+                                            SyscallError::NotSupported as u16,
+                                        )
+                                        .await;
                                     }
                                     verified_recipient = true;
                                 }
-                                _ => reject_on(core::file!(), core::line!()).await,
+                                _ => {
+                                    reject_on(
+                                        core::file!(),
+                                        core::line!(),
+                                        SyscallError::NotSupported as u16,
+                                    )
+                                    .await
+                                }
                             }
                         }
                         Command::SplitCoins(coin, input_indices) => {
                             match coin {
                                 Argument::GasCoin => {}
-                                _ => reject_on(core::file!(), core::line!()).await,
+                                _ => {
+                                    reject_on(
+                                        core::file!(),
+                                        core::line!(),
+                                        SyscallError::NotSupported as u16,
+                                    )
+                                    .await
+                                }
                             }
                             for arg in &input_indices {
                                 match arg {
@@ -376,14 +445,25 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<ProgrammableTransacti
                                                 match total_amount.checked_add(*amt) {
                                                     Some(t) => total_amount = t,
                                                     None => {
-                                                        reject_on(core::file!(), core::line!())
-                                                            .await
+                                                        reject_on(
+                                                            core::file!(),
+                                                            core::line!(),
+                                                            SyscallError::InvalidParameter as u16,
+                                                        )
+                                                        .await
                                                     }
                                                 }
                                             }
                                         }
                                     }
-                                    _ => reject_on(core::file!(), core::line!()).await,
+                                    _ => {
+                                        reject_on(
+                                            core::file!(),
+                                            core::line!(),
+                                            SyscallError::NotSupported as u16,
+                                        )
+                                        .await
+                                    }
                                 }
                             }
                         }
@@ -392,7 +472,12 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<ProgrammableTransacti
             }
 
             if !verified_recipient {
-                reject_on::<()>(core::file!(), core::line!()).await;
+                reject_on::<()>(
+                    core::file!(),
+                    core::line!(),
+                    SyscallError::NotSupported as u16,
+                )
+                .await;
             }
 
             if PROMPT
@@ -413,7 +498,7 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<ProgrammableTransacti
                     },
                 )
             {
-                reject::<()>().await;
+                reject::<()>(StatusWords::UserCancelled as u16).await;
             }
         }
     }
@@ -442,7 +527,12 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<TransactionKind<PROMP
                 }
                 _ => {
                     trace!("TransactionKind: {}", enum_variant);
-                    reject_on(core::file!(), core::line!()).await
+                    reject_on(
+                        core::file!(),
+                        core::line!(),
+                        SyscallError::NotSupported as u16,
+                    )
+                    .await
                 }
             }
         }
@@ -490,7 +580,14 @@ impl<BS: Clone + Readable> AsyncParser<TransactionExpiration, BS> for DefaultInt
                     trace!("TransactionExpiration: Epoch");
                     <DefaultInterp as AsyncParser<EpochId, BS>>::parse(&DefaultInterp, input).await;
                 }
-                _ => reject_on(core::file!(), core::line!()).await,
+                _ => {
+                    reject_on(
+                        core::file!(),
+                        core::line!(),
+                        SyscallError::NotSupported as u16,
+                    )
+                    .await
+                }
             }
         }
     }
@@ -566,7 +663,14 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<TransactionData<PROMP
                     trace!("TransactionData: V1");
                     transaction_data_v1_parser::<_, PROMPT>().parse(input).await;
                 }
-                _ => reject_on(core::file!(), core::line!()).await,
+                _ => {
+                    reject_on(
+                        core::file!(),
+                        core::line!(),
+                        SyscallError::NotSupported as u16,
+                    )
+                    .await
+                }
             }
         }
     }
@@ -580,7 +684,7 @@ const fn tx_parser<BS: Clone + Readable, const PROMPT: bool>(
 pub async fn sign_apdu(io: HostIO, settings: Settings) {
     let mut input = match io.get_params::<2>() {
         Some(v) => v,
-        None => reject().await,
+        None => reject(SyscallError::InvalidParameter as u16).await,
     };
 
     // Read length, and move input[0] by one byte
@@ -599,14 +703,14 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
 
     if known_txn {
         if scroller("Transfer", |w| Ok(write!(w, "SUI")?)).is_none() {
-            reject::<()>().await;
+            reject::<()>(StatusWords::UserCancelled as u16).await;
         };
         {
             let mut bs = input[1].clone();
             NoinlineFut(async move {
                 let path = BIP_PATH_PARSER.parse(&mut bs).await;
                 if !path.starts_with(&BIP32_PREFIX[0..2]) {
-                    reject::<()>().await;
+                    reject::<()>(SyscallError::InvalidParameter as u16).await;
                 }
                 if with_public_keys(&path, true, |_, address: &SuiPubKeyAddress| {
                     try_option(|| -> Option<()> {
@@ -617,7 +721,7 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
                 .ok()
                 .is_none()
                 {
-                    reject::<()>().await;
+                    reject::<()>(StatusWords::UserCancelled as u16).await;
                 }
             })
             .await
@@ -633,7 +737,7 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
         };
 
         if final_accept_prompt(&["Sign Transaction?"]).is_none() {
-            reject::<()>().await;
+            reject::<()>(StatusWords::UserCancelled as u16).await;
         };
     } else if settings.get() == 0 {
         scroller("WARNING", |w| {
@@ -642,9 +746,9 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
                 "Transaction not recognized, enable blind signing to sign unknown transactions"
             )?)
         });
-        reject::<()>().await;
+        reject::<()>(SyscallError::NotSupported as u16).await;
     } else if scroller("WARNING", |w| Ok(write!(w, "Transaction not recognized")?)).is_none() {
-        reject::<()>().await;
+        reject::<()>(StatusWords::UserCancelled as u16).await;
     }
 
     // By the time we get here, we've approved and just need to do the signature.
@@ -666,20 +770,20 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
         let hash: HexHash<32> = hasher.finalize();
         if !known_txn {
             if scroller("Transaction Hash", |w| Ok(write!(w, "0x{hash}")?)).is_none() {
-                reject::<()>().await;
+                reject::<()>(StatusWords::UserCancelled as u16).await;
             };
             if final_accept_prompt(&["Blind Sign Transaction?"]).is_none() {
-                reject::<()>().await;
+                reject::<()>(StatusWords::UserCancelled as u16).await;
             };
         }
         let path = BIP_PATH_PARSER.parse(&mut input[1].clone()).await;
         if !path.starts_with(&BIP32_PREFIX[0..2]) {
-            reject::<()>().await;
+            reject::<()>(SyscallError::InvalidParameter as u16).await;
         }
         if let Some(sig) = { eddsa_sign(&path, true, &hash.0).ok() } {
             io.result_final(&sig.0[0..]).await;
         } else {
-            reject::<()>().await;
+            reject::<()>(SyscallError::Unspecified as u16).await;
         }
     })
     .await
@@ -713,7 +817,7 @@ pub fn handle_apdu_async(io: HostIO, ins: Ins, settings: Settings) -> APDUsFutur
                 NoinlineFut(sign_apdu(io, settings)).await;
             }
             Ins::GetVersionStr => {}
-            Ins::Exit => nanos_sdk::exit_app(0),
+            Ins::Exit => ledger_device_sdk::exit_app(0),
         }
     }
 }
