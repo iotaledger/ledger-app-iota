@@ -1,6 +1,6 @@
-# Iota DLT app for Ledger
+# IOTA DLT app for Ledger
 
-[Ledger](https://www.ledger.com/) application for the [Iota DLT](https://www.iota.org/).
+[Ledger](https://www.ledger.com/) application for the [IOTA DLT](https://www.iota.org/).
 
 Written using [Alamgu](https://github.com/alamgu/).
 

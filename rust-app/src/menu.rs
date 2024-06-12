@@ -113,7 +113,7 @@ impl Menu for IdleMenuWithSettings {
             AppMain => (
                 MenuLabelTop::Icon(&APP_ICON),
                 MenuLabelBottom {
-                    text: "Iota",
+                    text: "IOTA",
                     bold: true,
                 },
             ),
