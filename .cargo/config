@@ -29,4 +29,4 @@ runner = "./speculos-wrapper -m nanox "
 [alias]
 tt = "test --features extra_debug"
 br = "build --release"
-stackcheck = "stack-sizes --release --bin sui --target=thumbv6m-none-eabi"
+stackcheck = "stack-sizes --release --bin iota --target=thumbv6m-none-eabi"

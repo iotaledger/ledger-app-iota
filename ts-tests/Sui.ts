@@ -26,17 +26,17 @@ export type GetPublicKeyResult = {
 };
 
 /**
- * Sui API
+ * Iota API
  *
  * @example
- * import Sui from "hw-app-sui";
- * const sui = new Sui(transport)
+ * import Iota from "hw-app-iota";
+ * const iota = new Iota(transport)
  */
 
-export default class Sui extends Common {
+export default class Iota extends Common {
 
   constructor(transport: Transport) {
-    super(transport, "SUI");
+    super(transport, "IOTA");
     this.sendChunks = this.sendWithBlocks;
   }
 

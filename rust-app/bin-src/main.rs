@@ -4,7 +4,7 @@
 #[cfg(not(target_family = "bolos"))]
 fn main() {}
 
-use sui::main_nanos::*;
+use iota::main_nanos::*;
 
 ledger_device_sdk::set_panic!(ledger_device_sdk::exiting_panic);
 

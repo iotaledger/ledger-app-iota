@@ -1,5 +1,5 @@
 [package]
-name = "sui"
+name = "iota"
 version = "0.2.1"
 authors = ["Ericson2314", "dfordivam", "dbzguy56"]
 edition = "2018"
@@ -10,7 +10,7 @@ resolver = "2"
 arrayvec = { version = "0.7.2", default-features = false }
 ledger-crypto-helpers = { git = "https://github.com/alamgu/ledger-crypto-helpers" }
 ledger-log = { git = "https://github.com/alamgu/ledger-log" }
-ledger-parser-combinators = { git = "https://github.com/alamgu/ledger-parser-combinators", branch="async-split-take-2" }
+ledger-parser-combinators = { git = "https://github.com/alamgu/ledger-parser-combinators", branch = "async-split-take-2" }
 alamgu-async-block = { git = "https://github.com/alamgu/alamgu-async-block" }
 zeroize = { version = "1.5.2", default-features = false }
 num_enum = { version = "0.5", default-features = false }
@@ -21,9 +21,14 @@ include_gif = "1.0.1"
 # Pass --features speculos,ledger-log/log_info (or log_trace, etc) to enable
 # speculos logging and change log level.
 [features]
-default = [ ]
+default = []
 # Pass --features speculos,ledger-log/log_info (or log_trace, etc) to enable speculos logging and change log level.
-speculos = [ "ledger_device_sdk/speculos", "ledger-log/speculos", "ledger-log/log_error", "ledger-parser-combinators/logging" ]
+speculos = [
+    "ledger_device_sdk/speculos",
+    "ledger-log/speculos",
+    "ledger-log/log_error",
+    "ledger-parser-combinators/logging",
+]
 extra_debug = ["ledger-log/log_trace"]
 
 [target.'cfg(target_family = "bolos")'.dependencies]
@@ -33,10 +38,10 @@ ledger-prompts-ui = { git = "https://github.com/alamgu/ledger-prompts-ui" }
 
 [target.'cfg(target_family = "bolos")'.dev-dependencies.ledger_device_sdk]
 version = "1.7.1"
-features = [ "speculos" ]
+features = ["speculos"]
 
 [[bin]]
-name = "sui"
+name = "iota"
 test = false
 path = "bin-src/main.rs"
 
@@ -51,16 +56,16 @@ opt-level = 3
 overflow-checks = false
 
 [package.metadata.ledger]
-name = "Sui"
+name = "Iota"
 path = ["44'/4218'"]
 curve = ["ed25519"]
 flags = "0"
 
 [package.metadata.ledger.nanos]
-icon = "sui.gif"
+icon = "iota.gif"
 
 [package.metadata.ledger.nanox]
-icon = "sui-small.gif"
+icon = "iota-small.gif"
 
 [package.metadata.ledger.nanosplus]
-icon = "sui-small.gif"
+icon = "iota-small.gif"

@@ -6,7 +6,7 @@ rec {
 
   inherit (alamgu) lib pkgs crate2nix alamguLib;
 
-  appName = "sui";
+  appName = "iota";
 
   app-nix = alamgu.crate2nix-tools.generatedCargoNix {
     name = "${appName}-nix";
@@ -149,8 +149,8 @@ rec {
     cp app.hex $dest
     cp ${./tarball-default.nix} $dest/default.nix
     cp ${./tarball-shell.nix} $dest/shell.nix
-    cp ${./rust-app/sui.gif} $dest/sui.gif
-    cp ${./rust-app/sui-small.gif} $dest/sui-small.gif
+    cp ${./rust-app/iota.gif} $dest/iota.gif
+    cp ${./rust-app/iota-small.gif} $dest/iota-small.gif
   '');
 
   inherit
@@ -317,7 +317,7 @@ rec {
     inherit localSystem;
   };
 
-  sui-node-shell = nixpkgs-unstable.mkShell {
+  iota-node-shell = nixpkgs-unstable.mkShell {
     strictDeps = true;
     nativeBuildInputs = with nixpkgs-unstable.buildPackages; [
       rustc
@@ -330,7 +330,7 @@ rec {
     ];
   };
 
-  sui-wallet-shell = nixpkgs-unstable.mkShell {
+  iota-wallet-shell = nixpkgs-unstable.mkShell {
     strictDeps = true;
     nativeBuildInputs = with nixpkgs-unstable.buildPackages; lib.optional stdenv.isLinux [
       # TODO make avaiable everywhere or skip whole thing on macOS

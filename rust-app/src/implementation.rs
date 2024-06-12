@@ -18,11 +18,13 @@ use ledger_prompts_ui::{final_accept_prompt, ScrollerError};
 use core::convert::TryFrom;
 use core::future::Future;
 
-type SuiAddressRaw = [u8; SUI_ADDRESS_LENGTH];
+type IotaAddressRaw = [u8; IOTA_ADDRESS_LENGTH];
 
-pub struct SuiPubKeyAddress(ledger_device_sdk::ecc::ECPublicKey<65, 'E'>, SuiAddressRaw);
+pub struct IotaPubKeyAddress(ledger_device_sdk::ecc::ECPublicKey<65, 'E'>, IotaAddressRaw);
 
-impl Address<SuiPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>> for SuiPubKeyAddress {
+impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
+    for IotaPubKeyAddress
+{
     fn get_address(
         key: &ledger_device_sdk::ecc::ECPublicKey<65, 'E'>,
     ) -> Result<Self, SyscallError> {
@@ -32,15 +34,15 @@ impl Address<SuiPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>> for
         let _ = tmp.try_extend_from_slice(key_bytes);
         let mut hasher: Blake2b = Hasher::new();
         hasher.update(&tmp);
-        let hash: [u8; SUI_ADDRESS_LENGTH] = hasher.finalize();
-        Ok(SuiPubKeyAddress(key.clone(), hash))
+        let hash: [u8; IOTA_ADDRESS_LENGTH] = hasher.finalize();
+        Ok(IotaPubKeyAddress(key.clone(), hash))
     }
     fn get_binary_address(&self) -> &[u8] {
         &self.1
     }
 }
 
-impl core::fmt::Display for SuiPubKeyAddress {
+impl core::fmt::Display for IotaPubKeyAddress {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "0x{}", HexSlice(&self.1))
     }
@@ -68,7 +70,7 @@ pub async fn get_address_apdu(io: HostIO, prompt: bool) {
 
     let mut rv = ArrayVec::<u8, 220>::new();
 
-    if with_public_keys(&path, true, |key, address: &SuiPubKeyAddress| {
+    if with_public_keys(&path, true, |key, address: &IotaPubKeyAddress| {
         try_option(|| -> Option<()> {
             if prompt {
                 scroller("Provide Public Key", |_w| Ok(()))?;
@@ -97,7 +99,7 @@ pub async fn get_address_apdu(io: HostIO, prompt: bool) {
 }
 
 pub enum CallArg {
-    RecipientAddress(SuiAddressRaw),
+    RecipientAddress(IotaAddressRaw),
     Amount(u64),
     OtherPure,
     ObjectArg,
@@ -493,7 +495,7 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<ProgrammableTransacti
 
                         let (quotient, remainder_str) = get_amount_in_decimals(total_amount);
                         scroller_paginated("Amount", |w| {
-                            Ok(write!(w, "SUI {quotient}.{}", remainder_str.as_str())?)
+                            Ok(write!(w, "IOTA {quotient}.{}", remainder_str.as_str())?)
                         })?;
                     },
                 )
@@ -547,7 +549,7 @@ fn get_amount_in_decimals(amount: u64) -> (u64, ArrayString<12>) {
     let mut remainder_str: ArrayString<12> = ArrayString::new();
     {
         // Make a string for the remainder, containing at lease one zero
-        // So 1 SUI will be displayed as "1.0"
+        // So 1 IOTA will be displayed as "1.0"
         let mut rem = remainder;
         for i in 0..factor_pow {
             let f = u64::pow(10, factor_pow - i - 1);
@@ -611,7 +613,7 @@ const fn gas_data_parser<BS: Clone + Readable, const PROMPT: bool>(
             if PROMPT {
                 let (quotient, remainder_str) = get_amount_in_decimals(gas_budget);
                 scroller("Max Gas", |w| {
-                    Ok(write!(w, "SUI {}.{}", quotient, remainder_str.as_str())?)
+                    Ok(write!(w, "IOTA {}.{}", quotient, remainder_str.as_str())?)
                 })?
             }
             Some(())
@@ -702,7 +704,7 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
     };
 
     if known_txn {
-        if scroller("Transfer", |w| Ok(write!(w, "SUI")?)).is_none() {
+        if scroller("Transfer", |w| Ok(write!(w, "IOTA")?)).is_none() {
             reject::<()>(StatusWords::UserCancelled as u16).await;
         };
         {
@@ -712,7 +714,7 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
                 if !path.starts_with(&BIP32_PREFIX[0..2]) {
                     reject::<()>(SyscallError::InvalidParameter as u16).await;
                 }
-                if with_public_keys(&path, true, |_, address: &SuiPubKeyAddress| {
+                if with_public_keys(&path, true, |_, address: &IotaPubKeyAddress| {
                     try_option(|| -> Option<()> {
                         scroller_paginated("From", |w| Ok(write!(w, "{address}")?))?;
                         Some(())
@@ -798,7 +800,7 @@ pub fn handle_apdu_async(io: HostIO, ins: Ins, settings: Settings) -> APDUsFutur
         trace!("Dispatching");
         match ins {
             Ins::GetVersion => {
-                const APP_NAME: &str = "sui";
+                const APP_NAME: &str = "iota";
                 let mut rv = ArrayVec::<u8, 220>::new();
                 let _ = rv.try_push(env!("CARGO_PKG_VERSION_MAJOR").parse().unwrap());
                 let _ = rv.try_push(env!("CARGO_PKG_VERSION_MINOR").parse().unwrap());

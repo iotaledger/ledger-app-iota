@@ -37,7 +37,7 @@ pub fn app_main() {
     };
     let mut busy_menu = BusyMenu::Working;
 
-    info!("Sui {}", env!("CARGO_PKG_VERSION"));
+    info!("Iota {}", env!("CARGO_PKG_VERSION"));
     info!(
         "State sizes\ncomm: {}\nstates: {}",
         core::mem::size_of::<io::Comm>(),
