@@ -26,7 +26,7 @@ Install the Sui app on your Ledger device to manage SUI Tokens with the [Sui Wal
 
 - Open the Sui wallet and select "Connect to Ledger device".
 
-- Enter the derivation path (default `m/44'/784'/0'/0/0`).
+- Enter the derivation path (default `m/44'/4218'/0'/0/0`).
 
 - You can use this account to receive Sui tokens.
 
