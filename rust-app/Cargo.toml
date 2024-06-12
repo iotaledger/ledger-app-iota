@@ -52,7 +52,7 @@ overflow-checks = false
 
 [package.metadata.ledger]
 name = "Sui"
-path = ["44'/784'"]
+path = ["44'/4218'"]
 curve = ["ed25519"]
 flags = "0"
 
