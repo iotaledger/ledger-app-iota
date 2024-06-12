@@ -27,11 +27,8 @@ impl Address<SuiPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>> for
         key: &ledger_device_sdk::ecc::ECPublicKey<65, 'E'>,
     ) -> Result<Self, SyscallError> {
         let key_bytes = ed25519_public_key_bytes(key);
-        let mut tmp = ArrayVec::<u8, 33>::new();
-        let _ = tmp.try_push(0); // SIGNATURE_SCHEME_TO_FLAG['ED25519']
-        let _ = tmp.try_extend_from_slice(key_bytes);
         let mut hasher: Blake2b = Hasher::new();
-        hasher.update(&tmp);
+        hasher.update(&key_bytes);
         let hash: [u8; SUI_ADDRESS_LENGTH] = hasher.finalize();
         Ok(SuiPubKeyAddress(key.clone(), hash))
     }
