@@ -32,7 +32,7 @@ impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
         let mut hasher: Blake2b = Hasher::new();
         hasher.update(&key_bytes);
         let hash: [u8; IOTA_ADDRESS_LENGTH] = hasher.finalize();
-        Ok(SuiPubKeyAddress(key.clone(), hash))
+        Ok(IotaPubKeyAddress(key.clone(), hash))
     }
     fn get_binary_address(&self) -> &[u8] {
         &self.1
