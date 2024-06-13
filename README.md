@@ -6,7 +6,7 @@ Written using [Alamgu](https://github.com/alamgu/).
 
 [Nix]: https://nixos.org/
 
-## Device Compatability
+## Device Compatibility
 
 This application is compatible with
 
@@ -62,7 +62,7 @@ If you don't want to develop the app but just use it, installation should be ver
 The first step is to obtain a release tarball.
 The second step is to load that app from the tarball.
 
-Additionaly, if you are using [Nix], you can skip the tarball entirely and directly build/downoad and load the load.
+Additionally, if you are using [Nix], you can skip the tarball entirely and directly build/downoad and load the load.
 
 ### Directly build/download and load the app with Nix
 
