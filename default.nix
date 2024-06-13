@@ -42,7 +42,7 @@ rec {
       pkgs = collection.ledgerPkgs;
       buildRustCrateForPkgs = alamguLib.combineWrappers [
         # The callPackage of `buildRustPackage` overridden with various
-        # modified arguemnts.
+        # modified arguments.
         (pkgs: (collection.buildRustCrateForPkgsLedger pkgs).override {
           defaultCrateOverrides = pkgs.defaultCrateOverrides // {
             ledger_device_sdk = attrs: {
@@ -333,7 +333,7 @@ rec {
   iota-wallet-shell = nixpkgs-unstable.mkShell {
     strictDeps = true;
     nativeBuildInputs = with nixpkgs-unstable.buildPackages; lib.optional stdenv.isLinux [
-      # TODO make avaiable everywhere or skip whole thing on macOS
+      # TODO make available everywhere or skip whole thing on macOS
       turbo
     ] ++ [
       nodejs-14_x nodePackages.pnpm
