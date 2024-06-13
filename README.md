@@ -1,6 +1,6 @@
-# Sui Blockchain app for Ledger
+# IOTA DLT app for Ledger
 
-[Ledger](https://www.ledger.com/) application for the [Sui Blockchain](https://sui.io/).
+[Ledger](https://www.ledger.com/) application for the [IOTA DLT](https://www.iota.org/).
 
 Written using [Alamgu](https://github.com/alamgu/).
 
@@ -9,6 +9,7 @@ Written using [Alamgu](https://github.com/alamgu/).
 ## Device Compatability
 
 This application is compatible with
+
 - Ledger Nano S, running firmware 2.1.0 and above
 - Ledger Nano S+, running firmware 1.1.0
 - Ledger Nano X
@@ -28,7 +29,7 @@ No steps need to be taken in advance.
 
 On NixOS, one can easily do this with by adding the following to configuration.nix:
 
-``` nix
+```nix
 {
   # ...
   hardware.ledger.enable = true;
@@ -70,13 +71,16 @@ First, follow our [general instructions](./NIX.md) for getting started with [Nix
 Second, please ensure that your device is plugged, unlocked, and on the device home screen.
 
 Finally, run the following command to load the app on your device:
+
 ```bash
 nix --extra-experimental-features nix-command run -f . $DEVICE.loadApp
 ```
+
 where `DEVICE` is one of
- - `nanos`, for Nano S
- - `nanox`, for Nano X
- - `nanosplus`, for Nano S+
+
+- `nanos`, for Nano S
+- `nanox`, for Nano X
+- `nanosplus`, for Nano S+
 
 The app will be downloaded (if you have our Nix cache enabled) and/or freshly built as needed.
 
@@ -84,7 +88,7 @@ The app will be downloaded (if you have our Nix cache enabled) and/or freshly bu
 
 #### Download an official build
 
-Check the [releases page](https://github.com/obsidiansystems/ledger-app-sui/releases) of this app to see if an official build has been uploaded for this release.
+Check the [releases page](https://github.com/iotaledger/ledger-app-iota/releases) of this app to see if an official build has been uploaded for this release.
 There is a separate tarball for each device.
 
 #### Build one yourself, with Nix
@@ -93,13 +97,16 @@ First, follow our [general instructions](./NIX.md) for getting started with [Nix
 
 There is a separate tarball for each device.
 To build one, run:
+
 ```bash
 nix-build -A $DEVICE.tarball
 ```
+
 where `DEVICE` is one of
- - `nanos`, for Nano S
- - `nanox`, for Nano X
- - `nanosplus`, for Nano S+
+
+- `nanos`, for Nano S
+- `nanox`, for Nano X
+- `nanosplus`, for Nano S+
 
 The last line printed out will be the path of the tarball.
 
@@ -113,7 +120,7 @@ By using Nix, this can be done simply by using the `load-app` command, without m
 
 ```bash
 tar xzf /path/to/release.tar.gz
-cd sui-$DEVICE
+cd iota-$DEVICE
 nix-shell
 load-app
 ```
@@ -128,7 +135,7 @@ For more information on how to install and use that tool see the [instructions f
 
 ```bash
 tar xzf release.tar.gz
-cd sui-$DEVICE
+cd iota-$DEVICE
 ledgerctl install -f app.json
 ```
 
@@ -137,23 +144,28 @@ ledgerctl install -f app.json
 The bundled [`generic-cli`](https://github.com/alamgu/alamgu-generic-cli) tool can be used to obtaining the public key and do signing.
 
 To use this tool using Nix, from the root level of this repo, run this command to enter a shell with all the tools you'll need:
+
 ```bash
 nix-shell -A $DEVICE.appShell
 ```
+
 where `DEVICE` is one of
- - `nanos`, for Nano S
- - `nanox`, for Nano X
- - `nanosplus`, for Nano S+
+
+- `nanos`, for Nano S
+- `nanox`, for Nano X
+- `nanosplus`, for Nano S+
 
 Then, one can use `generic-cli` like this:
 
 - Get a public key for a BIP-32 derivation without prompting the user:
+
   ```shell-session
   $ generic-cli getAddress --use-block "44'/4218'/0'/0'/0'"
   a42e71c004770d1a48956090248a8d7d86ee02726b5aab2a5cd15ca9f57cbd71
   ```
 
 - Show the address on device for a BIP-32 derivation and obtain the public key:
+
   ```shell-session
   $ generic-cli getAddress --use-block --verify "44'/4218'/0'/0'/0'"
   a42e71c004770d1a48956090248a8d7d86ee02726b5aab2a5cd15ca9f57cbd71

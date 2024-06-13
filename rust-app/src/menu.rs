@@ -4,7 +4,7 @@ use ledger_device_sdk::ui::bagls::*;
 use ledger_device_sdk::ui::bitmaps::Glyph;
 use ledger_prompts_ui::*;
 
-pub const APP_ICON_GLYPH: Glyph = Glyph::from_include(include_gif!("sui-small.gif"));
+pub const APP_ICON_GLYPH: Glyph = Glyph::from_include(include_gif!("iota-small.gif"));
 
 pub const APP_ICON: Icon = Icon::from(&APP_ICON_GLYPH)
     .set_x(MENU_ICON_X)
@@ -113,7 +113,7 @@ impl Menu for IdleMenuWithSettings {
             AppMain => (
                 MenuLabelTop::Icon(&APP_ICON),
                 MenuLabelBottom {
-                    text: "Sui",
+                    text: "IOTA",
                     bold: true,
                 },
             ),

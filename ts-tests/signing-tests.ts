@@ -2,7 +2,7 @@ import { VERSION, sendCommandAndAccept, BASE_URL, sendCommandExpectFail, toggleB
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 import Axios from 'axios';
-import type Sui from "./Sui";
+import type Iota from "./Iota";
 import * as blake2b from "blake2b";
 import { instantiate, Nacl } from "js-nacl";
 
@@ -12,7 +12,7 @@ instantiate(n => { nacl = n; });
 
 function testTransaction(path: string, txn: Buffer, prompts: any[]) {
   return async () => {
-    await sendCommandAndAccept(async (client: Sui) => {
+    await sendCommandAndAccept(async (client: Iota) => {
 
       const { publicKey } = await client.getPublicKey(path);
 
@@ -43,7 +43,7 @@ describe("Signing tests", function () {
       [
         {
           "header": "Transfer",
-          "prompt": "SUI"
+          "prompt": "IOTA"
         },
         {
           "header": "From",
@@ -57,11 +57,11 @@ describe("Signing tests", function () {
         },
         {
           "header": "Amount",
-          "prompt": "SUI 0.001"
+          "prompt": "IOTA 0.001"
         },
         {
           "header": "Max Gas",
-          "prompt": "SUI 0.000001036"
+          "prompt": "IOTA 0.000001036"
         },
         {
           "text": "Sign Transaction?",
@@ -109,11 +109,11 @@ describe("Signing tests", function () {
     await toggleBlindSigningSettings();
   });
 
-  it("should reject signing a non-SUI coin transaction, if blind signing is not enabled", async function () {
+  it("should reject signing a non-IOTA coin transaction, if blind signing is not enabled", async function () {
     const path = "44'/4218'/0'";
     const txn = Buffer.from("AAAAAAADAQAe2uv1Mds+xCVK5Jv/Dv5cgEl/9DthDcpbjWcsmFpzbs6BNQAAAAAAIKPD8GQqgBpJZRV+nFDRE7rqR0Za8x0pyfLusVdpPPVRAAgADl+jHAAAAAAg5y3MHATlk+Ik5cPIdEz5iPANs1jcXZHVGjh4Mb16lwkCAgEAAAEBAQABAQIAAAECAF/sd27xyQe/W+gY4WRtPlQro1siWQu79s0pxbbCSRafAfnjaU5yJSFFDJznsAaBqbkiR9CB8DJqWki8fn8AUZeQz4E1AAAAAAAgTRU/MsawTJirpVwjDF8gyiEbaT0+7J0V8ifUEGGBkcVf7Hdu8ckHv1voGOFkbT5UK6NbIlkLu/bNKcW2wkkWn+gDAAAAAAAA8NdGAAAAAAAA", "base64");
 
-    await sendCommandExpectFail(async (client: Sui) => {
+    await sendCommandExpectFail(async (client: Iota) => {
       await client.signTransaction(path, txn);
     });
   });
@@ -122,7 +122,7 @@ describe("Signing tests", function () {
     const path = "44'/4218'/0'";
     const txn = Buffer.from("00000000050205546e7f126d2f40331a543b9608439b582fd0d103000000000000002080fdabcc90498e7eb8413b140c4334871eeafa5a86203fd9cfdb032f604f49e1284af431cf032b5d85324135bf9a3073e920d7f5020000000000000020a06f410c175e828c24cee84cb3bd95cff25c33fbbdcb62c6596e8e423784ffe702d08074075c7097f361e8b443e2075a852a2292e8a08074075c7097f361e8b443e2075a852a2292e80180969800000000001643fb2578ff7191c643079a62c1cca8ec2752bc05546e7f126d2f40331a543b9608439b582fd0d103000000000000002080fdabcc90498e7eb8413b140c4334871eeafa5a86203fd9cfdb032f604f49e101000000000000002c01000000000000", "hex");
 
-    await sendCommandExpectFail(async (client: Sui) => {
+    await sendCommandExpectFail(async (client: Iota) => {
       await client.signTransaction(path, txn);
     });
   });

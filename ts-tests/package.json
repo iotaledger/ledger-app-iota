@@ -1,5 +1,5 @@
 {
-  "name": "sui-ledger-tests",
+  "name": "iota-ledger-tests",
   "version": "0.0.1",
   "src": ".",
   "scripts": {

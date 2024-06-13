@@ -10,14 +10,14 @@ pub type Bip32Key = DArray<Byte, U32<{ Endianness::Little }>, 10>;
 
 pub type SignParameters = (IntentMessage<true>, Bip32Key);
 
-// Sui Types
+// Iota Types
 pub type IntentMessage<const PROMPT: bool> = (Intent, TransactionData<PROMPT>);
 
 pub struct TransactionData<const PROMPT: bool>;
 
 pub type TransactionDataV1<const PROMPT: bool> = (
     TransactionKind<PROMPT>,
-    SuiAddress,            // sender
+    IotaAddress,           // sender
     GasData<PROMPT>,       // gas_data
     TransactionExpiration, // expiration
 );
@@ -32,7 +32,7 @@ pub struct CallArgSchema;
 
 pub type GasData<const PROMPT: bool> = (
     Vec<ObjectRef, { usize::MAX }>, // payment
-    SuiAddress,                     // owner
+    IotaAddress,                    // owner
     Amount,                         // price
     Amount,                         // budget
 );
@@ -48,17 +48,17 @@ pub type SharedObject = (
     bool,           // mutable
 );
 
-pub type AccountAddress = SuiAddress;
+pub type AccountAddress = IotaAddress;
 pub type ObjectID = AccountAddress;
 pub type SequenceNumber = U64LE;
 pub type ObjectDigest = SHA3_256_HASH;
 
-pub const SUI_ADDRESS_LENGTH: usize = 32;
-pub type SuiAddress = Array<Byte, SUI_ADDRESS_LENGTH>;
+pub const IOTA_ADDRESS_LENGTH: usize = 32;
+pub type IotaAddress = Array<Byte, IOTA_ADDRESS_LENGTH>;
 
 pub type Coins = Vec<ObjectRef, { usize::MAX }>;
 
-pub type Recipient = SuiAddress;
+pub type Recipient = IotaAddress;
 
 pub type Amount = U64LE;
 

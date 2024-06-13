@@ -1,7 +1,7 @@
 import SpeculosTransport from '@ledgerhq/hw-transport-node-speculos';
 import Axios from 'axios';
 import Transport from "./http-transport";
-import Sui from "./Sui";
+import Iota from "./Iota";
 import { expect } from 'chai';
 
 export const VERSION = {
@@ -13,7 +13,7 @@ export const VERSION = {
 const ignoredScreens = [ "Cancel", "Working...", "Quit", "Version"
 
                          /* App name and version */
-                         , "Sui", "ui", `${VERSION.major}.${VERSION.minor}.${VERSION.patch}`
+                         , "IOTA", "ui", `${VERSION.major}.${VERSION.minor}.${VERSION.patch}`
 
                          , "Settings", "Blind Signing", "Enabled", "Disabled", "Back"
                          /* The next ones are specifically for S+ in which OCR is broken */
@@ -152,7 +152,7 @@ const sendCommandAndAccept = async function(command : any, prompts : any[]) {
   await Axios.delete(BASE_URL + "/events");
 
   const transport = await Transport.open(BASE_URL + "/apdu");
-  const client = new Sui(transport);
+  const client = new Iota(transport);
   let err = null;
 
   try { await command(client); } catch(e) {
@@ -178,7 +178,7 @@ const sendCommandExpectFail = async function(command : any) {
   await Axios.delete(BASE_URL + "/events");
 
   const transport = await Transport.open(BASE_URL + "/apdu");
-  const client = new Sui(transport);
+  const client = new Iota(transport);
   // client.sendChunks = client.sendWithBlocks; // Use Block protocol
 
   try { await command(client); } catch(e) {
