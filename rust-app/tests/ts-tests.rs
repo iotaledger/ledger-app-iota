@@ -5,7 +5,7 @@
 
 use ledger_device_sdk::exit_app;
 
-use iota::main_nanos::*;
+use iota::main_nanos::app_main;
 
 #[no_mangle]
 extern "C" fn sample_main() {

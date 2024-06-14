@@ -50,8 +50,8 @@ pub fn scroller_paginated<F: for<'b> Fn(&mut PromptWrite<'b, 16>) -> Result<(), 
 }
 
 use core::future::Future;
-use core::pin::*;
-use core::task::*;
+use core::pin::Pin;
+use core::task::{Context, Poll};
 use pin_project::pin_project;
 #[pin_project]
 pub struct NoinlineFut<F: Future>(#[pin] pub F);

@@ -1,8 +1,10 @@
-use crate::settings::*;
+use crate::settings::Settings;
 use include_gif::include_gif;
-use ledger_device_sdk::ui::bagls::*;
+use ledger_device_sdk::ui::bagls::Icon;
 use ledger_device_sdk::ui::bitmaps::Glyph;
-use ledger_prompts_ui::*;
+use ledger_prompts_ui::{
+    Menu, MenuLabelBottom, MenuLabelTop, BACK_ICON, MENU_ICON_X, MENU_ICON_Y, SETTINGS_ICON,
+};
 
 pub const APP_ICON_GLYPH: Glyph = Glyph::from_include(include_gif!("iota-small.gif"));
 
@@ -38,121 +40,117 @@ pub struct DoExitApp;
 impl Menu for IdleMenuWithSettings {
     type BothResult = DoExitApp;
     fn move_left(&mut self) {
-        use crate::menu::IdleMenu::*;
-        use crate::menu::SettingsSubMenu::*;
         match self.idle_menu {
-            AppMain => self.idle_menu = Exit,
-            ShowVersion => self.idle_menu = AppMain,
-            Settings(None) => self.idle_menu = ShowVersion,
-            Settings(Some(Back)) => {
+            IdleMenu::AppMain => self.idle_menu = IdleMenu::Exit,
+            IdleMenu::ShowVersion => self.idle_menu = IdleMenu::AppMain,
+            IdleMenu::Settings(None) => self.idle_menu = IdleMenu::ShowVersion,
+            IdleMenu::Settings(Some(SettingsSubMenu::Back)) => {
                 if self.settings.get() == 1 {
-                    self.idle_menu = Settings(Some(DisableBlindSigning))
+                    self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning))
                 } else {
-                    self.idle_menu = Settings(Some(EnableBlindSigning))
+                    self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning))
                 }
             }
-            Settings(Some(_)) => self.idle_menu = Settings(Some(Back)),
-            Exit => self.idle_menu = Settings(None),
+            IdleMenu::Settings(Some(_)) => {
+                self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::Back))
+            }
+            IdleMenu::Exit => self.idle_menu = IdleMenu::Settings(None),
         };
     }
     fn move_right(&mut self) {
-        use crate::menu::IdleMenu::*;
-        use crate::menu::SettingsSubMenu::*;
         match self.idle_menu {
-            AppMain => self.idle_menu = ShowVersion,
-            ShowVersion => self.idle_menu = Settings(None),
-            Settings(None) => self.idle_menu = Exit,
-            Settings(Some(Back)) => {
+            IdleMenu::AppMain => self.idle_menu = IdleMenu::ShowVersion,
+            IdleMenu::ShowVersion => self.idle_menu = IdleMenu::Settings(None),
+            IdleMenu::Settings(None) => self.idle_menu = IdleMenu::Exit,
+            IdleMenu::Settings(Some(SettingsSubMenu::Back)) => {
                 if self.settings.get() == 1 {
-                    self.idle_menu = Settings(Some(DisableBlindSigning))
+                    self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning))
                 } else {
-                    self.idle_menu = Settings(Some(EnableBlindSigning))
+                    self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning))
                 }
             }
-            Settings(Some(_)) => self.idle_menu = Settings(Some(Back)),
-            Exit => self.idle_menu = AppMain,
+            IdleMenu::Settings(Some(_)) => {
+                self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::Back))
+            }
+            IdleMenu::Exit => self.idle_menu = IdleMenu::AppMain,
         };
     }
     #[inline(never)]
     fn handle_both(&mut self) -> Option<Self::BothResult> {
-        use crate::menu::IdleMenu::*;
-        use crate::menu::SettingsSubMenu::*;
         match self.idle_menu {
-            AppMain => None,
-            ShowVersion => None,
-            Settings(None) => {
+            IdleMenu::AppMain => None,
+            IdleMenu::ShowVersion => None,
+            IdleMenu::Settings(None) => {
                 if self.settings.get() == 1 {
-                    self.idle_menu = Settings(Some(DisableBlindSigning))
+                    self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning))
                 } else {
-                    self.idle_menu = Settings(Some(EnableBlindSigning))
+                    self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning))
                 };
                 None
             }
-            Settings(Some(EnableBlindSigning)) => {
+            IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning)) => {
                 self.settings.set(&1);
-                self.idle_menu = Settings(Some(DisableBlindSigning));
+                self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning));
                 None
             }
-            Settings(Some(DisableBlindSigning)) => {
+            IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning)) => {
                 self.settings.set(&0);
-                self.idle_menu = Settings(Some(EnableBlindSigning));
+                self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning));
                 None
             }
-            Settings(Some(Back)) => {
-                self.idle_menu = Settings(None);
+            IdleMenu::Settings(Some(SettingsSubMenu::Back)) => {
+                self.idle_menu = IdleMenu::Settings(None);
                 None
             }
-            Exit => Some(DoExitApp),
+            IdleMenu::Exit => Some(DoExitApp),
         }
     }
     #[inline(never)]
     fn label<'a>(&self) -> (MenuLabelTop<'a>, MenuLabelBottom<'a>) {
-        use crate::menu::IdleMenu::*;
-        use crate::menu::SettingsSubMenu::*;
         match self.idle_menu {
-            AppMain => (
+            IdleMenu::AppMain => (
                 MenuLabelTop::Icon(&APP_ICON),
                 MenuLabelBottom {
                     text: "IOTA",
                     bold: true,
                 },
             ),
-            ShowVersion => (
+            IdleMenu::ShowVersion => (
                 MenuLabelTop::Text("Version"),
                 MenuLabelBottom {
                     text: env!("CARGO_PKG_VERSION"),
                     bold: false,
                 },
             ),
-            Settings(None) => (
+            IdleMenu::Settings(None) => (
                 MenuLabelTop::Icon(&SETTINGS_ICON),
                 MenuLabelBottom {
                     text: "Settings",
                     bold: true,
                 },
             ),
-            Settings(Some(EnableBlindSigning)) => (
+            IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning)) => (
                 MenuLabelTop::Text("Blind Signing"),
                 MenuLabelBottom {
                     text: "Disabled",
                     bold: false,
                 },
             ),
-            Settings(Some(DisableBlindSigning)) => (
+            IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning)) => (
                 MenuLabelTop::Text("Blind Signing"),
                 MenuLabelBottom {
                     text: "Enabled",
                     bold: false,
                 },
             ),
-            Settings(Some(Back)) => (
+            IdleMenu::Settings(Some(SettingsSubMenu::Back)) => (
                 MenuLabelTop::Icon(&BACK_ICON),
                 MenuLabelBottom {
                     text: "Back",
                     bold: true,
                 },
             ),
-            Exit => (
+            IdleMenu::Exit => (
                 MenuLabelTop::Icon(&ledger_prompts_ui::DASHBOARD_ICON),
                 MenuLabelBottom {
                     text: "Quit",
@@ -175,24 +173,22 @@ impl Menu for BusyMenu {
     }
     #[inline(never)]
     fn handle_both(&mut self) -> Option<Self::BothResult> {
-        use crate::menu::BusyMenu::*;
         match self {
-            Working => None,
-            Cancel => Some(DoCancel),
+            BusyMenu::Working => None,
+            BusyMenu::Cancel => Some(DoCancel),
         }
     }
     #[inline(never)]
     fn label<'a>(&self) -> (MenuLabelTop<'a>, MenuLabelBottom<'a>) {
-        use crate::menu::BusyMenu::*;
         match self {
-            Working => (
+            BusyMenu::Working => (
                 MenuLabelTop::Text("Working..."),
                 MenuLabelBottom {
                     text: "",
                     bold: false,
                 },
             ),
-            Cancel => (
+            BusyMenu::Cancel => (
                 MenuLabelTop::Text("Cancel"),
                 MenuLabelBottom {
                     text: "",
