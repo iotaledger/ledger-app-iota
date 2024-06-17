@@ -1,8 +1,8 @@
 use core::convert::TryFrom;
 use ledger_device_sdk::io::{ApduHeader, StatusWords};
-use ledger_parser_combinators::bcs::async_parser::*;
-use ledger_parser_combinators::core_parsers::*;
-use ledger_parser_combinators::endianness::*;
+use ledger_parser_combinators::bcs::async_parser::{Vec, ULEB128};
+use ledger_parser_combinators::core_parsers::{Array, Byte, DArray, U16, U32, U64};
+use ledger_parser_combinators::endianness::Endianness;
 use num_enum::TryFromPrimitive;
 
 // Payload for a public key request

@@ -1,9 +1,9 @@
-use crate::implementation::*;
-use crate::interface::*;
-use crate::menu::*;
-use crate::settings::*;
+use crate::implementation::{handle_apdu_async, APDUsFuture};
+use crate::interface::Ins;
+use crate::menu::{BusyMenu, IdleMenu, IdleMenuWithSettings};
+use crate::settings::Settings;
 
-use alamgu_async_block::*;
+use alamgu_async_block::{poll_apdu_handlers, HostIO, HostIOState};
 
 use ledger_device_sdk::io;
 use ledger_device_sdk::uxapp::{UxEvent, BOLOS_UX_OK};
@@ -12,7 +12,7 @@ use ledger_prompts_ui::{handle_menu_button_event, show_menu};
 
 use core::cell::RefCell;
 use core::pin::Pin;
-use pin_cell::*;
+use pin_cell::{PinCell, PinMut};
 
 #[allow(dead_code)]
 pub fn app_main() {

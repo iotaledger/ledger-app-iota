@@ -1,4 +1,4 @@
-use ledger_device_sdk::nvm::*;
+use ledger_device_sdk::nvm::{AtomicStorage, SingleStorage};
 use ledger_device_sdk::NVMData;
 
 // This is necessary to store the object in NVM and not in RAM
