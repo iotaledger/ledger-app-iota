@@ -716,27 +716,6 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
         if scroller("Transfer", |w| Ok(write!(w, "IOTA")?)).is_none() {
             reject::<()>(StatusWords::UserCancelled as u16).await;
         };
-        {
-            let mut bs = input[1].clone();
-            NoinlineFut(async move {
-                let path = BIP_PATH_PARSER.parse(&mut bs).await;
-                if !is_bip_prefix_valid(&path) {
-                    reject::<()>(SyscallError::InvalidParameter as u16).await;
-                }
-                if with_public_keys(&path, true, |_, address: &IotaPubKeyAddress| {
-                    try_option(|| -> Option<()> {
-                        scroller_paginated("From", |w| Ok(write!(w, "{address}")?))?;
-                        Some(())
-                    }())
-                })
-                .ok()
-                .is_none()
-                {
-                    reject::<()>(StatusWords::UserCancelled as u16).await;
-                }
-            })
-            .await
-        };
 
         {
             let mut txn = input[0].clone();
