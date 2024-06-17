@@ -56,8 +56,14 @@ pub type BipParserImplT =
 pub const BIP_PATH_PARSER: BipParserImplT = SubInterp(DefaultInterp);
 
 // Need a path of length 5, as make_bip32_path panics with smaller paths
-pub const BIP32_PREFIX: [u32; 5] =
+pub const BIP32_IOTA_PREFIX: [u32; 5] =
     ledger_device_sdk::ecc::make_bip32_path(b"m/44'/4218'/123'/0'/0'");
+pub const BIP32_SMR_PREFIX: [u32; 5] =
+    ledger_device_sdk::ecc::make_bip32_path(b"m/44'/4219'/123'/0'/0'");
+
+fn is_bip_prefix_valid(path: &[u32]) -> bool {
+    path.starts_with(&BIP32_IOTA_PREFIX[0..2]) || path.starts_with(&BIP32_SMR_PREFIX[0..2])
+}
 
 pub async fn get_address_apdu(io: HostIO, prompt: bool) {
     let input = match io.get_params::<1>() {
@@ -67,7 +73,7 @@ pub async fn get_address_apdu(io: HostIO, prompt: bool) {
 
     let path = BIP_PATH_PARSER.parse(&mut input[0].clone()).await;
 
-    if !path.starts_with(&BIP32_PREFIX[0..2]) {
+    if !is_bip_prefix_valid(&path) {
         reject::<()>(SyscallError::InvalidParameter as u16).await;
     }
 
@@ -714,7 +720,7 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
             let mut bs = input[1].clone();
             NoinlineFut(async move {
                 let path = BIP_PATH_PARSER.parse(&mut bs).await;
-                if !path.starts_with(&BIP32_PREFIX[0..2]) {
+                if !is_bip_prefix_valid(&path) {
                     reject::<()>(SyscallError::InvalidParameter as u16).await;
                 }
                 if with_public_keys(&path, true, |_, address: &IotaPubKeyAddress| {
@@ -782,7 +788,7 @@ pub async fn sign_apdu(io: HostIO, settings: Settings) {
             };
         }
         let path = BIP_PATH_PARSER.parse(&mut input[1].clone()).await;
-        if !path.starts_with(&BIP32_PREFIX[0..2]) {
+        if !is_bip_prefix_valid(&path) {
             reject::<()>(SyscallError::InvalidParameter as u16).await;
         }
         if let Some(sig) = { eddsa_sign(&path, true, &hash.0).ok() } {
