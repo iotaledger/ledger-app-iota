@@ -15,7 +15,7 @@ export const VERSION = {
 const ignoredScreens = ["", "Cancel", "Working...", "Quit", "Version"
 
   /* App name and version */
-  , "IOTA", "OTA", `${VERSION.major}.${VERSION.minor}.${VERSION.patch}`
+  , "IOTA", "lOTA", `${VERSION.major}.${VERSION.minor}.${VERSION.patch}`
 
   , "Settings", "Blind Signing", "Enabled", "Disabled", "Back"
   /* The next ones are specifically for S+ in which OCR is broken */
