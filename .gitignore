@@ -4,3 +4,6 @@ Cargo.nix
 
 result
 result-*
+
+.vscode
+iota-nanos
