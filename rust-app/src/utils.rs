@@ -59,7 +59,7 @@ pub struct NoinlineFut<F: Future>(#[pin] pub F);
 impl<F: Future> Future for NoinlineFut<F> {
     type Output = F::Output;
     #[inline(never)]
-    fn poll(self: Pin<&mut Self>, cx: &mut Context) -> core::task::Poll<Self::Output> {
+    fn poll(self: Pin<&mut Self>, cx: &mut Context) -> Poll<Self::Output> {
         self.project().0.poll(cx)
     }
 }

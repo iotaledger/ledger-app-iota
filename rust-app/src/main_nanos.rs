@@ -1,6 +1,6 @@
 use crate::implementation::{handle_apdu_async, APDUsFuture};
 use crate::interface::Ins;
-use crate::menu::{BusyMenu, IdleMenu, IdleMenuWithSettings};
+use crate::menu::{BusyMenu, DoCancel, DoExitApp, IdleMenu, IdleMenuWithSettings};
 use crate::settings::Settings;
 
 use alamgu_async_block::{poll_apdu_handlers, HostIO, HostIOState};

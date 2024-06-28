@@ -36,7 +36,7 @@ impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
     ) -> Result<Self, SyscallError> {
         let key_bytes = ed25519_public_key_bytes(key);
         let mut hasher: Blake2b = Hasher::new();
-        hasher.update(&key_bytes);
+        hasher.update(key_bytes);
         let hash: [u8; IOTA_ADDRESS_LENGTH] = hasher.finalize();
         Ok(IotaPubKeyAddress(key.clone(), hash))
     }
