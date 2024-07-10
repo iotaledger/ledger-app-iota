@@ -48,6 +48,10 @@ jobs:
           mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/app.hex iota-nanosplus-app.hex
           mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota iota-nanox
           mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/app.hex iota-nanox-app.hex
+          mv ./.github/workflows/release/*.json ./
+          tar cfzv nanos.tar.gz iota-nanos iota-nanos-app.hex app_nanos.json
+          tar cfzv nanosplus.tar.gz iota-nanosplus iota-nanosplus-app.hex app_nanosplus.json
+          tar cfzv nanox.tar.gz iota-nanox iota-nanox-app.hex app_nanox.json
 
       # upload binary to the GH release
       - name: upload release assets
@@ -58,13 +62,10 @@ jobs:
         with:
           name: "ledger-app-iota-v${{ env.CRATE_VERSION }}"
           tag_name: "ledger-app-iota-v${{ env.CRATE_VERSION }}"
-          body_path: ./.github/workflows/release-text.txt
+          body_path: ./.github/workflows/release/release-text.txt
           draft: true
           prerelease: true
           files: |
-            iota-nanos
-            iota-nanos-app.hex
-            iota-nanosplus
-            iota-nanosplus-app.hex
-            iota-nanox
-            iota-nanox-app.hex
+            nanos.tar.gz
+            nanosplus.tar.gz
+            nanox.tar.gz

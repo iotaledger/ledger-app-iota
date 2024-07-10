@@ -1,0 +1,9 @@
+Binaries can be used with speculos https://github.com/LedgerHQ/speculos. `speculos iota-nanos`
+
+*-app.hex files can be loaded on a real device with https://github.com/LedgerHQ/ledgerctl.
+
+First install ledgerctl https://github.com/LedgerHQ/ledgerctl?tab=readme-ov-file#install.
+
+Then download the *.tar.gz file for your device, unpack it and install it with the following commands (replace `nanos` with `nanosplus`/`nanox` if needed):
+`tar -xvzf nanos.tar.gz`
+`ledgerctl install -f app_nanos.json`
