@@ -58,11 +58,10 @@ For more details, see [Ledger's documentation](https://support.ledger.com/hc/en-
 
 ## Installing the app
 
-If you don't want to develop the app but just use it, installation should be very simple.
-The first step is to obtain a release tarball.
-The second step is to load that app from the tarball.
+If you don't want to develop the app but just use it, installation should be very simple by downloading the *app.hex file for your device from the [release](https://github.com/iotaledger/ledger-app-iota/releases) and following the instructions on the release page.
 
-Additionally, if you are using [Nix], you can skip the tarball entirely and directly build/downoad and load the load.
+
+Additionally, if you are using [Nix], you can skip the tarball entirely and directly build/download and load the app.
 
 ### Directly build/download and load the app with Nix
 
@@ -85,11 +84,6 @@ where `DEVICE` is one of
 The app will be downloaded (if you have our Nix cache enabled) and/or freshly built as needed.
 
 ### Obtaining a release tarball
-
-#### Download an official build
-
-Check the [releases page](https://github.com/iotaledger/ledger-app-iota/releases) of this app to see if an official build has been uploaded for this release.
-There is a separate tarball for each device.
 
 #### Build one yourself, with Nix
 
@@ -126,7 +120,7 @@ load-app
 ```
 
 `/path/to/release.tar.gz` you should replace with the actual path to the tarball.
-For example, it might be `~/Downloads/release.tar.gz` if you downloaded a pre-built official release from GitHub, or `/nix/store/adsfijadslifjaslif-release.tar.gz` if you built it yourself with Nix.
+For example, it might be `/nix/store/adsfijadslifjaslif-release.tar.gz` if you built it yourself with Nix.
 
 #### Without Nix
 
