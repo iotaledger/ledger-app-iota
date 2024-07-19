@@ -1,4 +1,5 @@
-Binaries can be used with speculos https://github.com/LedgerHQ/speculos. `speculos iota-nanos`
+Binaries can be used with speculos https://github.com/LedgerHQ/speculos.
+Command: `speculos iota-nanos` where `iota-nanos` is the binary for ledger nanos.
 
 *-app.hex files can be loaded on a real device with https://github.com/LedgerHQ/ledgerctl.
 
