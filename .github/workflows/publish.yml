@@ -49,6 +49,14 @@ jobs:
           tar cfzv nanosplus.tar.gz iota-nanosplus iota-nanosplus-app.hex app_nanosplus.json
           tar cfzv nanox.tar.gz iota-nanox iota-nanox-app.hex app_nanox.json
 
+      - name: Add SHA-256 checksums to release
+        run: |
+          echo "|Asset|SHA-256 checksum|" >> ./.github/workflows/release/release-text.txt
+          echo "|---|---|"  >> ./.github/workflows/release/release-text.txt
+          echo "|nanos.tar.gz|$(shasum -a 256 nanos.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
+          echo "|nanosplus.tar.gz|$(shasum -a 256 nanosplus.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
+          echo "|nanox.tar.gz|$(shasum -a 256 nanox.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
+
       # upload binary to the GH release
       - name: upload release assets
         id: upload-release-assets
