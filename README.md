@@ -58,7 +58,7 @@ For more details, see [Ledger's documentation](https://support.ledger.com/hc/en-
 
 ## Installing the app
 
-If you don't want to develop the app but just use it, installation should be very simple by downloading the *app.hex file for your device from the [release](https://github.com/iotaledger/ledger-app-iota/releases) and following the instructions on the release page.
+If you don't want to develop the app but just use it, installation should be very simple by downloading the *app.hex file for your device from the [releases](https://github.com/iotaledger/ledger-app-iota/releases) and following the instructions on the release page.
 
 
 Additionally, if you are using [Nix], you can skip the tarball entirely and directly build/download and load the app.
