@@ -5,14 +5,13 @@ The messaging format of the app uses the [Block Protocol](/docs/block-protocol.m
 All commands use `CLA = 0x00`.
 The `P1` and `P2` fields are reserved for future use and must be set to `0` in all messages.
 
-| CLA | INS | COMMAND NAME    | DESCRIPTION                                             |
-| --- | --- | --------------- | ------------------------------------------------------- |
-| 00  | 00  | GET_VERSION     | Gets the app version in machine readable format (bytes) |
-| 00  | 01  | VERIFY_ADDRESS  | Shows the Address on device for a BIP32 path            |
-| 00  | 02  | GET_PUBKEY      | Gets the Public Key and Address for a BIP32 path        |
-| 00  | 03  | SIGN_TX         | Sign Transaction                                        |
-| 00  | FE  | GET_VERSION_STR | Gets the app version in string                          |
-| 00  | FF  | QUIT_APP        | Quits the app                                           |
+| CLA | INS | COMMAND NAME   | DESCRIPTION                                             |
+| --- | --- | -------------- | ------------------------------------------------------- |
+| 00  | 00  | GET_VERSION    | Gets the app version in machine readable format (bytes) |
+| 00  | 01  | VERIFY_ADDRESS | Shows the Address on device for a BIP32 path            |
+| 00  | 02  | GET_PUBKEY     | Gets the Public Key and Address for a BIP32 path        |
+| 00  | 03  | SIGN_TX        | Sign Transaction                                        |
+| 00  | FF  | QUIT_APP       | Quits the app                                           |
 
 ### GET_VERSION
 

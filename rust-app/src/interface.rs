@@ -81,7 +81,6 @@ pub enum Ins {
     VerifyAddress = 1,
     GetPubkey = 2,
     Sign = 3,
-    GetVersionStr = 0xfe,
     Exit = 0xff,
 }
 
