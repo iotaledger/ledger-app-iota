@@ -827,7 +827,6 @@ pub fn handle_apdu_async(io: HostIO, ins: Ins, settings: Settings) -> APDUsFutur
                 trace!("Handling sign");
                 NoinlineFut(sign_apdu(io, settings)).await;
             }
-            Ins::GetVersionStr => {}
             Ins::Exit => ledger_device_sdk::exit_app(0),
         }
     }
