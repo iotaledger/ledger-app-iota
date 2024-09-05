@@ -56,7 +56,7 @@ opt-level = 3
 overflow-checks = false
 
 [package.metadata.ledger]
-name = "IOTA"
+name = "IOTA Rebased"
 path = ["44'/4218'"]
 curve = ["ed25519"]
 flags = "0"
