@@ -56,8 +56,9 @@ opt-level = 3
 overflow-checks = false
 
 [package.metadata.ledger]
-name = "IOTA"
-path = ["44'/4218'"]
+name = "IOTA Rebased"
+# Testnet, IOTA, Shimmer
+path = ["44'/1'", "44'/4218'", "44'/4219'"]
 curve = ["ed25519"]
 flags = "0"
 
