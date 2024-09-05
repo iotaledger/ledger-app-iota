@@ -47,6 +47,11 @@ describe("Signing tests", function () {
                     "prompt": "",
                 },
                 {
+                    "header": "From",
+                    "prompt": "0x1b3669e321893ee49c387a08fc251dbfff37cd2a981e6c473a5b2afde19d363e",
+                    "paginate": true
+                },
+                {
                     "header": "To",
                     "prompt": "0x4f2370b2a4810ad6c8e1cfd92cc8c8818fef8f59e3a80cea17871f78d850ba4b",
                     "paginate": true
