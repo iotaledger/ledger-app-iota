@@ -36,18 +36,21 @@ jobs:
           name: ${{ inputs.download_app_binaries_artifact }}
           path: ${{ needs.call_get_app_metadata.outputs.build_directory }}
 
-      - name: Rename and move files
+      - name: Create release archives
         run: |
-          mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/iota iota-nanos
-          mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/app.hex iota-nanos-app.hex
-          mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota iota-nanosplus
-          mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/app.hex iota-nanosplus-app.hex
-          mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota iota-nanox
-          mv ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/app.hex iota-nanox-app.hex
-          mv ./.github/workflows/release/*.json ./
-          tar cfzv nanos.tar.gz iota-nanos iota-nanos-app.hex app_nanos.json
-          tar cfzv nanosplus.tar.gz iota-nanosplus iota-nanosplus-app.hex app_nanosplus.json
-          tar cfzv nanox.tar.gz iota-nanox iota-nanox-app.hex app_nanox.json
+          mkdir nanos nanosplus nanox
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/iota nanos/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/iota.hex  nanos/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/app_nanos.json  nanos/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota nanosplus/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota.hex nanosplus/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/app_nanosplus.json nanosplus/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota nanox/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota.hex nanox/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/app_nanox.json nanox/
+          tar cfzv nanos.tar.gz nanos
+          tar cfzv nanosplus.tar.gz nanosplus
+          tar cfzv nanox.tar.gz nanox
 
       - name: Add SHA-256 checksums to release
         run: |
