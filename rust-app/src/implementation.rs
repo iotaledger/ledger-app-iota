@@ -60,13 +60,9 @@ pub const BIP32_TESTNET_PREFIX: [u32; 5] =
     ledger_device_sdk::ecc::make_bip32_path(b"m/44'/1'/123'/0'/0'");
 pub const BIP32_IOTA_PREFIX: [u32; 5] =
     ledger_device_sdk::ecc::make_bip32_path(b"m/44'/4218'/123'/0'/0'");
-pub const BIP32_SMR_PREFIX: [u32; 5] =
-    ledger_device_sdk::ecc::make_bip32_path(b"m/44'/4219'/123'/0'/0'");
 
 fn is_bip_prefix_valid(path: &[u32]) -> bool {
-    path.starts_with(&BIP32_TESTNET_PREFIX[0..2])
-        || path.starts_with(&BIP32_IOTA_PREFIX[0..2])
-        || path.starts_with(&BIP32_SMR_PREFIX[0..2])
+    path.starts_with(&BIP32_TESTNET_PREFIX[0..2]) || path.starts_with(&BIP32_IOTA_PREFIX[0..2])
 }
 
 pub async fn get_address_apdu(io: HostIO, prompt: bool) {

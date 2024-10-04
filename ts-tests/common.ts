@@ -4,7 +4,7 @@ import Iota from "./Iota";
 import { expect } from 'chai';
 
 const IOTA_BIP_PATH = "44'/4218'/0'/0'/0'";
-const SHIMMER_BIP_PATH = "44'/4219'/0'/0'/0'";
+const TESTNET_BIP_PATH = "44'/1'/0'/0'/0'";
 
 export const VERSION = {
   major: 0,
@@ -201,4 +201,4 @@ let toggleBlindSigningSettings = async function () {
   await Axios.post(BASE_URL + "/button/left", { "action": "press-and-release" });
 }
 
-export { sendCommandAndAccept, BASE_URL, IOTA_BIP_PATH, SHIMMER_BIP_PATH, sendCommandExpectFail, toggleBlindSigningSettings }
+export { sendCommandAndAccept, BASE_URL, IOTA_BIP_PATH, TESTNET_BIP_PATH, sendCommandExpectFail, toggleBlindSigningSettings }
