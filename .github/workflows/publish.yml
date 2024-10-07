@@ -42,12 +42,15 @@ jobs:
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/iota nanos/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/iota.hex  nanos/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/app_nanos.json  nanos/
+          cp rust-app/iota.gif nanos/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota.hex nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/app_nanosplus.json nanosplus/
+          cp rust-app/iota-small.gif nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota nanox/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota.hex nanox/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/app_nanox.json nanox/
+          cp rust-app/iota-small.gif nanox/
           tar cfzv nanos.tar.gz nanos
           tar cfzv nanosplus.tar.gz nanosplus
           tar cfzv nanox.tar.gz nanox
