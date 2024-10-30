@@ -8,8 +8,8 @@ const TESTNET_BIP_PATH = "44'/1'/0'/0'/0'";
 
 export const VERSION = {
   major: 0,
-  minor: 2,
-  patch: 1,
+  minor: 9,
+  patch: 0,
 };
 
 const ignoredScreens = ["", "Cancel", "Working...", "Quit", "Version"
