@@ -17,6 +17,7 @@ impl Default for Settings {
 impl Settings {
     #[inline(never)]
     pub fn get(&self) -> u8 {
+        #[allow(static_mut_refs)]
         let settings = unsafe { SETTINGS.get_mut() };
         return *settings.get_ref();
     }
@@ -24,6 +25,7 @@ impl Settings {
     // The inline(never) is important. Otherwise weird segmentation faults happen on speculos.
     #[inline(never)]
     pub fn set(&mut self, v: &u8) {
+        #[allow(static_mut_refs)]
         let settings = unsafe { SETTINGS.get_mut() };
         settings.update(v);
     }

@@ -1,6 +1,6 @@
 [package]
 name = "iota_rebased"
-version = "0.9.0"
+version = "0.9.1"
 authors = ["IOTA Foundation <info@iota.org>"]
 edition = "2018"
 autobins = false
@@ -30,14 +30,15 @@ speculos = [
     "ledger-parser-combinators/logging",
 ]
 extra_debug = ["ledger-log/log_trace"]
+pending_review_screen = []
 
 [target.'cfg(target_family = "bolos")'.dependencies]
-ledger_device_sdk = "1.7.1"
-ledger_secure_sdk_sys = "1.2.0"
+ledger_device_sdk = "1.20.4"
+ledger_secure_sdk_sys = "1.6.7"
 ledger-prompts-ui = { git = "https://github.com/alamgu/ledger-prompts-ui" }
 
 [target.'cfg(target_family = "bolos")'.dev-dependencies.ledger_device_sdk]
-version = "1.7.1"
+version = "1.20.4"
 features = ["speculos"]
 
 [[bin]]

@@ -26,6 +26,7 @@ use core::future::Future;
 
 type IotaAddressRaw = [u8; IOTA_ADDRESS_LENGTH];
 
+#[allow(dead_code)]
 pub struct IotaPubKeyAddress(ledger_device_sdk::ecc::ECPublicKey<65, 'E'>, IotaAddressRaw);
 
 impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
@@ -119,7 +120,10 @@ impl HasOutput<CallArgSchema> for DefaultInterp {
 }
 
 impl<BS: Clone + Readable> AsyncParser<CallArgSchema, BS> for DefaultInterp {
-    type State<'c> = impl Future<Output = Self::Output> + 'c where BS: 'c;
+    type State<'c>
+        = impl Future<Output = Self::Output> + 'c
+    where
+        BS: 'c;
     fn parse<'a: 'c, 'b: 'c, 'c>(&'b self, input: &'a mut BS) -> Self::State<'c> {
         async move {
             let enum_variant =
@@ -210,7 +214,10 @@ impl HasOutput<CommandSchema> for DefaultInterp {
 }
 
 impl<BS: Clone + Readable> AsyncParser<CommandSchema, BS> for DefaultInterp {
-    type State<'c> = impl Future<Output = Self::Output> + 'c where BS: 'c;
+    type State<'c>
+        = impl Future<Output = Self::Output> + 'c
+    where
+        BS: 'c;
     fn parse<'a: 'c, 'b: 'c, 'c>(&'b self, input: &'a mut BS) -> Self::State<'c> {
         async move {
             let enum_variant =
@@ -270,7 +277,10 @@ impl HasOutput<ArgumentSchema> for DefaultInterp {
 }
 
 impl<BS: Clone + Readable> AsyncParser<ArgumentSchema, BS> for DefaultInterp {
-    type State<'c> = impl Future<Output = Self::Output> + 'c where BS: 'c;
+    type State<'c>
+        = impl Future<Output = Self::Output> + 'c
+    where
+        BS: 'c;
     fn parse<'a: 'c, 'b: 'c, 'c>(&'b self, input: &'a mut BS) -> Self::State<'c> {
         async move {
             let enum_variant =
@@ -325,7 +335,10 @@ impl<const PROMPT: bool> HasOutput<ProgrammableTransaction<PROMPT>>
 impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<ProgrammableTransaction<PROMPT>, BS>
     for ProgrammableTransaction<PROMPT>
 {
-    type State<'c> = impl Future<Output = Self::Output> + 'c where BS: 'c;
+    type State<'c>
+        = impl Future<Output = Self::Output> + 'c
+    where
+        BS: 'c;
     fn parse<'a: 'c, 'b: 'c, 'c>(&'b self, input: &'a mut BS) -> Self::State<'c> {
         async move {
             let mut recipient = None;
@@ -522,7 +535,10 @@ impl<const PROMPT: bool> HasOutput<TransactionKind<PROMPT>> for TransactionKind<
 impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<TransactionKind<PROMPT>, BS>
     for TransactionKind<PROMPT>
 {
-    type State<'c> = impl Future<Output = Self::Output> + 'c where BS: 'c;
+    type State<'c>
+        = impl Future<Output = Self::Output> + 'c
+    where
+        BS: 'c;
     fn parse<'a: 'c, 'b: 'c, 'c>(&'b self, input: &'a mut BS) -> Self::State<'c> {
         async move {
             let enum_variant =
@@ -578,7 +594,10 @@ impl HasOutput<TransactionExpiration> for DefaultInterp {
 }
 
 impl<BS: Clone + Readable> AsyncParser<TransactionExpiration, BS> for DefaultInterp {
-    type State<'c> = impl Future<Output = Self::Output> + 'c where BS: 'c;
+    type State<'c>
+        = impl Future<Output = Self::Output> + 'c
+    where
+        BS: 'c;
     fn parse<'a: 'c, 'b: 'c, 'c>(&'b self, input: &'a mut BS) -> Self::State<'c> {
         async move {
             let enum_variant =
@@ -664,7 +683,10 @@ impl<const PROMPT: bool> HasOutput<TransactionData<PROMPT>> for TransactionData<
 impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<TransactionData<PROMPT>, BS>
     for TransactionData<PROMPT>
 {
-    type State<'c> = impl Future<Output = Self::Output> + 'c where BS: 'c;
+    type State<'c>
+        = impl Future<Output = Self::Output> + 'c
+    where
+        BS: 'c;
     fn parse<'a: 'c, 'b: 'c, 'c>(&'b self, input: &'a mut BS) -> Self::State<'c> {
         async move {
             let enum_variant =
