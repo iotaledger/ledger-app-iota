@@ -20,15 +20,25 @@ pub fn app_main() {
 
     let hostio_state: SingleThreaded<RefCell<HostIOState>> =
         SingleThreaded(RefCell::new(HostIOState::new(unsafe {
-            core::mem::transmute(&comm.0)
+            core::mem::transmute::<
+                &core::cell::RefCell<ledger_device_sdk::io::Comm>,
+                &core::cell::RefCell<ledger_device_sdk::io::Comm>,
+            >(&comm.0)
         })));
-    let hostio: SingleThreaded<HostIO> =
-        SingleThreaded(HostIO(unsafe { core::mem::transmute(&hostio_state.0) }));
+    let hostio: SingleThreaded<HostIO> = SingleThreaded(HostIO(unsafe {
+        core::mem::transmute::<
+            &core::cell::RefCell<alamgu_async_block::HostIOState>,
+            &core::cell::RefCell<alamgu_async_block::HostIOState>,
+        >(&hostio_state.0)
+    }));
     let states_backing: SingleThreaded<PinCell<Option<APDUsFuture>>> =
         SingleThreaded(PinCell::new(None));
     let states: SingleThreaded<Pin<&PinCell<Option<APDUsFuture>>>> =
         SingleThreaded(Pin::static_ref(unsafe {
-            core::mem::transmute(&states_backing.0)
+            core::mem::transmute::<
+                &pin_cell::PinCell<core::option::Option<APDUsFuture>>,
+                &pin_cell::PinCell<core::option::Option<APDUsFuture>>,
+            >(&states_backing.0)
         }));
 
     let mut idle_menu = IdleMenuWithSettings {

@@ -56,6 +56,11 @@ overflow-checks = false
 opt-level = 3
 overflow-checks = false
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(target_os, values("nanos"))',
+] }
+
 [package.metadata.ledger]
 name = "IOTA Rebased"
 # Testnet, IOTA

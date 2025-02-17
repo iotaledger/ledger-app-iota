@@ -19,7 +19,7 @@ impl Settings {
     pub fn get(&self) -> u8 {
         #[allow(static_mut_refs)]
         let settings = unsafe { SETTINGS.get_mut() };
-        return *settings.get_ref();
+        *settings.get_ref()
     }
 
     // The inline(never) is important. Otherwise weird segmentation faults happen on speculos.

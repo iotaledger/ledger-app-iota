@@ -52,8 +52,7 @@ impl core::fmt::Display for IotaPubKeyAddress {
     }
 }
 
-pub type BipParserImplT =
-    impl AsyncParser<Bip32Key, ByteStream> + HasOutput<Bip32Key, Output = ArrayVec<u32, 10>>;
+pub type BipParserImplT = impl AsyncParser<Bip32Key, ByteStream, Output = ArrayVec<u32, 10>>;
 pub const BIP_PATH_PARSER: BipParserImplT = SubInterp(DefaultInterp);
 
 // Need a path of length 5, as make_bip32_path panics with smaller paths
@@ -624,7 +623,7 @@ impl<BS: Clone + Readable> AsyncParser<TransactionExpiration, BS> for DefaultInt
 }
 
 const fn gas_data_parser<BS: Clone + Readable, const PROMPT: bool>(
-) -> impl AsyncParser<GasData<PROMPT>, BS> + HasOutput<GasData<PROMPT>, Output = ()> {
+) -> impl AsyncParser<GasData<PROMPT>, BS, Output = ()> {
     Action(
         (
             SubInterp(object_ref_parser()),
@@ -649,13 +648,11 @@ const fn gas_data_parser<BS: Clone + Readable, const PROMPT: bool>(
     )
 }
 
-const fn object_ref_parser<BS: Readable>(
-) -> impl AsyncParser<ObjectRef, BS> + HasOutput<ObjectRef, Output = ()> {
+const fn object_ref_parser<BS: Readable>() -> impl AsyncParser<ObjectRef, BS, Output = ()> {
     Action((DefaultInterp, DefaultInterp, DefaultInterp), |_| Some(()))
 }
 
-const fn intent_parser<BS: Readable>(
-) -> impl AsyncParser<Intent, BS> + HasOutput<Intent, Output = ()> {
+const fn intent_parser<BS: Readable>() -> impl AsyncParser<Intent, BS, Output = ()> {
     Action((DefaultInterp, DefaultInterp, DefaultInterp), |_| {
         trace!("Intent Ok");
         Some(())
@@ -663,8 +660,7 @@ const fn intent_parser<BS: Readable>(
 }
 
 const fn transaction_data_v1_parser<BS: Clone + Readable, const PROMPT: bool>(
-) -> impl AsyncParser<TransactionDataV1<PROMPT>, BS> + HasOutput<TransactionDataV1<PROMPT>, Output = ()>
-{
+) -> impl AsyncParser<TransactionDataV1<PROMPT>, BS, Output = ()> {
     Action(
         (
             TransactionKind::<PROMPT>,
@@ -710,7 +706,7 @@ impl<BS: Clone + Readable, const PROMPT: bool> AsyncParser<TransactionData<PROMP
 }
 
 const fn tx_parser<BS: Clone + Readable, const PROMPT: bool>(
-) -> impl AsyncParser<IntentMessage<PROMPT>, BS> + HasOutput<IntentMessage<PROMPT>, Output = ()> {
+) -> impl AsyncParser<IntentMessage<PROMPT>, BS, Output = ()> {
     Action((intent_parser(), TransactionData::<PROMPT>), |_| Some(()))
 }
 
