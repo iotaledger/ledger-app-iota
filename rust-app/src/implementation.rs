@@ -26,7 +26,7 @@ use core::future::Future;
 
 type IotaAddressRaw = [u8; IOTA_ADDRESS_LENGTH];
 
-#[allow(dead_code)]
+#[expect(dead_code)]
 pub struct IotaPubKeyAddress(ledger_device_sdk::ecc::ECPublicKey<65, 'E'>, IotaAddressRaw);
 
 impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
