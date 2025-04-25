@@ -50,7 +50,7 @@ pub fn app_main(ctx: &RunCtx) {
     // API calls.
     init_comm(&mut comm.borrow_mut());
 
-    info!("Sui {}", env!("CARGO_PKG_VERSION"));
+    info!("IOTA {}", env!("CARGO_PKG_VERSION"));
     info!(
         "State sizes\ncomm: {}\nstates: {}",
         core::mem::size_of::<io::Comm>(),
@@ -66,7 +66,7 @@ pub fn app_main(ctx: &RunCtx) {
         NbglHomeAndSettings::new()
             .glyph(&APP_ICON)
             .settings(settings.get_mut(), &settings_strings)
-            .infos("Sui", env!("CARGO_PKG_VERSION"), env!("CARGO_PKG_AUTHORS")),
+            .infos("IOTA", env!("CARGO_PKG_VERSION"), env!("CARGO_PKG_AUTHORS")),
     ));
     let do_refresh_val = true;
     let do_refresh = SingleThreaded(RefCell::new(do_refresh_val));

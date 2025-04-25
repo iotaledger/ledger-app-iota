@@ -13,5 +13,5 @@ jobs:
     job_functional_tests:
       uses: LedgerHQ/app-exchange/.github/workflows/reusable_swap_functional_tests.yml@develop
       with:
-        branch_for_sui: ${{ github.ref }}
-        test_filter: '"SUI or sui or Sui"'
+        branch_for_iota: ${{ github.ref }}
+        test_filter: '"IOTA or iota or Iota"'

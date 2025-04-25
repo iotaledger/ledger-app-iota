@@ -36,7 +36,7 @@ pub fn get_amount_in_decimals(amount: u64, divisor: u8) -> (u64, ArrayString<12>
     let mut remainder_str: ArrayString<12> = ArrayString::new();
     {
         // Make a string for the remainder, containing at lease one zero
-        // So 1 SUI will be displayed as "1.0"
+        // So 1 IOTA will be displayed as "1.0"
         let mut rem = remainder;
         for i in 0..factor_pow {
             let f = u64::pow(10, factor_pow - i - 1);

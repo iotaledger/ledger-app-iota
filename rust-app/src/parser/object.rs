@@ -22,7 +22,7 @@ pub type ObjectInnerSchema = (
 
 pub type MoveObject = (MoveObjectType, bool, SequenceNumber, ObjectContents);
 
-// The object content parsing is limited to either a simple Coin (40 bytes) or StakedSui (80 bytes)
+// The object content parsing is limited to either a simple Coin (40 bytes) or StakedIota (80 bytes)
 // We will simply reject parsing objects with content size greater than OBJECT_CONTENTS_LEN
 pub const OBJECT_CONTENTS_LEN: usize = 80;
 pub type ObjectContents = Vec<Byte, OBJECT_CONTENTS_LEN>;
@@ -39,7 +39,7 @@ pub type StorageRebate = U64LE;
 pub const STRING_LENGTH: usize = 64;
 pub type String = Vec<Byte, STRING_LENGTH>;
 
-pub type StructTag = (SuiAddress, String, String, TypeParams);
+pub type StructTag = (IotaAddress, String, String, TypeParams);
 pub type TypeParams = Vec<TypeTag2, 5>;
 
 pub struct TypeTag;
@@ -51,11 +51,11 @@ pub struct TypeTag2;
 pub enum MoveObjectType {
     /// A type that is not `0x2::coin::Coin<T>`
     // Other(StructTag),
-    /// A SUI coin (i.e., `0x2::coin::Coin<0x2::sui::SUI>`)
+    /// A IOTA coin (i.e., `0x2::coin::Coin<0x2::iota::IOTA>`)
     GasCoin,
-    /// A record of a staked SUI coin (i.e., `0x3::staking_pool::StakedSui`)
-    StakedSui,
-    /// A non-SUI coin type (i.e., `0x2::coin::Coin<T> where T != 0x2::sui::SUI`)
+    /// A record of a staked IOTA coin (i.e., `0x3::staking_pool::StakedIota`)
+    StakedIota,
+    /// A non-IOTA coin type (i.e., `0x2::coin::Coin<T> where T != 0x2::iota::IOTA`)
     Coin((CoinID, CoinModuleName, CoinFunctionName)),
 }
 
@@ -125,12 +125,12 @@ pub const fn move_object_parser<BS: Clone + Readable>(
             info!("SequenceNumber {}", _sequence_number);
 
             let (coin_type, is_stake) = match object_type {
-                MoveObjectType::GasCoin => (SUI_COIN_TYPE, false),
-                MoveObjectType::StakedSui => (SUI_COIN_TYPE, true),
+                MoveObjectType::GasCoin => (IOTA_COIN_TYPE, false),
+                MoveObjectType::StakedIota => (IOTA_COIN_TYPE, true),
                 MoveObjectType::Coin(v) => (v, false),
             };
 
-            // A coin object is always of size 40, and StakedSui is 80
+            // A coin object is always of size 40, and StakedIota is 80
             // Last 8 bytes contain the balance amount in both
             let amount: Option<u64> = match (d.len(), is_stake) {
                 (40, false) => Some(u64::from_le_bytes(
@@ -138,7 +138,7 @@ pub const fn move_object_parser<BS: Clone + Readable>(
                         .try_into()
                         .expect("amount slice wrong length"),
                 )),
-                // StakedSui
+                // StakedIota
                 (80, true) => Some(u64::from_le_bytes(
                     d.as_slice()[72..]
                         .try_into()
@@ -182,8 +182,8 @@ impl<BS: Clone + Readable> AsyncParser<MoveObjectType, BS> for DefaultInterp {
                     MoveObjectType::GasCoin
                 }
                 2 => {
-                    info!("MoveObjectType: StakedSui");
-                    MoveObjectType::StakedSui
+                    info!("MoveObjectType: StakedIota");
+                    MoveObjectType::StakedIota
                 }
                 3 => {
                     info!("MoveObjectType: Coin(TypeTag)");
@@ -383,8 +383,8 @@ impl<BS: Clone + Readable> AsyncParser<OwnerSchema, BS> for DefaultInterp {
                 <DefaultInterp as AsyncParser<ULEB128, BS>>::parse(&DefaultInterp, input).await;
             match enum_variant {
                 0 => {
-                    info!("OwnerSchema: AddressOwner(SuiAddress)");
-                    let _owner = <DefaultInterp as AsyncParser<SuiAddress, BS>>::parse(
+                    info!("OwnerSchema: AddressOwner(IotaAddress)");
+                    let _owner = <DefaultInterp as AsyncParser<IotaAddress, BS>>::parse(
                         &DefaultInterp,
                         input,
                     )
@@ -392,8 +392,8 @@ impl<BS: Clone + Readable> AsyncParser<OwnerSchema, BS> for DefaultInterp {
                     info!("OwnerSchema: AddressOwner({})", HexSlice(&_owner));
                 }
                 1 => {
-                    info!("OwnerSchema: ObjectOwner(SuiAddress)");
-                    <DefaultInterp as AsyncParser<SuiAddress, BS>>::parse(&DefaultInterp, input)
+                    info!("OwnerSchema: ObjectOwner(IotaAddress)");
+                    <DefaultInterp as AsyncParser<IotaAddress, BS>>::parse(&DefaultInterp, input)
                         .await;
                 }
                 2 => {

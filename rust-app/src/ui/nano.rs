@@ -1,5 +1,5 @@
 use crate::interface::*;
-use crate::parser::common::{CoinType, SUI_COIN_DIVISOR};
+use crate::parser::common::{CoinType, IOTA_COIN_DIVISOR};
 use crate::ui::common::*;
 use crate::utils::*;
 
@@ -18,7 +18,7 @@ use ledger_device_sdk::ui::gadgets::*;
 pub struct UserInterface {}
 
 impl UserInterface {
-    pub fn confirm_address(&self, address: &SuiPubKeyAddress) -> Option<()> {
+    pub fn confirm_address(&self, address: &IotaPubKeyAddress) -> Option<()> {
         let fields = [Field {
             name: "Address",
             value: &format!("{address}"),
@@ -42,7 +42,7 @@ impl UserInterface {
 
     pub fn confirm_sign_tx(
         &self,
-        address: &SuiPubKeyAddress,
+        address: &IotaPubKeyAddress,
         recipient: [u8; 32],
         total_amount: u64,
         coin_type: CoinType,
@@ -60,8 +60,8 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, SUI_COIN_DIVISOR);
-                &format!("SUI {}.{}", quotient, remainder_str.as_str())
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
         let ((amt_str, amt_val), coin_fields) = get_coin_and_amount_fields(total_amount, coin_type);
@@ -101,7 +101,7 @@ impl UserInterface {
 
     pub fn confirm_stake_tx(
         &self,
-        address: &SuiPubKeyAddress,
+        address: &IotaPubKeyAddress,
         recipient: [u8; 32],
         total_amount: u64,
         gas_budget: u64,
@@ -118,15 +118,15 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, SUI_COIN_DIVISOR);
-                &format!("SUI {}.{}", quotient, remainder_str.as_str())
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
 
-        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, SUI_COIN_DIVISOR);
+        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, IOTA_COIN_DIVISOR);
         let amt = Field {
             name: "Stake amount",
-            value: &format!("SUI {}.{}", quotient, remainder_str.as_str()),
+            value: &format!("IOTA {}.{}", quotient, remainder_str.as_str()),
         };
 
         let do_review = |fields| {
@@ -151,7 +151,7 @@ impl UserInterface {
 
     pub fn confirm_unstake_tx(
         &self,
-        address: &SuiPubKeyAddress,
+        address: &IotaPubKeyAddress,
         total_amount: u64,
         gas_budget: u64,
     ) -> Option<()> {
@@ -163,15 +163,15 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, SUI_COIN_DIVISOR);
-                &format!("SUI {}.{}", quotient, remainder_str.as_str())
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
 
-        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, SUI_COIN_DIVISOR);
+        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, IOTA_COIN_DIVISOR);
         let amt = Field {
             name: "Unstake amount",
-            value: &format!("SUI {}.{}", quotient, remainder_str.as_str()),
+            value: &format!("IOTA {}.{}", quotient, remainder_str.as_str()),
         };
 
         let do_review = |fields| {

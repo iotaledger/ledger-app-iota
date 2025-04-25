@@ -84,7 +84,7 @@ icon = "iota-small.gif"
 icon = "iota-small.gif"
 
 [package.metadata.ledger.stax]
-icon = "sui_32x32.gif"
+icon = "iota_32x32.gif"
 
 [package.metadata.ledger.flex]
-icon = "sui_40x40.gif"
+icon = "iota_40x40.gif"

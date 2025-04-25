@@ -1,4 +1,4 @@
-# Covers various scenarios for valid Sui stake txs
+# Covers various scenarios for valid IOTA stake txs
 
 import pytest
 import concurrent.futures
@@ -70,7 +70,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [
@@ -188,7 +188,7 @@ def test_sign_stake_gas_coin(backend, scenario_navigator, firmware, navigator):
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [
@@ -318,7 +318,7 @@ def test_sign_stake_whole_coin(backend, scenario_navigator, firmware, navigator)
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [
@@ -456,7 +456,7 @@ def test_sign_stake_split_gas(backend, scenario_navigator, firmware, navigator):
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [
@@ -590,7 +590,7 @@ def test_sign_stake_split_coin(backend, scenario_navigator, firmware, navigator)
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [
@@ -723,7 +723,7 @@ def test_sign_stake_merge_gas(backend, scenario_navigator, firmware, navigator):
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [

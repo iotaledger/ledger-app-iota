@@ -1,5 +1,5 @@
 use crate::interface::*;
-use crate::parser::common::{CoinType, SUI_COIN_DIVISOR};
+use crate::parser::common::{CoinType, IOTA_COIN_DIVISOR};
 use crate::ui::common::*;
 use crate::utils::*;
 
@@ -14,7 +14,7 @@ use ledger_crypto_helpers::common::HexSlice;
 use ledger_crypto_helpers::hasher::HexHash;
 use ledger_device_sdk::nbgl::*;
 
-pub const APP_ICON: NbglGlyph = NbglGlyph::from_include(include_gif!("sui_64x64.gif", NBGL));
+pub const APP_ICON: NbglGlyph = NbglGlyph::from_include(include_gif!("iota_64x64.gif", NBGL));
 
 #[derive(Copy, Clone)]
 pub struct UserInterface {
@@ -30,7 +30,7 @@ impl UserInterface {
         }
     }
 
-    pub fn confirm_address(&self, address: &SuiPubKeyAddress) -> Option<()> {
+    pub fn confirm_address(&self, address: &IotaPubKeyAddress) -> Option<()> {
         self.do_refresh.replace(true);
         let success = NbglAddressReview::new()
             .glyph(&APP_ICON)
@@ -48,7 +48,7 @@ impl UserInterface {
 
     pub fn confirm_sign_tx(
         &self,
-        address: &SuiPubKeyAddress,
+        address: &IotaPubKeyAddress,
         recipient: [u8; 32],
         total_amount: u64,
         coin_type: CoinType,
@@ -67,8 +67,8 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, SUI_COIN_DIVISOR);
-                &format!("SUI {}.{}", quotient, remainder_str.as_str())
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
         let ((amt_str, amt_val), coin_fields) = get_coin_and_amount_fields(total_amount, coin_type);
@@ -107,7 +107,7 @@ impl UserInterface {
 
     pub fn confirm_stake_tx(
         &self,
-        address: &SuiPubKeyAddress,
+        address: &IotaPubKeyAddress,
         recipient: [u8; 32],
         total_amount: u64,
         gas_budget: u64,
@@ -125,20 +125,20 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, SUI_COIN_DIVISOR);
-                &format!("SUI {}.{}", quotient, remainder_str.as_str())
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
 
-        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, SUI_COIN_DIVISOR);
+        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, IOTA_COIN_DIVISOR);
         let amt = Field {
             name: "Stake amount",
-            value: &format!("SUI {}.{}", quotient, remainder_str.as_str()),
+            value: &format!("IOTA {}.{}", quotient, remainder_str.as_str()),
         };
 
         let do_review = |fields| {
-            let first_msg = "Review transaction to stake SUI".to_string();
-            let last_msg = "Sign transaction to stake SUI".to_string();
+            let first_msg = "Review transaction to stake IOTA".to_string();
+            let last_msg = "Sign transaction to stake IOTA".to_string();
             NbglReview::new()
                 .glyph(&APP_ICON)
                 .titles(&first_msg, "", &last_msg)
@@ -157,7 +157,7 @@ impl UserInterface {
 
     pub fn confirm_unstake_tx(
         &self,
-        address: &SuiPubKeyAddress,
+        address: &IotaPubKeyAddress,
         total_amount: u64,
         gas_budget: u64,
     ) -> Option<()> {
@@ -170,20 +170,20 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, SUI_COIN_DIVISOR);
-                &format!("SUI {}.{}", quotient, remainder_str.as_str())
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
 
-        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, SUI_COIN_DIVISOR);
+        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, IOTA_COIN_DIVISOR);
         let amt = Field {
             name: "Unstake amount",
-            value: &format!("SUI {}.{}", quotient, remainder_str.as_str()),
+            value: &format!("IOTA {}.{}", quotient, remainder_str.as_str()),
         };
 
         let do_review = |fields| {
-            let first_msg = "Review transaction to unstake SUI".to_string();
-            let last_msg = "Sign transaction to unstake SUI".to_string();
+            let first_msg = "Review transaction to unstake IOTA".to_string();
+            let last_msg = "Sign transaction to unstake IOTA".to_string();
             NbglReview::new()
                 .glyph(&APP_ICON)
                 .titles(&first_msg, "", &last_msg)

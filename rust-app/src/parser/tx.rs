@@ -22,7 +22,7 @@ pub struct TransactionDataSchema;
 
 pub type TransactionDataV1 = (
     TransactionKindSchema,
-    SuiAddress,            // sender
+    IotaAddress,            // sender
     GasDataSchema,         // gas_data
     TransactionExpiration, // expiration
 );
@@ -38,7 +38,7 @@ pub struct CallArgSchema;
 pub const MAX_GAS_COIN_COUNT: usize = 32;
 pub type GasDataSchema = (
     Vec<ObjectRefSchema, MAX_GAS_COIN_COUNT>, // payment
-    SuiAddress,                               // owner
+    IotaAddress,                               // owner
     Amount,                                   // price
     Amount,                                   // budget
 );
@@ -67,7 +67,7 @@ pub type GasData = (u64, Option<u64>);
 // Tx Parsers
 
 pub enum CallArg {
-    RecipientAddress(SuiAddressRaw),
+    RecipientAddress(IotaAddressRaw),
     Amount(u64),
     OptionalAmount(Option<u64>),
     ObjectRef(ObjectDigest),
@@ -77,7 +77,7 @@ pub enum CallArg {
 
 // Inputs which are referenced in computation of commands
 pub enum InputValue {
-    RecipientAddress(SuiAddressRaw),
+    RecipientAddress(IotaAddressRaw),
     Amount(u64),
     OptionalAmount(Option<u64>),
     ObjectRef(ObjectDigest),
@@ -465,7 +465,7 @@ pub struct ProgrammableTransactionParser<OD> {
 }
 
 pub enum ProgrammableTransaction {
-    TransferSuiTx {
+    TransferIotaTx {
         recipient: <DefaultInterp as HasOutput<Recipient>>::Output,
         amount: <DefaultInterp as HasOutput<Amount>>::Output,
         includes_gas_coin: bool,
@@ -762,8 +762,8 @@ impl<BS: Clone + Readable, OD: Clone + HasObjectData> AsyncParser<ProgrammableTr
                         }
                     };
 
-                    if coin_type.0 != SUI_COIN_ID {
-                        // Transfer of GasCoin with non SUI coins is not supported
+                    if coin_type.0 != IOTA_COIN_ID {
+                        // Transfer of GasCoin with non IOTA coins is not supported
                         if includes_gas_coin {
                             reject_on(
                                 core::file!(),
@@ -783,7 +783,7 @@ impl<BS: Clone + Readable, OD: Clone + HasObjectData> AsyncParser<ProgrammableTr
                             total_amount += added_amount_to_gas_coin;
                         }
 
-                        ProgrammableTransaction::TransferSuiTx {
+                        ProgrammableTransaction::TransferIotaTx {
                             recipient,
                             amount: total_amount,
                             includes_gas_coin,
@@ -791,7 +791,7 @@ impl<BS: Clone + Readable, OD: Clone + HasObjectData> AsyncParser<ProgrammableTr
                     }
                 }
                 ProgrammableTransactionTypeState::StakeTx => {
-                    if coin_type.0 != SUI_COIN_ID {
+                    if coin_type.0 != IOTA_COIN_ID {
                         reject_on(
                             core::file!(),
                             core::line!(),
@@ -818,7 +818,7 @@ impl<BS: Clone + Readable, OD: Clone + HasObjectData> AsyncParser<ProgrammableTr
                     }
                 }
                 ProgrammableTransactionTypeState::UnstakeTx => {
-                    if coin_type.0 != SUI_COIN_ID {
+                    if coin_type.0 != IOTA_COIN_ID {
                         reject_on(
                             core::file!(),
                             core::line!(),
@@ -853,11 +853,11 @@ async fn handle_move_call<OD: HasObjectData>(
     (
         ProgrammableTransactionTypeState,
         TotalCoinAmount,
-        Option<SuiAddressRaw>,
+        Option<IotaAddressRaw>,
     ),
     CommandResult,
 > {
-    if package != SUI_SYSTEM_ID {
+    if package != IOTA_SYSTEM_ID {
         reject_on(
             core::file!(),
             core::line!(),
@@ -865,10 +865,10 @@ async fn handle_move_call<OD: HasObjectData>(
         )
         .await
     }
-    fn is_sui_state(inp: &InputValue) -> Option<()> {
+    fn is_iota_state(inp: &InputValue) -> Option<()> {
         match inp {
             InputValue::SharedObject(id_) => {
-                if *id_ == SUI_SYSTEM_STATE_ID {
+                if *id_ == IOTA_SYSTEM_STATE_ID {
                     Some(())
                 } else {
                     None
@@ -885,19 +885,19 @@ async fn handle_move_call<OD: HasObjectData>(
         })
     };
 
-    if core::str::from_utf8(module.as_slice()) == Ok("sui_system")
+    if core::str::from_utf8(module.as_slice()) == Ok("iota_system")
         && core::str::from_utf8(function.as_slice()) == Ok("request_add_stake")
     {
-        info!("MoveCall 0x3::sui_system::request_add_stake");
+        info!("MoveCall 0x3::iota_system::request_add_stake");
 
         // Function args
         // public entry fun request_add_stake(
-        //     wrapper: &mut SuiSystemState,
-        //     stake: Coin<SUI>,
+        //     wrapper: &mut IotaSystemState,
+        //     stake: Coin<IOTA>,
         //     validator_address: address,
         //     ctx: &mut TxContext,
 
-        if get_arg_input(0).and_then(is_sui_state).is_none() {
+        if get_arg_input(0).and_then(is_iota_state).is_none() {
             reject_on(
                 core::file!(),
                 core::line!(),
@@ -943,20 +943,20 @@ async fn handle_move_call<OD: HasObjectData>(
                 .await
             }
         }
-    } else if core::str::from_utf8(module.as_slice()) == Ok("sui_system")
+    } else if core::str::from_utf8(module.as_slice()) == Ok("iota_system")
         && core::str::from_utf8(function.as_slice()) == Ok("request_add_stake_mul_coin")
     {
-        info!("MoveCall 0x3::sui_system::request_add_stake_mul_coin");
+        info!("MoveCall 0x3::iota_system::request_add_stake_mul_coin");
 
         // Function args
         // public entry fun request_add_stake_mul_coin(
-        //     wrapper: &mut SuiSystemState,
-        //     stakes: vector<Coin<SUI>>,
+        //     wrapper: &mut IotaSystemState,
+        //     stakes: vector<Coin<IOTA>>,
         //     stake_amount: option::Option<u64>,
         //     validator_address: address,
         //     ctx: &mut TxContext,
 
-        if get_arg_input(0).and_then(is_sui_state).is_none() {
+        if get_arg_input(0).and_then(is_iota_state).is_none() {
             reject_on(
                 core::file!(),
                 core::line!(),
@@ -1015,18 +1015,18 @@ async fn handle_move_call<OD: HasObjectData>(
                 .await
             }
         }
-    } else if core::str::from_utf8(module.as_slice()) == Ok("sui_system")
+    } else if core::str::from_utf8(module.as_slice()) == Ok("iota_system")
         && core::str::from_utf8(function.as_slice()) == Ok("request_withdraw_stake")
     {
-        info!("MoveCall 0x3::sui_system::request_withdraw_stake");
+        info!("MoveCall 0x3::iota_system::request_withdraw_stake");
 
         // Function args
         // public entry fun request_withdraw_stake(
-        //     wrapper: &mut SuiSystemState,
-        //     staked_sui: StakedSui,
+        //     wrapper: &mut IotaSystemState,
+        //     staked_iota: StakedIota,
         //     ctx: &mut TxContext,
 
-        if get_arg_input(0).and_then(is_sui_state).is_none() {
+        if get_arg_input(0).and_then(is_iota_state).is_none() {
             reject_on(
                 core::file!(),
                 core::line!(),
@@ -1035,9 +1035,9 @@ async fn handle_move_call<OD: HasObjectData>(
             .await
         }
 
-        // Obtain staked_sui amount
+        // Obtain staked_iota amount
         // It is possible to unstake a part of staked amount by first doing
-        // 0x3::staking_pool::split on the staked sui coin
+        // 0x3::staking_pool::split on the staked IOTA coin
         let total_amt = match args.get(1) {
             None => {
                 reject_on(
@@ -1056,7 +1056,7 @@ async fn handle_move_call<OD: HasObjectData>(
                     _ => None,
                 } {
                     TotalCoinAmount {
-                        coin_type: SUI_COIN_TYPE,
+                        coin_type: IOTA_COIN_TYPE,
                         total_amount: *amt,
                         includes_gas_coin: false,
                     }
@@ -1115,7 +1115,7 @@ async fn handle_transfer_object<OD: HasObjectData>(
     coins: ArrayVec<Argument, TRANSFER_OBJECT_ARRAY_LENGTH>,
     recipient_input: Argument,
     inputs: &BTreeMap<u16, InputValue>,
-    recipient_addr: &mut Option<SuiAddressRaw>,
+    recipient_addr: &mut Option<IotaAddressRaw>,
     total_coin_amount: &mut Option<TotalCoinAmount>,
     object_data_source: OD,
     command_results: &BTreeMap<u16, CommandResult>,
@@ -1186,7 +1186,7 @@ fn to_total_coin_amount(c: CommandArgumentAmount) -> TotalCoinAmount {
     match c {
         CommandArgumentAmount::GasCoin => TotalCoinAmount {
             total_amount: 0,
-            coin_type: SUI_COIN_TYPE,
+            coin_type: IOTA_COIN_TYPE,
             includes_gas_coin: true,
         },
         CommandArgumentAmount::Coin { coin_type, amount } => TotalCoinAmount {
@@ -1203,7 +1203,7 @@ fn add_to_total_coin_amount(
 ) -> Option<TotalCoinAmount> {
     match c {
         CommandArgumentAmount::GasCoin => {
-            if t.coin_type != SUI_COIN_TYPE || t.includes_gas_coin {
+            if t.coin_type != IOTA_COIN_TYPE || t.includes_gas_coin {
                 None
             } else {
                 Some(TotalCoinAmount {
@@ -1396,7 +1396,7 @@ async fn handle_split_coins<OD: HasObjectData>(
     // We are not validating whether the coin balance is sufficient for the amounts specified
     // as the transaction would fail on the network with InsufficientCoinBalance error
     let coin_type = match coin {
-        Argument::GasCoin => SUI_COIN_TYPE,
+        Argument::GasCoin => IOTA_COIN_TYPE,
         Argument::Input(input_ix) => match inputs.get(&input_ix) {
             Some(InputValue::ObjectRef(digest)) => {
                 info!("SplitCoins trying object_data_source");
@@ -1499,7 +1499,7 @@ async fn handle_merge_coins<OD: HasObjectData>(
 ) {
     let mut total_amount_2: u64 = 0;
     let coin_type = match dest_coin {
-        Argument::GasCoin => SUI_COIN_TYPE,
+        Argument::GasCoin => IOTA_COIN_TYPE,
         Argument::Input(input_ix) => match inputs.get(&input_ix) {
             Some(InputValue::ObjectRef(digest)) => {
                 info!("MergeCoins trying object_data_source");
@@ -1893,7 +1893,7 @@ impl<BS: Clone + Readable, OD: Clone + HasObjectData> AsyncParser<TransactionDat
                     .parse(input)
                     .await;
 
-                    <DefaultInterp as AsyncParser<SuiAddress, BS>>::parse(&DefaultInterp, input)
+                    <DefaultInterp as AsyncParser<IotaAddress, BS>>::parse(&DefaultInterp, input)
                         .await;
 
                     let (gas_coins, gas_budget) = gas_data_parser().parse(input).await;
@@ -1934,13 +1934,13 @@ impl<BS: Clone + Readable, OD: Clone + HasObjectData> AsyncParser<TransactionDat
 
 pub enum KnownTx {
     TransferTx {
-        recipient: SuiAddressRaw,
+        recipient: IotaAddressRaw,
         coin_type: CoinType,
         total_amount: u64,
         gas_budget: u64,
     },
     StakeTx {
-        recipient: SuiAddressRaw,
+        recipient: IotaAddressRaw,
         total_amount: u64,
         gas_budget: u64,
     },
@@ -1966,7 +1966,7 @@ pub const fn tx_parser<BS: Clone + Readable, OD: Clone + HasObjectData>(
             <TransactionDataParser<OD> as HasOutput<TransactionDataSchema>>::Output,
         )| {
             match d.0 {
-                ProgrammableTransaction::TransferSuiTx {
+                ProgrammableTransaction::TransferIotaTx {
                     recipient,
                     amount,
                     includes_gas_coin,
@@ -1982,7 +1982,7 @@ pub const fn tx_parser<BS: Clone + Readable, OD: Clone + HasObjectData>(
 
                     maybe_total_amount.map(|total_amount| KnownTx::TransferTx {
                         recipient,
-                        coin_type: SUI_COIN_TYPE,
+                        coin_type: IOTA_COIN_TYPE,
                         total_amount,
                         gas_budget,
                     })

@@ -9,8 +9,8 @@ from ragger.error import ExceptionRAPDU
 from ragger.navigator import NavIns, NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_nav_tasks_concurrently
 
-# can sign a simple Sui transfer transaction
-def test_sign_tx_sui_transfer(backend, scenario_navigator, firmware, navigator):
+# can sign a simple IOTA transfer transaction
+def test_sign_tx_iota_transfer(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'"
 
@@ -25,7 +25,7 @@ def test_sign_tx_sui_transfer(backend, scenario_navigator, firmware, navigator):
     def nav_task():
         if firmware.device.startswith("nano"):
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer SUI
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount
@@ -33,7 +33,7 @@ def test_sign_tx_sui_transfer(backend, scenario_navigator, firmware, navigator):
                                , NavInsID.BOTH_CLICK
                               ]
                 , timeout=10
-                , test_case_name="test_sign_tx_sui_transfer"
+                , test_case_name="test_sign_tx_iota_transfer"
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
                 , screen_change_after_last_instruction=False
@@ -115,7 +115,7 @@ def test_sign_tx_refused(backend, scenario_navigator, firmware, navigator):
     def nav_task():
         if firmware.device.startswith("nano"):
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer SUI
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount
@@ -140,8 +140,8 @@ def test_sign_tx_refused(backend, scenario_navigator, firmware, navigator):
 
     assert len(e.value.data) == 0
 
-# should reject signing a non-SUI coin transaction, if blind signing is not enabled
-def test_sign_tx_non_sui_transfer_rejected(backend, scenario_navigator, firmware, navigator):
+# should reject signing a non-IOTA coin transaction, if blind signing is not enabled
+def test_sign_tx_non_iota_transfer_rejected(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'"
 
@@ -158,7 +158,7 @@ def test_sign_tx_non_sui_transfer_rejected(backend, scenario_navigator, firmware
             navigator.navigate_and_compare(
                 instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
                 , timeout=10
-                , test_case_name="test_sign_tx_non_sui_transfer_rejected"
+                , test_case_name="test_sign_tx_non_iota_transfer_rejected"
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
                 , screen_change_after_last_instruction=False

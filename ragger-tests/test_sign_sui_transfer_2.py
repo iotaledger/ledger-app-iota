@@ -1,4 +1,4 @@
-# Covers various scenarios for valid Sui transfer txs
+# Covers various scenarios for valid IOTA transfer txs
 
 import pytest
 import concurrent.futures
@@ -110,7 +110,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #   ]
 # }
 
-def test_sign_tx_sui_two_merge_input_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_two_merge_input_coin(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -132,7 +132,7 @@ def test_sign_tx_sui_two_merge_input_coin(backend, scenario_navigator, firmware,
     def nav_task():
         if firmware.device.startswith("nano"):
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer SUI
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount
@@ -245,7 +245,7 @@ def test_sign_tx_sui_two_merge_input_coin(backend, scenario_navigator, firmware,
 #   ]
 # }
 
-def test_sign_tx_sui_two_merge_input_coin_2(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_two_merge_input_coin_2(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -267,7 +267,7 @@ def test_sign_tx_sui_two_merge_input_coin_2(backend, scenario_navigator, firmwar
     def nav_task():
         if firmware.device.startswith("nano"):
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer SUI
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount
@@ -355,7 +355,7 @@ def test_sign_tx_sui_two_merge_input_coin_2(backend, scenario_navigator, firmwar
 #   ]
 # }
 
-def test_sign_tx_sui_merge_input_coin_plus_two_gas(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_merge_input_coin_plus_two_gas(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -377,7 +377,7 @@ def test_sign_tx_sui_merge_input_coin_plus_two_gas(backend, scenario_navigator, 
     def nav_task():
         if firmware.device.startswith("nano"):
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer SUI
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount
@@ -489,7 +489,7 @@ def test_sign_tx_sui_merge_input_coin_plus_two_gas(backend, scenario_navigator, 
 #   ]
 # }
 
-def test_sign_tx_sui_merge_split(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_merge_split(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -511,7 +511,7 @@ def test_sign_tx_sui_merge_split(backend, scenario_navigator, firmware, navigato
     def nav_task():
         if firmware.device.startswith("nano"):
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer SUI
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount
@@ -608,7 +608,7 @@ def test_sign_tx_sui_merge_split(backend, scenario_navigator, firmware, navigato
 #   ]
 # }
 
-def test_sign_tx_sui_two_transfer(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_two_transfer(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -630,7 +630,7 @@ def test_sign_tx_sui_two_transfer(backend, scenario_navigator, firmware, navigat
     def nav_task():
         if firmware.device.startswith("nano"):
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer SUI
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount
@@ -740,7 +740,7 @@ def test_sign_tx_sui_two_transfer(backend, scenario_navigator, firmware, navigat
 #   ]
 # }
 
-def test_sign_tx_sui_split_transfer_two(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_split_transfer_two(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -762,7 +762,7 @@ def test_sign_tx_sui_split_transfer_two(backend, scenario_navigator, firmware, n
     def nav_task():
         if firmware.device.startswith("nano"):
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer SUI
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount

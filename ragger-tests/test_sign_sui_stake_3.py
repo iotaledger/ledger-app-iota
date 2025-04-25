@@ -1,4 +1,4 @@
-# Covers various scenarios for valid Sui stake txs
+# Covers various scenarios for valid IOTA stake txs
 
 import pytest
 import concurrent.futures
@@ -123,7 +123,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake_mul_coin",
 #         "typeArguments": [],
 #         "arguments": [
@@ -239,7 +239,7 @@ def test_sign_stake_mul_coin_gas_merge_split(backend, scenario_navigator, firmwa
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_withdraw_stake",
 #         "typeArguments": [],
 #         "arguments": [
@@ -369,7 +369,7 @@ def test_sign_unstake_whole_coin(backend, scenario_navigator, firmware, navigato
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_withdraw_stake",
 #         "typeArguments": [],
 #         "arguments": [

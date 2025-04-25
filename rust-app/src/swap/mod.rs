@@ -19,12 +19,12 @@ use ledger_log::{error, trace};
 use panic_handler::{set_swap_panic_handler, swap_panic_handler};
 use params::{CheckAddressParams, PrintableAmountParams, TxParams};
 
-use crate::interface::SuiPubKeyAddress;
+use crate::interface::IotaPubKeyAddress;
 #[cfg(not(any(target_os = "stax", target_os = "flex")))]
 use crate::main_nanos::app_main;
 #[cfg(any(target_os = "stax", target_os = "flex"))]
 use crate::main_stax::app_main;
-use crate::{ctx::RunCtx, parser::common::SUI_COIN_DIVISOR, utils::get_amount_in_decimals};
+use crate::{ctx::RunCtx, parser::common::IOTA_COIN_DIVISOR, utils::get_amount_in_decimals};
 
 pub mod panic_handler;
 pub mod params;
@@ -54,7 +54,7 @@ pub fn check_address(params: &CheckAddressParams) -> Result<bool, Error> {
     Ok(with_public_keys(
         &params.dpath,
         true,
-        |_, address: &SuiPubKeyAddress| -> Result<_, CryptographyError> {
+        |_, address: &IotaPubKeyAddress| -> Result<_, CryptographyError> {
             trace!("check_address: der: {}", address);
             let der_addr = address.get_binary_address();
 
@@ -63,15 +63,15 @@ pub fn check_address(params: &CheckAddressParams) -> Result<bool, Error> {
     )?)
 }
 
-// Outputs a string with the amount of SUI.
+// Outputs a string with the amount of IOTA.
 //
-// Max sui amount 10_000_000_000 SUI.
+// Max IOTA amount 10_000_000_000 IOTA.
 // So max string length is 11 (quotient) + 1 (dot) + 12 (remainder) + 4 (text) = 28
 pub fn get_printable_amount(params: &PrintableAmountParams) -> Result<ArrayString<28>, Error> {
-    let (quotient, remainder_str) = get_amount_in_decimals(params.amount, SUI_COIN_DIVISOR);
+    let (quotient, remainder_str) = get_amount_in_decimals(params.amount, IOTA_COIN_DIVISOR);
 
     let mut printable_amount = ArrayString::<28>::default();
-    write!(&mut printable_amount, "SUI {}.{}", quotient, remainder_str)
+    write!(&mut printable_amount, "IOTA {}.{}", quotient, remainder_str)
         .expect("string always fits");
 
     trace!(

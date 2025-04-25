@@ -4,18 +4,18 @@ use core::ffi::CStr;
 use core::mem;
 use ledger_device_sdk::libcall;
 
-use crate::parser::common::SuiAddressRaw;
+use crate::parser::common::IotaAddressRaw;
 use crate::swap::Error;
 
-// Max SUI address str length is 32*2
-const SUI_ADDRESS_STR_LENGTH: usize = 64;
+// Max IOTA address str length is 32*2
+const IOTA_ADDRESS_STR_LENGTH: usize = 64;
 const MAX_BIP32_PATH_LENGTH: usize = 5;
 const BIP32_PATH_SEGMENT_LEN: usize = mem::size_of::<u32>();
 
 #[derive(Debug)]
 pub struct CheckAddressParams {
     pub dpath: ArrayVec<u32, MAX_BIP32_PATH_LENGTH>,
-    pub ref_address: SuiAddressRaw,
+    pub ref_address: IotaAddressRaw,
 }
 
 impl TryFrom<&libcall::swap::CheckAddressParams> for CheckAddressParams {
@@ -58,7 +58,7 @@ impl TryFrom<&libcall::swap::PrintableAmountParams> for PrintableAmountParams {
 pub struct TxParams {
     pub amount: u64,
     pub fee: u64,
-    pub destination_address: SuiAddressRaw,
+    pub destination_address: IotaAddressRaw,
 }
 
 impl TryFrom<&libcall::swap::CreateTxParams> for TxParams {
@@ -93,7 +93,7 @@ fn unpack_path(buf: &[u8], out_path: &mut [u32]) -> Result<usize, Error> {
     }
 
     for i in (0..buf.len()).step_by(BIP32_PATH_SEGMENT_LEN) {
-        // For some reason SUI coin app expects path in little endian byte order
+        // For some reason IOTA coin app expects path in little endian byte order
         let path_seg = u32::from_le_bytes([buf[i], buf[i + 1], buf[i + 2], buf[i + 3]]);
 
         out_path[i / BIP32_PATH_SEGMENT_LEN] = path_seg;
@@ -102,21 +102,21 @@ fn unpack_path(buf: &[u8], out_path: &mut [u32]) -> Result<usize, Error> {
     Ok(buf.len() / BIP32_PATH_SEGMENT_LEN)
 }
 
-fn address_from_hex_cstr(c_str: *const u8) -> Result<SuiAddressRaw, Error> {
+fn address_from_hex_cstr(c_str: *const u8) -> Result<IotaAddressRaw, Error> {
     let str = unsafe {
         CStr::from_ptr(c_str as *const i8)
             .to_str()
             .map_err(|_| Error::BadAddressASCII)?
     };
 
-    if str.len() < SUI_ADDRESS_STR_LENGTH {
+    if str.len() < IOTA_ADDRESS_STR_LENGTH {
         return Err(Error::BadAddressLength);
     }
 
     // Trim zero terminator
-    let str = &str[..SUI_ADDRESS_STR_LENGTH];
+    let str = &str[..IOTA_ADDRESS_STR_LENGTH];
 
-    let mut address = SuiAddressRaw::default();
+    let mut address = IotaAddressRaw::default();
     hex::decode_to_slice(str, &mut address).map_err(|_| Error::BadAddressHex)?;
 
     Ok(address)

@@ -1,4 +1,4 @@
-# Covers various scenarios for Sui transfer txs not supported for clear signing
+# Covers various scenarios for IOTA transfer txs not supported for clear signing
 
 import pytest
 import concurrent.futures
@@ -86,7 +86,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #   ]
 # }
 
-def test_sign_tx_sui_multi_recipient(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_multi_recipient(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -128,7 +128,7 @@ def test_sign_tx_sui_multi_recipient(backend, scenario_navigator, firmware, navi
 
 
 # GasCoin does not exist in object_list
-def test_sign_tx_sui_whole_gas_coin_missing_obj(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_whole_gas_coin_missing_obj(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -168,7 +168,7 @@ def test_sign_tx_sui_whole_gas_coin_missing_obj(backend, scenario_navigator, fir
     assert len(e.value.data) == 0
 
 # Coin referred by TransferObjects does not exist in object_list
-def test_sign_tx_sui_whole_input_coin_missing_obj(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_whole_input_coin_missing_obj(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -283,7 +283,7 @@ def test_sign_tx_sui_whole_input_coin_missing_obj(backend, scenario_navigator, f
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [
@@ -301,7 +301,7 @@ def test_sign_tx_sui_whole_input_coin_missing_obj(backend, scenario_navigator, f
 #     }
 #   ]
 # }
-def test_sign_tx_sui_and_move_call(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_and_move_call(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/1'"
 
@@ -404,7 +404,7 @@ def test_sign_tx_sui_and_move_call(backend, scenario_navigator, firmware, naviga
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [
@@ -423,7 +423,7 @@ def test_sign_tx_sui_and_move_call(backend, scenario_navigator, firmware, naviga
 #     {
 #       "MoveCall": {
 #         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "sui_system",
+#         "module": "iota_system",
 #         "function": "request_add_stake",
 #         "typeArguments": [],
 #         "arguments": [

@@ -264,7 +264,7 @@ def test_sign_tx_usdc_and_wusdc(backend, scenario_navigator, firmware, navigator
 #     }
 #   ]
 # }
-def test_sign_tx_usdc_and_sui(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_usdc_and_iota(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/784'/0'/0'/0'"
 

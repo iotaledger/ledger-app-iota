@@ -8,9 +8,9 @@ fn main() {}
 use iota_rebased::main_nanos::app_main;
 
 #[cfg(any(target_os = "stax", target_os = "flex"))]
-use sui::main_stax::*;
+use iota::main_stax::*;
 
-use sui::{
+use iota::{
     ctx::RunCtx,
     swap::{lib_main, panic_handler::get_swap_panic_handler},
 };
