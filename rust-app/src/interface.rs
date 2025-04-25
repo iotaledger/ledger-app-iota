@@ -19,7 +19,6 @@ pub type Bip32Key = DArray<Byte, U32<{ Endianness::Little }>, 10>;
 
 pub struct IotaPubKeyAddress(IotaAddressRaw);
 
-use arrayvec::ArrayVec;
 use ledger_crypto_helpers::common::{Address, HexSlice};
 use ledger_crypto_helpers::eddsa::ed25519_public_key_bytes;
 use ledger_crypto_helpers::hasher::{Blake2b, Hasher};
