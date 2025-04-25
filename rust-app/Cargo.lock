@@ -379,8 +379,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "iota_rebased"
-version = "0.9.1"
+name = "iota"
+version = "0.10.0"
 dependencies = [
  "alamgu-async-block",
  "arrayvec",

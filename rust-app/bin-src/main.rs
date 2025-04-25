@@ -5,7 +5,7 @@
 fn main() {}
 
 #[cfg(not(any(target_os = "stax", target_os = "flex")))]
-use iota_rebased::main_nanos::app_main;
+use iota::main_nanos::app_main;
 
 #[cfg(any(target_os = "stax", target_os = "flex"))]
 use iota::main_stax::*;
