@@ -1,5 +1,5 @@
 [package]
-name = "iota_rebased"
+name = "iota"
 version = "0.9.1"
 authors = ["IOTA Foundation <info@iota.org>"]
 edition = "2018"
@@ -62,7 +62,7 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 ] }
 
 [package.metadata.ledger]
-name = "IOTA Rebased"
+name = "IOTA"
 # Testnet, IOTA
 path = ["44'/1'", "44'/4218'"]
 curve = ["ed25519"]
