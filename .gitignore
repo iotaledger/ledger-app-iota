@@ -10,3 +10,5 @@ iota-nanos
 __pycache__
 snapshots-tmp
 docker-outputs
+rust-app/build
+.DS_Store
