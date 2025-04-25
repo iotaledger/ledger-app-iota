@@ -45,7 +45,7 @@ impl Menu for IdleMenuWithSettings {
             IdleMenu::ShowVersion => self.idle_menu = IdleMenu::AppMain,
             IdleMenu::Settings(None) => self.idle_menu = IdleMenu::ShowVersion,
             IdleMenu::Settings(Some(SettingsSubMenu::Back)) => {
-                if self.settings.get() == 1 {
+                if self.settings.get_blind_sign() {
                     self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning))
                 } else {
                     self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning))
@@ -63,7 +63,7 @@ impl Menu for IdleMenuWithSettings {
             IdleMenu::ShowVersion => self.idle_menu = IdleMenu::Settings(None),
             IdleMenu::Settings(None) => self.idle_menu = IdleMenu::Exit,
             IdleMenu::Settings(Some(SettingsSubMenu::Back)) => {
-                if self.settings.get() == 1 {
+                if self.settings.get_blind_sign() {
                     self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning))
                 } else {
                     self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning))
@@ -81,7 +81,7 @@ impl Menu for IdleMenuWithSettings {
             IdleMenu::AppMain => None,
             IdleMenu::ShowVersion => None,
             IdleMenu::Settings(None) => {
-                if self.settings.get() == 1 {
+                if self.settings.get_blind_sign() {
                     self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning))
                 } else {
                     self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning))
@@ -89,12 +89,12 @@ impl Menu for IdleMenuWithSettings {
                 None
             }
             IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning)) => {
-                self.settings.set(&1);
+                self.settings.set_blind_sign(true);
                 self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning));
                 None
             }
             IdleMenu::Settings(Some(SettingsSubMenu::DisableBlindSigning)) => {
-                self.settings.set(&0);
+                self.settings.set_blind_sign(false);
                 self.idle_menu = IdleMenu::Settings(Some(SettingsSubMenu::EnableBlindSigning));
                 None
             }

@@ -1,5 +1,5 @@
 [unstable]
-build-std = ["core"]
+build-std = ["core", "alloc"]
 build-std-features = ["compiler-builtins-mem"]
 
 [target.nanosplus]
@@ -8,7 +8,6 @@ rustflags = [
   "-C", "save-temps", # Fixes incremental builds by keeping .bc and .ll files
   "-C", "embed-bitcode",
 ]
-runner = "./speculos-wrapper -m nanosp "
 
 [target.nanos]
 rustflags = [
@@ -16,7 +15,6 @@ rustflags = [
   "-C", "save-temps", # Fixes incremental builds by keeping .bc and .ll files
   "-C", "embed-bitcode",
 ]
-runner = "./speculos-wrapper -m nanos "
 
 [target.nanox]
 rustflags = [
@@ -24,7 +22,6 @@ rustflags = [
   "-C", "save-temps", # Fixes incremental builds by keeping .bc and .ll files
   "-C", "embed-bitcode",
 ]
-runner = "./speculos-wrapper -m nanox "
 
 [alias]
 tt = "test --features extra_debug"

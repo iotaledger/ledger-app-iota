@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.2.5
+* Fix displaying of UI warning in swap mode 
+
+## 0.2.4
+* Add swap support
+* Bump SDK version
+
 ## 0.2.1
 
 * Update SDK

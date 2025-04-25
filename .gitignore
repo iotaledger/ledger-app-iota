@@ -7,4 +7,6 @@ result-*
 
 .vscode
 iota-nanos
+__pycache__
+snapshots-tmp
 docker-outputs
