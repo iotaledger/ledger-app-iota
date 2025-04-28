@@ -2,7 +2,7 @@
 set -eu
 
 export APP_NAME=`grep name rust-app/Cargo.toml | cut -d '"' -f2 | head -n1`
-export RUST_NANOS_SDK_REV="ad901b54e3178659fa6cac2885a3081afbf9c9bb"
+export RUST_NANOS_SDK_REV="ec37bef6d7e44fd550bf1a6ad3c33d81da2830b0"
 export RUST_NANOS_SDK_GIT="https://github.com/LedgerHQ/ledger-device-rust-sdk.git"
 
 OUT_DIR="./docker-outputs"
