@@ -6,7 +6,7 @@ export RUST_NANOS_SDK_REV="ad901b54e3178659fa6cac2885a3081afbf9c9bb"
 export RUST_NANOS_SDK_GIT="https://github.com/LedgerHQ/ledger-device-rust-sdk.git"
 
 OUT_DIR="./docker-outputs"
-for device in nanos nanosplus nanox
+for device in nanosplus nanox
 do
     mkdir -p $OUT_DIR/$device
 done
@@ -24,14 +24,13 @@ docker run \
 
 # Run tests
 # The speculos-wrapper need to be invoked from a dir further down, as it refers to "../ts-tests"
-nix-shell -A nanos.rustShell --run "cd $OUT_DIR; ../speculos-wrapper -m nanos ../$OUT_DIR/nanos/$APP_NAME"
 nix-shell -A nanosplus.rustShell --run "cd $OUT_DIR; ../speculos-wrapper -m nanosp ../$OUT_DIR/nanosplus/$APP_NAME"
 nix-shell -A nanox.rustShell --run "cd $OUT_DIR; ../speculos-wrapper -m nanox ../$OUT_DIR/nanox/$APP_NAME"
 
 echo "Tests done!"
 
 # Create app.hex
-for device in nanos nanosplus nanox
+for device in nanosplus nanox
 do
     cp rust-app/Cargo.toml $OUT_DIR/$device/
     cp rust-app/*.gif $OUT_DIR/$device/
@@ -39,5 +38,4 @@ do
 done
 
 echo "Use the following commands to install app"
-echo 'nix-shell -A alamgu.rustShell --run "cd docker-outputs/nanos; ledgerctl install -f app_nanos.json"'
 echo 'nix-shell -A alamgu.rustShell --run "cd docker-outputs/nanosplus; ledgerctl install -f app_nanosplus.json"'

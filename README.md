@@ -77,7 +77,6 @@ nix --extra-experimental-features nix-command run -f . $DEVICE.loadApp
 
 where `DEVICE` is one of
 
-- `nanos`, for Nano S
 - `nanox`, for Nano X
 - `nanosplus`, for Nano S+
 
@@ -98,7 +97,6 @@ nix-build -A $DEVICE.tarball
 
 where `DEVICE` is one of
 
-- `nanos`, for Nano S
 - `nanox`, for Nano X
 - `nanosplus`, for Nano S+
 
@@ -145,7 +143,6 @@ nix-shell -A $DEVICE.appShell
 
 where `DEVICE` is one of
 
-- `nanos`, for Nano S
 - `nanox`, for Nano X
 - `nanosplus`, for Nano S+
 

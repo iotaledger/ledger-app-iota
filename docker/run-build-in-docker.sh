@@ -16,7 +16,7 @@ export NM="llvm-nm"
 cd rust-app
 
 # $RUST_NIGHTLY is set in ledger-app-builder
-for device in nanos nanosplus nanox
+for device in nanosplus nanox
 do
    cargo +$RUST_NIGHTLY build --target-dir=$TARGET_DIR --release --target=$RUST_NANOS_SDK/ledger_device_sdk/$device.json -Z build-std=core
    cp $TARGET_DIR/$device/release/$APP_NAME $OUT_DIR/$device
