@@ -39,3 +39,4 @@ done
 
 echo "Use the following commands to install app"
 echo 'nix-shell -A alamgu.rustShell --run "cd docker-outputs/nanosplus; ledgerctl install -f app_nanosplus.json"'
+echo 'nix-shell -A alamgu.rustShell --run "cd docker-outputs/nanox; ledgerctl install -f app_nanox.json"'
