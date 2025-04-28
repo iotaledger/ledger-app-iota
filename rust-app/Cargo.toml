@@ -33,12 +33,12 @@ extra_debug = ["ledger-log/log_trace"]
 pending_review_screen = []
 
 [target.'cfg(target_family = "bolos")'.dependencies]
-ledger_device_sdk = "1.21.1"
-ledger_secure_sdk_sys = "1.7.1"
+ledger_device_sdk = "1.22.5"
+ledger_secure_sdk_sys = "1.8.1"
 ledger-prompts-ui = { git = "https://github.com/alamgu/ledger-prompts-ui" }
 
 [target.'cfg(target_family = "bolos")'.dev-dependencies.ledger_device_sdk]
-version = "1.21.1"
+version = "1.22.5"
 features = ["speculos"]
 
 [[bin]]
@@ -67,9 +67,6 @@ name = "IOTA"
 path = ["44'/1'", "44'/4218'"]
 curve = ["ed25519"]
 flags = "0"
-
-[package.metadata.ledger.nanos]
-icon = "iota.gif"
 
 [package.metadata.ledger.nanox]
 icon = "iota-small.gif"

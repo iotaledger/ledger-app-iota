@@ -6,7 +6,7 @@ set -eu
 
 nix-thunk unpack ./dep/ledger_secure_sdk_sys-bindings
 
-for device in nanos nanosplus nanox
+for device in nanosplus nanox
 do
     export DEVICE=$device
     nix-shell -A $DEVICE.rustShell --run ' \

@@ -3,8 +3,8 @@
 echo "Speculos Wrapper called with $*"
 
 # Specify args for mocha / 'yarn run test' like this
-# cargo test --test ts-tests --target=nanos.json -- --mocha-args="--grep 'provides a public key'"
-# cargo test --test ts-tests --target=nanos.json -- --mocha-args="--timeout 30000"
+# cargo test --test ts-tests --target=nanosplus.json -- --mocha-args="--grep 'provides a public key'"
+# cargo test --test ts-tests --target=nanosplus.json -- --mocha-args="--timeout 30000"
 MOCHA_ARGS=""
 
 API_PORT=5005
