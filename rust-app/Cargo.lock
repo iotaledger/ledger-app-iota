@@ -377,7 +377,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "iota_rebased"
+name = "iota"
 version = "0.9.2"
 dependencies = [
  "alamgu-async-block",
@@ -486,9 +486,9 @@ dependencies = [
 
 [[package]]
 name = "ledger_device_sdk"
-version = "1.21.5"
+version = "1.22.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf3b0b20bb753fd206317fe9dd8325f00b968f3fa7d257692b45b73c42280a7a"
+checksum = "a6be59f37c8910109f9b80da18693dd8b1eccb569c1b1270d133cc3af46435a9"
 dependencies = [
  "const-zero",
  "include_gif",
@@ -501,9 +501,9 @@ dependencies = [
 
 [[package]]
 name = "ledger_secure_sdk_sys"
-version = "1.7.2"
+version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e695004d49e61dcccd7ef391a3c727c0ef0b6d6abe65903e68b1f9d6f940c040"
+checksum = "c0a7893c01d2d881b44f01bf85be30c08fed7f741a0a4fa0068b185d797fcaff"
 dependencies = [
  "bindgen",
  "cc",
