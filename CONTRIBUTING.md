@@ -30,7 +30,6 @@ cd rust-app/
 cargo ledger build -l $DEVICE
 ````
 where `DEVICE` is one of
- - `nanos` for Nano S
  - `nanox` for Nano X
  - `nanosplus` for Nano S+
 
