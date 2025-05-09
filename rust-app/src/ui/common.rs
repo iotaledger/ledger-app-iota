@@ -82,7 +82,15 @@ struct KnownCoin<'a> {
 
 use hex_literal::hex;
 
-const KNOWN_COINS: [KnownCoin; 1] = [
+const KNOWN_COINS: [KnownCoin; 2] = [
+    // Mainnet stIOTA
+    KnownCoin {
+        coin_id: hex!("346778989a9f57480ec3fee15f2cd68409c73a62112d40a3efd13987997be68c"),
+        module: "cert",
+        function: "CERT",
+        divisor: 9,
+        ticker: "stIOTA",
+    },
     // Testnet stIOTA
     KnownCoin {
         coin_id: hex!("1461ef74f97e83eb024a448ab851f980f4e577a97877069c72b44b5fe9929ee3"),
