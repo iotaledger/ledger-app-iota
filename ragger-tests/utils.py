@@ -44,7 +44,7 @@ def run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result):
             result = future_apdu.result()
             check_result(result)
         else:
-            for future in done:
+            for future in not_done:
                 try:
                     future.result()
                 except Exception as e:
