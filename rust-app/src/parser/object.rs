@@ -20,7 +20,7 @@ pub type ObjectInnerSchema = (
     StorageRebate,
 );
 
-pub type MoveObject = (MoveObjectType, bool, SequenceNumber, ObjectContents);
+pub type MoveObject = (MoveObjectType, SequenceNumber, ObjectContents);
 
 // The object content parsing is limited to either a simple Coin (40 bytes) or StakedIota (80 bytes)
 // We will simply reject parsing objects with content size greater than OBJECT_CONTENTS_LEN
@@ -118,10 +118,9 @@ pub const fn move_object_parser<BS: Clone + Readable>(
         (
             DefaultInterp,
             DefaultInterp,
-            DefaultInterp,
             SubInterp(DefaultInterp),
         ),
-        |(object_type, _, _sequence_number, d): (_, _, _, ArrayVec<u8, OBJECT_CONTENTS_LEN>)| {
+        |(object_type, _sequence_number, d): (_, _, ArrayVec<u8, OBJECT_CONTENTS_LEN>)| {
             info!("SequenceNumber {}", _sequence_number);
 
             let (coin_type, is_stake) = match object_type {
