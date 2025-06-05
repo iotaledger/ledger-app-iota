@@ -12,7 +12,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # can sign a simple IOTA transfer transaction
 def test_sign_tx_iota_transfer(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'"
+    path = "m/44'/4218'/0'/0'/0'"
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
@@ -50,7 +50,7 @@ def test_sign_tx_iota_transfer(backend, scenario_navigator, firmware, navigator)
 # can blind sign an unknown transaction
 def test_sign_tx_blind_sign(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'"
+    path = "m/44'/4218'/0'/0'/0'"
 
     _, public_key, _, _ = client.get_public_key(path=path)
 
@@ -105,7 +105,7 @@ def test_sign_tx_blind_sign(backend, scenario_navigator, firmware, navigator):
 # The test will ask for a transaction signature that will be refused on screen
 def test_sign_tx_refused(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'"
+    path = "m/44'/4218'/0'/0'/0'"
 
     transaction = bytes.fromhex('000000000002000840420f000000000000204f2370b2a4810ad6c8e1cfd92cc8c8818fef8f59e3a80cea17871f78d850ba4b0202000101000001010200000101006fb21feead027da4873295affd6c4f3618fe176fa2fbf3e7b5ef1d9463b31e210112a6d0c44edc630d2724b1f57fea4f93308b1d22164402c65778bd99379c4733070000000000000020f2fd3c87b227f1015182fe4348ed680d7ed32bcd3269704252c03e1d0b13d30d6fb21feead027da4873295affd6c4f3618fe176fa2fbf3e7b5ef1d9463b31e2101000000000000000c0400000000000000')
 
@@ -143,7 +143,7 @@ def test_sign_tx_refused(backend, scenario_navigator, firmware, navigator):
 # should reject signing a non-IOTA coin transaction, if blind signing is not enabled
 def test_sign_tx_non_iota_transfer_rejected(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'"
+    path = "m/44'/4218'/0'/0'/0'"
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
@@ -180,7 +180,7 @@ def test_sign_tx_non_iota_transfer_rejected(backend, scenario_navigator, firmwar
 # should reject signing an unknown transaction, if blind signing is not enabled
 def test_sign_tx_unknown_tx_rejected(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'"
+    path = "m/44'/4218'/0'/0'/0'"
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32

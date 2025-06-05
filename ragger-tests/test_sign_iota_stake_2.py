@@ -1,107 +1,142 @@
-# Covers various scenarios for valid IOTA stake txs
-
-import pytest
-import concurrent.futures
-import time
 import base64
+import pytest
 
-from application_client.client import Client, Errors
+from application_client.client import Client
 from contextlib import contextmanager
 from ragger.error import ExceptionRAPDU
-from ragger.navigator import NavIns, NavInsID
+from ragger.navigator import NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_nav_tasks_concurrently
 
-# Balances of objects used in these tests
-# 0xa93f6c464f8fb8b98fb3d02112902060c8f85ea4d71cfc7777dfdbd75e68ab6d 0.03
-# 0x1f876ff0144386dcf4e886c5de53b326c718cc1221e1ccea71ef8aa6231a40ea 0.02
-# 0x1c12be5429384d00eeef61242f3aebabeac3012549dd6f888dc1087c4d00da80 0.01
-# 0xebff16b4d2081ab06d1d5251c988208641e5c501c7fa8bdce9c8b7b0908ba76b 0.041
+#
+# Used Objects in these tests:
+# ----------------------------
+# ObjectID: 0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: GasCoin
+# Balance: 3000000000
+# Version: 134
+# Digest: ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty
+# BCS: AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
+#
+# ObjectID: 0x2b47a0dca64a7c783224e27125e5a9d337d0a6595bace34d65e4c7bbc0a71ee3
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x0000000000000000000000000000000000000000000000000000000000000003::staking_pool::StakedIota
+# Version: 2301
+# Digest: 61tD4mkae65faomciPtSo1xvxZ7SjrdpWvFfauTLJBPH
+# BCS: AAL9CAAAAAAAAFArR6Dcpkp8eDIk4nEl5anTN9CmWVus401l5Me7wKce43c1muAQnbWuHwT18qo25ZHVvQhRRYmrDZMmRzf8bQl0/AgAAAAAAAAAERAkAQAAAAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtiBG3FEWr6ouKxc3xTULBPfGkpGRFsFoOzuwIg0NBJhPnTCZEwAAAAAA
+#
+# ObjectID: 0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: GasCoin
+# Balance: 2000000000
+# Version: 134
+# Digest: Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE
+# BCS: AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
+#
+# ObjectID: 0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: GasCoin
+# Balance: 4100000000
+# Version: 131
+# Digest: BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx
+# BCS: AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA=
+#
+# ObjectID: 0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: GasCoin
+# Balance: 1000000000
+# Version: 131
+# Digest: 88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU
+# BCS: AAGDAAAAAAAAACiZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUgDKmjsAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA=
+#
 
-# built_tx AAAFAQAcEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AAjAml4AAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEAIDX18VTwEXRk4zecRcfzy2stTv7fMArK3/in6OnjoVEJAwMBAAABAQEAAgEAAAEBAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMKc3VpX3N5c3RlbRFyZXF1ZXN0X2FkZF9zdGFrZQADAQMAAwEAAAABBAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiALr/xa00ggasG0dUlHJiCCGQeXFAcf6i9zpyLewkIuna9V2QhEAAAAAIDv/BHzKDboSa5D15/D3Jqu9o4dWUhvcE6bym/knjbDkH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOrTdkIRAAAAACAhwBvcKbCI07AVHqsBdv+VAeBKtJ4AEkpbb64aBfNRuh0/JkMwV2AiblGMm1qWFlODgI3Zd5cfc96pcVQ7C+SI6AMAAAAAAAB44AEAAAAAAAA=
-# Transaction Commands: {
+# test_sign_stake_merge_split_coin
+# --------------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x1d3f2643305760226e518c9b5a96165383808dd977971f73dea971543b0be488",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "123000",
-#     "price": "1000",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xebff16b4d2081ab06d1d5251c988208641e5c501c7fa8bdce9c8b7b0908ba76b",
-#         "version": "289568469",
-#         "digest": "53CbPjHczNtV9Kids6JdGt9bkPbSeJ34dc9TX2W2g6tT"
-#       },
-#       {
-#         "objectId": "0x1f876ff0144386dcf4e886c5de53b326c718cc1221e1ccea71ef8aa6231a40ea",
-#         "version": "289568467",
-#         "digest": "3GkMekAY5KQqiop61rRCnQjK57ztStksBSuZsUPf62JM"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0x1c12be5429384d00eeef61242f3aebabeac3012549dd6f888dc1087c4d00da80",
-#           "version": "289568466",
-#           "digest": "G9KngE3q7fpBfZtrmoEFdjZC4Ebb4TR7mZ1NYpf2xqaJ"
-#         }
-#       }
+#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xa93f6c464f8fb8b98fb3d02112902060c8f85ea4d71cfc7777dfdbd75e68ab6d",
-#           "version": "289568468",
-#           "digest": "Cbin2kMMWzjtPER7GZ7ne81Dhpk2tS31MwinvTwjMEZi"
-#         }
-#       }
+#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "wJpeAAAAAAA="
-#       }
+#         "bytes": "APIFKgEAAAA="
+#       },
+#       "$kind": "Pure"
 #     },
 #     {
 #       "Object": {
 #         "SharedObject": {
 #           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": 1,
+#           "initialSharedVersion": "1",
 #           "mutable": true
-#         }
-#       }
+#         },
+#         "$kind": "SharedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "NfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQk="
-#       }
+#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
 #     {
 #       "MergeCoins": {
 #         "destination": {
-#           "Input": 0
+#           "Input": 0,
+#           "$kind": "Input"
 #         },
 #         "sources": [
 #           {
-#             "Input": 1
+#             "Input": 1,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MergeCoins"
 #     },
 #     {
 #       "SplitCoins": {
 #         "coin": {
-#           "Input": 0
+#           "Input": 0,
+#           "$kind": "Input"
 #         },
 #         "amounts": [
 #           {
-#             "Input": 2
+#             "Input": 2,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "SplitCoins"
 #     },
 #     {
 #       "MoveCall": {
@@ -111,37 +146,59 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #         "typeArguments": [],
 #         "arguments": [
 #           {
-#             "Input": 3
+#             "Input": 3,
+#             "$kind": "Input"
 #           },
 #           {
 #             "NestedResult": [
 #               1,
 #               0
-#             ]
+#             ],
+#             "$kind": "NestedResult"
 #           },
 #           {
-#             "Input": 4
+#             "Input": 4,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MoveCall"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#         "version": "131",
+#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#       },
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       }
+#     ]
+#   }
 # }
 
 def test_sign_stake_merge_split_coin(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAAFAQAcEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AAjAml4AAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEAIDX18VTwEXRk4zecRcfzy2stTv7fMArK3/in6OnjoVEJAwMBAAABAQEAAgEAAAEBAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMKc3VpX3N5c3RlbRFyZXF1ZXN0X2FkZF9zdGFrZQADAQMAAwEAAAABBAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiALr/xa00ggasG0dUlHJiCCGQeXFAcf6i9zpyLewkIuna9V2QhEAAAAAIDv/BHzKDboSa5D15/D3Jqu9o4dWUhvcE6bym/knjbDkH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOrTdkIRAAAAACAhwBvcKbCI07AVHqsBdv+VAeBKtJ4AEkpbb64aBfNRuh0/JkMwV2AiblGMm1qWFlODgI3Zd5cfc96pcVQ7C+SI6AMAAAAAAAB44AEAAAAAAAA=')
+    transaction = base64.b64decode('AAAAAAAFAQCZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUoMAAAAAAAAAIGoJQKOO20OiScH4YPmyBaNQ2gjTfUS2/QJF0bEoTMtnAQAe7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04oYAAAAAAAAAIMfrxsRDCzz35Y11q1PduRgCdN72Oxq1YZ+9twls29cSAAgA8gUqAQAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEAIIZMZRlYCUcyoSJxNM98q3WH8Fo5k5iARVJVP7wB26TnAwMBAAABAQEAAgEAAAEBAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMLaW90YV9zeXN0ZW0RcmVxdWVzdF9hZGRfc3Rha2UAAwEDAAMBAAAAAQQAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYCirQvhACKdDaHRezPiYmnsZdAc3yzANn6oCu5hL4mEPeDAAAAAAAAACCitmybZdloPrq9rSjiMBvdOYVLg8C1f6DTg978ICme40ifuMiIlnA6sfupU4s5KrZbF1Z0ExJB2oVmXdG2JPMPhgAAAAAAAAAgrfsbaZSu5LHsf4mMHVswUSkxaElmBc5tV7cPXMyJut0PWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtugDAAAAAAAAQEIPAAAAAAAA')
 
-    object_list = [ base64.b64decode('AAEB0nZCEQAAAAAoHBK+VCk4TQDu72EkLzrrq+rDASVJ3W+IjcEIfE0A2oCAlpgAAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAdWxm/zBGpPolm35Bn6wJKCXKBWKegYpW9ZT1L4YEUXWATDwAAAAAA')
-      , base64.b64decode('AAEB03ZCEQAAAAAoH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOoALTEBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCB0/j3Uc6ljNbb1tbWgvj5PAz7MCgIO6e91iU9asLM9x2ATDwAAAAAA')
-      , base64.b64decode('AAEB1HZCEQAAAAAoqT9sRk+PuLmPs9AhEpAgYMj4XqTXHPx3d9/b115oq22Aw8kBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAfVAIamErRVJt4BuqoZFY2dBaAKAaQzrxvVjuLcgrqZmATDwAAAAAA')
-      , base64.b64decode('AAEB1XZCEQAAAAAo6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2tAnHECAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAuq6BxxXPwIbLsDoXWJN6/Emi0EtUzGJnln5pJL4iDYWATDwAAAAAA')
-       ]
+    object_list = [
+        base64.b64decode('AAGDAAAAAAAAACiZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUgDKmjsAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
@@ -170,80 +227,79 @@ def test_sign_stake_merge_split_coin(backend, scenario_navigator, firmware, navi
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-# built_tx AAAFAQAcEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zAAhAH30AAAAAAAEAqT9sRk+PuLmPs9AhEpAgYMj4XqTXHPx3d9/b115oq23UdkIRAAAAACCsVYpX4/44Cp2BWe8aVkACUW5rxtsErjUPJ6nMxaCvvQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEAIDX18VTwEXRk4zecRcfzy2stTv7fMArK3/in6OnjoVEJAwIBAAABAQEAAwMAAAAAAQECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwpzdWlfc3lzdGVtEXJlcXVlc3RfYWRkX3N0YWtlAAMBAwADAAAAAAEEAB0/JkMwV2AiblGMm1qWFlODgI3Zd5cfc96pcVQ7C+SIAuv/FrTSCBqwbR1SUcmIIIZB5cUBx/qL3OnIt7CQi6dr1XZCEQAAAAAgO/8EfMoNuhJrkPXn8Pcmq72jh1ZSG9wTpvKb+SeNsOQfh2/wFEOG3PTohsXeU7MmxxjMEiHhzOpx74qmIxpA6tN2QhEAAAAAICHAG9wpsIjTsBUeqwF2/5UB4Eq0ngASSltvrhoF81G6HT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IjoAwAAAAAAAHjgAQAAAAAAAA==
-# Transaction Commands: {
+    
+# test_sign_stake_split_merge_coin
+# --------------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x1d3f2643305760226e518c9b5a96165383808dd977971f73dea971543b0be488",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "123000",
-#     "price": "1000",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xebff16b4d2081ab06d1d5251c988208641e5c501c7fa8bdce9c8b7b0908ba76b",
-#         "version": "289568469",
-#         "digest": "53CbPjHczNtV9Kids6JdGt9bkPbSeJ34dc9TX2W2g6tT"
-#       },
-#       {
-#         "objectId": "0x1f876ff0144386dcf4e886c5de53b326c718cc1221e1ccea71ef8aa6231a40ea",
-#         "version": "289568467",
-#         "digest": "3GkMekAY5KQqiop61rRCnQjK57ztStksBSuZsUPf62JM"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0x1c12be5429384d00eeef61242f3aebabeac3012549dd6f888dc1087c4d00da80",
-#           "version": "289568466",
-#           "digest": "G9KngE3q7fpBfZtrmoEFdjZC4Ebb4TR7mZ1NYpf2xqaJ"
-#         }
-#       }
+#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "QB99AAAAAAA="
-#       }
+#         "bytes": "APkClQAAAAA="
+#       },
+#       "$kind": "Pure"
 #     },
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xa93f6c464f8fb8b98fb3d02112902060c8f85ea4d71cfc7777dfdbd75e68ab6d",
-#           "version": "289568468",
-#           "digest": "Cbin2kMMWzjtPER7GZ7ne81Dhpk2tS31MwinvTwjMEZi"
-#         }
-#       }
+#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "SharedObject": {
 #           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": 1,
+#           "initialSharedVersion": "1",
 #           "mutable": true
-#         }
-#       }
+#         },
+#         "$kind": "SharedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "NfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQk="
-#       }
+#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
 #     {
 #       "SplitCoins": {
 #         "coin": {
-#           "Input": 0
+#           "Input": 0,
+#           "$kind": "Input"
 #         },
 #         "amounts": [
 #           {
-#             "Input": 1
+#             "Input": 1,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "SplitCoins"
 #     },
 #     {
 #       "MergeCoins": {
@@ -251,14 +307,17 @@ def test_sign_stake_merge_split_coin(backend, scenario_navigator, firmware, navi
 #           "NestedResult": [
 #             0,
 #             0
-#           ]
+#           ],
+#           "$kind": "NestedResult"
 #         },
 #         "sources": [
 #           {
-#             "Input": 2
+#             "Input": 2,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MergeCoins"
 #     },
 #     {
 #       "MoveCall": {
@@ -268,37 +327,59 @@ def test_sign_stake_merge_split_coin(backend, scenario_navigator, firmware, navi
 #         "typeArguments": [],
 #         "arguments": [
 #           {
-#             "Input": 3
+#             "Input": 3,
+#             "$kind": "Input"
 #           },
 #           {
 #             "NestedResult": [
 #               0,
 #               0
-#             ]
+#             ],
+#             "$kind": "NestedResult"
 #           },
 #           {
-#             "Input": 4
+#             "Input": 4,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MoveCall"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#         "version": "131",
+#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#       },
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       }
+#     ]
+#   }
 # }
 
 def test_sign_stake_split_merge_coin(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAAFAQAcEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zAAhAH30AAAAAAAEAqT9sRk+PuLmPs9AhEpAgYMj4XqTXHPx3d9/b115oq23UdkIRAAAAACCsVYpX4/44Cp2BWe8aVkACUW5rxtsErjUPJ6nMxaCvvQEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEAIDX18VTwEXRk4zecRcfzy2stTv7fMArK3/in6OnjoVEJAwIBAAABAQEAAwMAAAAAAQECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwpzdWlfc3lzdGVtEXJlcXVlc3RfYWRkX3N0YWtlAAMBAwADAAAAAAEEAB0/JkMwV2AiblGMm1qWFlODgI3Zd5cfc96pcVQ7C+SIAuv/FrTSCBqwbR1SUcmIIIZB5cUBx/qL3OnIt7CQi6dr1XZCEQAAAAAgO/8EfMoNuhJrkPXn8Pcmq72jh1ZSG9wTpvKb+SeNsOQfh2/wFEOG3PTohsXeU7MmxxjMEiHhzOpx74qmIxpA6tN2QhEAAAAAICHAG9wpsIjTsBUeqwF2/5UB4Eq0ngASSltvrhoF81G6HT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IjoAwAAAAAAAHjgAQAAAAAAAA==')
+    transaction = base64.b64decode('AAAAAAAFAQCZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUoMAAAAAAAAAIGoJQKOO20OiScH4YPmyBaNQ2gjTfUS2/QJF0bEoTMtnAAgA+QKVAAAAAAEAHuxsMu82RnMx+3sIi0rLHORvc2NUMI4D/2zpE6QnNOKGAAAAAAAAACDH68bEQws89+WNdatT3bkYAnTe9jsatWGfvbcJbNvXEgEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEAIIZMZRlYCUcyoSJxNM98q3WH8Fo5k5iARVJVP7wB26TnAwIBAAABAQEAAwMAAAAAAQECAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwtpb3RhX3N5c3RlbRFyZXF1ZXN0X2FkZF9zdGFrZQADAQMAAwAAAAABBAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtgKKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ94MAAAAAAAAAIKK2bJtl2Wg+ur2tKOIwG905hUuDwLV/oNOD3vwgKZ7jSJ+4yIiWcDqx+6lTizkqtlsXVnQTEkHahWZd0bYk8w+GAAAAAAAAACCt+xtplK7ksex/iYwdWzBRKTFoSWYFzm1Xtw9czIm63Q9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W26AMAAAAAAABAQg8AAAAAAAA=')
 
-    object_list = [ base64.b64decode('AAEB0nZCEQAAAAAoHBK+VCk4TQDu72EkLzrrq+rDASVJ3W+IjcEIfE0A2oCAlpgAAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAdWxm/zBGpPolm35Bn6wJKCXKBWKegYpW9ZT1L4YEUXWATDwAAAAAA')
-      , base64.b64decode('AAEB03ZCEQAAAAAoH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOoALTEBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCB0/j3Uc6ljNbb1tbWgvj5PAz7MCgIO6e91iU9asLM9x2ATDwAAAAAA')
-      , base64.b64decode('AAEB1HZCEQAAAAAoqT9sRk+PuLmPs9AhEpAgYMj4XqTXHPx3d9/b115oq22Aw8kBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAfVAIamErRVJt4BuqoZFY2dBaAKAaQzrxvVjuLcgrqZmATDwAAAAAA')
-      , base64.b64decode('AAEB1XZCEQAAAAAo6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2tAnHECAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAuq6BxxXPwIbLsDoXWJN6/Emi0EtUzGJnln5pJL4iDYWATDwAAAAAA')
-       ]
+    object_list = [
+        base64.b64decode('AAGDAAAAAAAAACiZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUgDKmjsAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
@@ -327,66 +408,62 @@ def test_sign_stake_split_merge_coin(backend, scenario_navigator, firmware, navi
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-# built_tx AAAFAQAcEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQABAAAgNfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQkCBQACAQAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADCnN1aV9zeXN0ZW0acmVxdWVzdF9hZGRfc3Rha2VfbXVsX2NvaW4ABAECAAIAAAEDAAEEAB0/JkMwV2AiblGMm1qWFlODgI3Zd5cfc96pcVQ7C+SIAuv/FrTSCBqwbR1SUcmIIIZB5cUBx/qL3OnIt7CQi6dr1XZCEQAAAAAgO/8EfMoNuhJrkPXn8Pcmq72jh1ZSG9wTpvKb+SeNsOQfh2/wFEOG3PTohsXeU7MmxxjMEiHhzOpx74qmIxpA6tN2QhEAAAAAICHAG9wpsIjTsBUeqwF2/5UB4Eq0ngASSltvrhoF81G6HT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IjoAwAAAAAAAHjgAQAAAAAAAA==
-# Transaction Commands: {
+    
+# test_sign_stake_mul_coin
+# ------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x1d3f2643305760226e518c9b5a96165383808dd977971f73dea971543b0be488",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "123000",
-#     "price": "1000",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xebff16b4d2081ab06d1d5251c988208641e5c501c7fa8bdce9c8b7b0908ba76b",
-#         "version": "289568469",
-#         "digest": "53CbPjHczNtV9Kids6JdGt9bkPbSeJ34dc9TX2W2g6tT"
-#       },
-#       {
-#         "objectId": "0x1f876ff0144386dcf4e886c5de53b326c718cc1221e1ccea71ef8aa6231a40ea",
-#         "version": "289568467",
-#         "digest": "3GkMekAY5KQqiop61rRCnQjK57ztStksBSuZsUPf62JM"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0x1c12be5429384d00eeef61242f3aebabeac3012549dd6f888dc1087c4d00da80",
-#           "version": "289568466",
-#           "digest": "G9KngE3q7fpBfZtrmoEFdjZC4Ebb4TR7mZ1NYpf2xqaJ"
-#         }
-#       }
+#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xa93f6c464f8fb8b98fb3d02112902060c8f85ea4d71cfc7777dfdbd75e68ab6d",
-#           "version": "289568468",
-#           "digest": "Cbin2kMMWzjtPER7GZ7ne81Dhpk2tS31MwinvTwjMEZi"
-#         }
-#       }
+#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "SharedObject": {
 #           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": 1,
+#           "initialSharedVersion": "1",
 #           "mutable": true
-#         }
-#       }
+#         },
+#         "$kind": "SharedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
 #         "bytes": "AA=="
-#       }
+#       },
+#       "$kind": "Pure"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "NfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQk="
-#       }
+#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
@@ -395,13 +472,16 @@ def test_sign_stake_split_merge_coin(backend, scenario_navigator, firmware, navi
 #         "type": null,
 #         "elements": [
 #           {
-#             "Input": 0
+#             "Input": 0,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Input": 1
+#             "Input": 1,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MakeMoveVec"
 #     },
 #     {
 #       "MoveCall": {
@@ -411,36 +491,60 @@ def test_sign_stake_split_merge_coin(backend, scenario_navigator, firmware, navi
 #         "typeArguments": [],
 #         "arguments": [
 #           {
-#             "Input": 2
+#             "Input": 2,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Result": 0
+#             "Result": 0,
+#             "$kind": "Result"
 #           },
 #           {
-#             "Input": 3
+#             "Input": 3,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Input": 4
+#             "Input": 4,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MoveCall"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#         "version": "131",
+#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#       },
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       }
+#     ]
+#   }
 # }
+
 def test_sign_stake_mul_coin(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAAFAQAcEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQABAAAgNfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQkCBQACAQAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADCnN1aV9zeXN0ZW0acmVxdWVzdF9hZGRfc3Rha2VfbXVsX2NvaW4ABAECAAIAAAEDAAEEAB0/JkMwV2AiblGMm1qWFlODgI3Zd5cfc96pcVQ7C+SIAuv/FrTSCBqwbR1SUcmIIIZB5cUBx/qL3OnIt7CQi6dr1XZCEQAAAAAgO/8EfMoNuhJrkPXn8Pcmq72jh1ZSG9wTpvKb+SeNsOQfh2/wFEOG3PTohsXeU7MmxxjMEiHhzOpx74qmIxpA6tN2QhEAAAAAICHAG9wpsIjTsBUeqwF2/5UB4Eq0ngASSltvrhoF81G6HT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IjoAwAAAAAAAHjgAQAAAAAAAA==')
+    transaction = base64.b64decode('AAAAAAAFAQCZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUoMAAAAAAAAAIGoJQKOO20OiScH4YPmyBaNQ2gjTfUS2/QJF0bEoTMtnAQAe7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04oYAAAAAAAAAIMfrxsRDCzz35Y11q1PduRgCdN72Oxq1YZ+9twls29cSAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQABAAAghkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOcCBQACAQAAAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADC2lvdGFfc3lzdGVtGnJlcXVlc3RfYWRkX3N0YWtlX211bF9jb2luAAQBAgACAAABAwABBAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtgKKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ94MAAAAAAAAAIKK2bJtl2Wg+ur2tKOIwG905hUuDwLV/oNOD3vwgKZ7jSJ+4yIiWcDqx+6lTizkqtlsXVnQTEkHahWZd0bYk8w+GAAAAAAAAACCt+xtplK7ksex/iYwdWzBRKTFoSWYFzm1Xtw9czIm63Q9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W26AMAAAAAAABAQg8AAAAAAAA=')
 
-    object_list = [ base64.b64decode('AAEB0nZCEQAAAAAoHBK+VCk4TQDu72EkLzrrq+rDASVJ3W+IjcEIfE0A2oCAlpgAAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAdWxm/zBGpPolm35Bn6wJKCXKBWKegYpW9ZT1L4YEUXWATDwAAAAAA')
-      , base64.b64decode('AAEB03ZCEQAAAAAoH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOoALTEBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCB0/j3Uc6ljNbb1tbWgvj5PAz7MCgIO6e91iU9asLM9x2ATDwAAAAAA')
-      , base64.b64decode('AAEB1HZCEQAAAAAoqT9sRk+PuLmPs9AhEpAgYMj4XqTXHPx3d9/b115oq22Aw8kBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAfVAIamErRVJt4BuqoZFY2dBaAKAaQzrxvVjuLcgrqZmATDwAAAAAA')
-      , base64.b64decode('AAEB1XZCEQAAAAAo6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2tAnHECAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAuq6BxxXPwIbLsDoXWJN6/Emi0EtUzGJnln5pJL4iDYWATDwAAAAAA')
-       ]
+    object_list = [
+        base64.b64decode('AAGDAAAAAAAAACiZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUgDKmjsAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
@@ -469,67 +573,62 @@ def test_sign_stake_mul_coin(backend, scenario_navigator, firmware, navigator):
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-
-# built_tx AAAFAQAcEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQAJAWCNrQUAAAAAACA19fFU8BF0ZOM3nEXH88trLU7+3zAKyt/4p+jp46FRCQIFAAIBAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMKc3VpX3N5c3RlbRpyZXF1ZXN0X2FkZF9zdGFrZV9tdWxfY29pbgAEAQIAAgAAAQMAAQQAHT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IgC6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2vVdkIRAAAAACA7/wR8yg26EmuQ9efw9yarvaOHVlIb3BOm8pv5J42w5B+Hb/AUQ4bc9OiGxd5TsybHGMwSIeHM6nHviqYjGkDq03ZCEQAAAAAgIcAb3CmwiNOwFR6rAXb/lQHgSrSeABJKW2+uGgXzUbodPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiOgDAAAAAAAAeOABAAAAAAAA
-# Transaction Commands: {
+    
+# test_sign_stake_mul_coin_with_amount
+# ------------------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x1d3f2643305760226e518c9b5a96165383808dd977971f73dea971543b0be488",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "123000",
-#     "price": "1000",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xebff16b4d2081ab06d1d5251c988208641e5c501c7fa8bdce9c8b7b0908ba76b",
-#         "version": "289568469",
-#         "digest": "53CbPjHczNtV9Kids6JdGt9bkPbSeJ34dc9TX2W2g6tT"
-#       },
-#       {
-#         "objectId": "0x1f876ff0144386dcf4e886c5de53b326c718cc1221e1ccea71ef8aa6231a40ea",
-#         "version": "289568467",
-#         "digest": "3GkMekAY5KQqiop61rRCnQjK57ztStksBSuZsUPf62JM"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0x1c12be5429384d00eeef61242f3aebabeac3012549dd6f888dc1087c4d00da80",
-#           "version": "289568466",
-#           "digest": "G9KngE3q7fpBfZtrmoEFdjZC4Ebb4TR7mZ1NYpf2xqaJ"
-#         }
-#       }
+#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xa93f6c464f8fb8b98fb3d02112902060c8f85ea4d71cfc7777dfdbd75e68ab6d",
-#           "version": "289568468",
-#           "digest": "Cbin2kMMWzjtPER7GZ7ne81Dhpk2tS31MwinvTwjMEZi"
-#         }
-#       }
+#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "SharedObject": {
 #           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": 1,
+#           "initialSharedVersion": "1",
 #           "mutable": true
-#         }
-#       }
+#         },
+#         "$kind": "SharedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "AWCNrQUAAAAA"
-#       }
+#         "bytes": "AQCdlmsBAAAA"
+#       },
+#       "$kind": "Pure"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "NfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQk="
-#       }
+#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
@@ -538,13 +637,16 @@ def test_sign_stake_mul_coin(backend, scenario_navigator, firmware, navigator):
 #         "type": null,
 #         "elements": [
 #           {
-#             "Input": 0
+#             "Input": 0,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Input": 1
+#             "Input": 1,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MakeMoveVec"
 #     },
 #     {
 #       "MoveCall": {
@@ -554,36 +656,60 @@ def test_sign_stake_mul_coin(backend, scenario_navigator, firmware, navigator):
 #         "typeArguments": [],
 #         "arguments": [
 #           {
-#             "Input": 2
+#             "Input": 2,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Result": 0
+#             "Result": 0,
+#             "$kind": "Result"
 #           },
 #           {
-#             "Input": 3
+#             "Input": 3,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Input": 4
+#             "Input": 4,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MoveCall"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#         "version": "131",
+#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#       },
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       }
+#     ]
+#   }
 # }
+
 def test_sign_stake_mul_coin_with_amount(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAAFAQAcEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQAJAWCNrQUAAAAAACA19fFU8BF0ZOM3nEXH88trLU7+3zAKyt/4p+jp46FRCQIFAAIBAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMKc3VpX3N5c3RlbRpyZXF1ZXN0X2FkZF9zdGFrZV9tdWxfY29pbgAEAQIAAgAAAQMAAQQAHT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IgC6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2vVdkIRAAAAACA7/wR8yg26EmuQ9efw9yarvaOHVlIb3BOm8pv5J42w5B+Hb/AUQ4bc9OiGxd5TsybHGMwSIeHM6nHviqYjGkDq03ZCEQAAAAAgIcAb3CmwiNOwFR6rAXb/lQHgSrSeABJKW2+uGgXzUbodPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiOgDAAAAAAAAeOABAAAAAAAA')
+    transaction = base64.b64decode('AAAAAAAFAQCZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUoMAAAAAAAAAIGoJQKOO20OiScH4YPmyBaNQ2gjTfUS2/QJF0bEoTMtnAQAe7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04oYAAAAAAAAAIMfrxsRDCzz35Y11q1PduRgCdN72Oxq1YZ+9twls29cSAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQAJAQCdlmsBAAAAACCGTGUZWAlHMqEicTTPfKt1h/BaOZOYgEVSVT+8Aduk5wIFAAIBAAABAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMLaW90YV9zeXN0ZW0acmVxdWVzdF9hZGRfc3Rha2VfbXVsX2NvaW4ABAECAAIAAAEDAAEEAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2Aoq0L4QAinQ2h0Xsz4mJp7GXQHN8swDZ+qAruYS+JhD3gwAAAAAAAAAgorZsm2XZaD66va0o4jAb3TmFS4PAtX+g04Pe/CApnuNIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzD4YAAAAAAAAAIK37G2mUruSx7H+JjB1bMFEpMWhJZgXObVe3D1zMibrdD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bboAwAAAAAAAEBCDwAAAAAAAA==')
 
-    object_list = [ base64.b64decode('AAEB0nZCEQAAAAAoHBK+VCk4TQDu72EkLzrrq+rDASVJ3W+IjcEIfE0A2oCAlpgAAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAdWxm/zBGpPolm35Bn6wJKCXKBWKegYpW9ZT1L4YEUXWATDwAAAAAA')
-      , base64.b64decode('AAEB03ZCEQAAAAAoH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOoALTEBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCB0/j3Uc6ljNbb1tbWgvj5PAz7MCgIO6e91iU9asLM9x2ATDwAAAAAA')
-      , base64.b64decode('AAEB1HZCEQAAAAAoqT9sRk+PuLmPs9AhEpAgYMj4XqTXHPx3d9/b115oq22Aw8kBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAfVAIamErRVJt4BuqoZFY2dBaAKAaQzrxvVjuLcgrqZmATDwAAAAAA')
-      , base64.b64decode('AAEB1XZCEQAAAAAo6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2tAnHECAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAuq6BxxXPwIbLsDoXWJN6/Emi0EtUzGJnln5pJL4iDYWATDwAAAAAA')
-       ]
+    object_list = [
+        base64.b64decode('AAGDAAAAAAAAACiZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUgDKmjsAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
@@ -612,62 +738,51 @@ def test_sign_stake_mul_coin_with_amount(backend, scenario_navigator, firmware, 
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-# built_tx AAAEAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQABAAAgNfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQkCBQACAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwpzdWlfc3lzdGVtGnJlcXVlc3RfYWRkX3N0YWtlX211bF9jb2luAAQBAQACAAABAgABAwAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiAPr/xa00ggasG0dUlHJiCCGQeXFAcf6i9zpyLewkIuna9V2QhEAAAAAIDv/BHzKDboSa5D15/D3Jqu9o4dWUhvcE6bym/knjbDkH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOrTdkIRAAAAACAhwBvcKbCI07AVHqsBdv+VAeBKtJ4AEkpbb64aBfNRuhwSvlQpOE0A7u9hJC8666vqwwElSd1viI3BCHxNANqA0nZCEQAAAAAg4QExiF47MOfLRWHVOXDVXL9pTAmextLHibLy3JLKf/MdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiOgDAAAAAAAAeOABAAAAAAAA
-# Transaction Commands: {
+    
+# test_sign_stake_mul_coin_gas
+# ----------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x1d3f2643305760226e518c9b5a96165383808dd977971f73dea971543b0be488",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "123000",
-#     "price": "1000",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xebff16b4d2081ab06d1d5251c988208641e5c501c7fa8bdce9c8b7b0908ba76b",
-#         "version": "289568469",
-#         "digest": "53CbPjHczNtV9Kids6JdGt9bkPbSeJ34dc9TX2W2g6tT"
-#       },
-#       {
-#         "objectId": "0x1f876ff0144386dcf4e886c5de53b326c718cc1221e1ccea71ef8aa6231a40ea",
-#         "version": "289568467",
-#         "digest": "3GkMekAY5KQqiop61rRCnQjK57ztStksBSuZsUPf62JM"
-#       },
-#       {
-#         "objectId": "0x1c12be5429384d00eeef61242f3aebabeac3012549dd6f888dc1087c4d00da80",
-#         "version": "289568466",
-#         "digest": "G9KngE3q7fpBfZtrmoEFdjZC4Ebb4TR7mZ1NYpf2xqaJ"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xa93f6c464f8fb8b98fb3d02112902060c8f85ea4d71cfc7777dfdbd75e68ab6d",
-#           "version": "289568468",
-#           "digest": "Cbin2kMMWzjtPER7GZ7ne81Dhpk2tS31MwinvTwjMEZi"
-#         }
-#       }
+#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "SharedObject": {
 #           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": 1,
+#           "initialSharedVersion": "1",
 #           "mutable": true
-#         }
-#       }
+#         },
+#         "$kind": "SharedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
 #         "bytes": "AA=="
-#       }
+#       },
+#       "$kind": "Pure"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "NfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQk="
-#       }
+#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
@@ -676,13 +791,16 @@ def test_sign_stake_mul_coin_with_amount(backend, scenario_navigator, firmware, 
 #         "type": null,
 #         "elements": [
 #           {
-#             "GasCoin": true
+#             "GasCoin": true,
+#             "$kind": "GasCoin"
 #           },
 #           {
-#             "Input": 0
+#             "Input": 0,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MakeMoveVec"
 #     },
 #     {
 #       "MoveCall": {
@@ -692,36 +810,65 @@ def test_sign_stake_mul_coin_with_amount(backend, scenario_navigator, firmware, 
 #         "typeArguments": [],
 #         "arguments": [
 #           {
-#             "Input": 1
+#             "Input": 1,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Result": 0
+#             "Result": 0,
+#             "$kind": "Result"
 #           },
 #           {
-#             "Input": 2
+#             "Input": 2,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Input": 3
+#             "Input": 3,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MoveCall"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#         "version": "131",
+#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#       },
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       },
+#       {
+#         "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#         "version": "131",
+#         "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#       }
+#     ]
+#   }
 # }
+
 def test_sign_stake_mul_coin_gas(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAAEAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQABAAAgNfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQkCBQACAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwpzdWlfc3lzdGVtGnJlcXVlc3RfYWRkX3N0YWtlX211bF9jb2luAAQBAQACAAABAgABAwAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiAPr/xa00ggasG0dUlHJiCCGQeXFAcf6i9zpyLewkIuna9V2QhEAAAAAIDv/BHzKDboSa5D15/D3Jqu9o4dWUhvcE6bym/knjbDkH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOrTdkIRAAAAACAhwBvcKbCI07AVHqsBdv+VAeBKtJ4AEkpbb64aBfNRuhwSvlQpOE0A7u9hJC8666vqwwElSd1viI3BCHxNANqA0nZCEQAAAAAg4QExiF47MOfLRWHVOXDVXL9pTAmextLHibLy3JLKf/MdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiOgDAAAAAAAAeOABAAAAAAAA')
+    transaction = base64.b64decode('AAAAAAAEAQAe7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04oYAAAAAAAAAIMfrxsRDCzz35Y11q1PduRgCdN72Oxq1YZ+9twls29cSAQEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQEAAAAAAAAAAQABAAAghkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOcCBQACAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwtpb3RhX3N5c3RlbRpyZXF1ZXN0X2FkZF9zdGFrZV9tdWxfY29pbgAEAQEAAgAAAQIAAQMAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYDirQvhACKdDaHRezPiYmnsZdAc3yzANn6oCu5hL4mEPeDAAAAAAAAACCitmybZdloPrq9rSjiMBvdOYVLg8C1f6DTg978ICme40ifuMiIlnA6sfupU4s5KrZbF1Z0ExJB2oVmXdG2JPMPhgAAAAAAAAAgrfsbaZSu5LHsf4mMHVswUSkxaElmBc5tV7cPXMyJut2Z6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUoMAAAAAAAAAIGoJQKOO20OiScH4YPmyBaNQ2gjTfUS2/QJF0bEoTMtnD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bboAwAAAAAAAEBCDwAAAAAAAA==')
 
-    object_list = [ base64.b64decode('AAEB0nZCEQAAAAAoHBK+VCk4TQDu72EkLzrrq+rDASVJ3W+IjcEIfE0A2oCAlpgAAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAdWxm/zBGpPolm35Bn6wJKCXKBWKegYpW9ZT1L4YEUXWATDwAAAAAA')
-      , base64.b64decode('AAEB03ZCEQAAAAAoH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOoALTEBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCB0/j3Uc6ljNbb1tbWgvj5PAz7MCgIO6e91iU9asLM9x2ATDwAAAAAA')
-      , base64.b64decode('AAEB1HZCEQAAAAAoqT9sRk+PuLmPs9AhEpAgYMj4XqTXHPx3d9/b115oq22Aw8kBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAfVAIamErRVJt4BuqoZFY2dBaAKAaQzrxvVjuLcgrqZmATDwAAAAAA')
-      , base64.b64decode('AAEB1XZCEQAAAAAo6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2tAnHECAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAuq6BxxXPwIbLsDoXWJN6/Emi0EtUzGJnln5pJL4iDYWATDwAAAAAA')
-       ]
+    object_list = [
+        base64.b64decode('AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGDAAAAAAAAACiZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUgDKmjsAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
@@ -750,81 +897,74 @@ def test_sign_stake_mul_coin_gas(backend, scenario_navigator, firmware, navigato
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-# built_tx AAAFAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AAiAWE8AAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEAAQAAIDX18VTwEXRk4zecRcfzy2stTv7fMArK3/in6OnjoVEJAwIBAAABAQEABQACAwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMKc3VpX3N5c3RlbRpyZXF1ZXN0X2FkZF9zdGFrZV9tdWxfY29pbgAEAQIAAgEAAQMAAQQAHT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IgD6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2vVdkIRAAAAACA7/wR8yg26EmuQ9efw9yarvaOHVlIb3BOm8pv5J42w5B+Hb/AUQ4bc9OiGxd5TsybHGMwSIeHM6nHviqYjGkDq03ZCEQAAAAAgIcAb3CmwiNOwFR6rAXb/lQHgSrSeABJKW2+uGgXzUbocEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zHT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IjoAwAAAAAAAHjgAQAAAAAAAA==
-# Transaction Commands: {
+    
+# test_sign_stake_mul_coin_gas_with_amount
+# ----------------------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x1d3f2643305760226e518c9b5a96165383808dd977971f73dea971543b0be488",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "123000",
-#     "price": "1000",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xebff16b4d2081ab06d1d5251c988208641e5c501c7fa8bdce9c8b7b0908ba76b",
-#         "version": "289568469",
-#         "digest": "53CbPjHczNtV9Kids6JdGt9bkPbSeJ34dc9TX2W2g6tT"
-#       },
-#       {
-#         "objectId": "0x1f876ff0144386dcf4e886c5de53b326c718cc1221e1ccea71ef8aa6231a40ea",
-#         "version": "289568467",
-#         "digest": "3GkMekAY5KQqiop61rRCnQjK57ztStksBSuZsUPf62JM"
-#       },
-#       {
-#         "objectId": "0x1c12be5429384d00eeef61242f3aebabeac3012549dd6f888dc1087c4d00da80",
-#         "version": "289568466",
-#         "digest": "G9KngE3q7fpBfZtrmoEFdjZC4Ebb4TR7mZ1NYpf2xqaJ"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xa93f6c464f8fb8b98fb3d02112902060c8f85ea4d71cfc7777dfdbd75e68ab6d",
-#           "version": "289568468",
-#           "digest": "Cbin2kMMWzjtPER7GZ7ne81Dhpk2tS31MwinvTwjMEZi"
-#         }
-#       }
+#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "gFhPAAAAAAA="
-#       }
+#         "bytes": "AC9oWQAAAAA="
+#       },
+#       "$kind": "Pure"
 #     },
 #     {
 #       "Object": {
 #         "SharedObject": {
 #           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": 1,
+#           "initialSharedVersion": "1",
 #           "mutable": true
-#         }
-#       }
+#         },
+#         "$kind": "SharedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "AA=="
-#       }
+#         "bytes": "AQCUNXcAAAAA"
+#       },
+#       "$kind": "Pure"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "NfXxVPARdGTjN5xFx/PLay1O/t8wCsrf+Kfo6eOhUQk="
-#       }
+#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
 #     {
 #       "SplitCoins": {
 #         "coin": {
-#           "Input": 0
+#           "Input": 0,
+#           "$kind": "Input"
 #         },
 #         "amounts": [
 #           {
-#             "Input": 1
+#             "Input": 1,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "SplitCoins"
 #     },
 #     {
 #       "MakeMoveVec": {
@@ -834,13 +974,16 @@ def test_sign_stake_mul_coin_gas(backend, scenario_navigator, firmware, navigato
 #             "NestedResult": [
 #               0,
 #               0
-#             ]
+#             ],
+#             "$kind": "NestedResult"
 #           },
 #           {
-#             "Input": 0
+#             "Input": 0,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MakeMoveVec"
 #     },
 #     {
 #       "MoveCall": {
@@ -850,36 +993,65 @@ def test_sign_stake_mul_coin_gas(backend, scenario_navigator, firmware, navigato
 #         "typeArguments": [],
 #         "arguments": [
 #           {
-#             "Input": 2
+#             "Input": 2,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Result": 1
+#             "Result": 1,
+#             "$kind": "Result"
 #           },
 #           {
-#             "Input": 3
+#             "Input": 3,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Input": 4
+#             "Input": 4,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "MoveCall"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#         "version": "131",
+#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#       },
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       },
+#       {
+#         "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#         "version": "131",
+#         "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#       }
+#     ]
+#   }
 # }
+
 def test_sign_stake_mul_coin_gas_with_amount(backend, scenario_navigator, firmware, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAAFAQCpP2xGT4+4uY+z0CESkCBgyPhepNcc/Hd339vXXmirbdR2QhEAAAAAIKxVilfj/jgKnYFZ7xpWQAJRbmvG2wSuNQ8nqczFoK+9AAiAWE8AAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEAAQAAIDX18VTwEXRk4zecRcfzy2stTv7fMArK3/in6OnjoVEJAwIBAAABAQEABQACAwAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMKc3VpX3N5c3RlbRpyZXF1ZXN0X2FkZF9zdGFrZV9tdWxfY29pbgAEAQIAAgEAAQMAAQQAHT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IgD6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2vVdkIRAAAAACA7/wR8yg26EmuQ9efw9yarvaOHVlIb3BOm8pv5J42w5B+Hb/AUQ4bc9OiGxd5TsybHGMwSIeHM6nHviqYjGkDq03ZCEQAAAAAgIcAb3CmwiNOwFR6rAXb/lQHgSrSeABJKW2+uGgXzUbocEr5UKThNAO7vYSQvOuur6sMBJUndb4iNwQh8TQDagNJ2QhEAAAAAIOEBMYheOzDny0Vh1Tlw1Vy/aUwJnsbSx4my8tySyn/zHT8mQzBXYCJuUYybWpYWU4OAjdl3lx9z3qlxVDsL5IjoAwAAAAAAAHjgAQAAAAAAAA==')
+    transaction = base64.b64decode('AAAAAAAFAQAe7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04oYAAAAAAAAAIMfrxsRDCzz35Y11q1PduRgCdN72Oxq1YZ+9twls29cSAAgAL2hZAAAAAAEBAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUBAAAAAAAAAAEACQEAlDV3AAAAAAAghkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOcDAgEAAAEBAQAFAAIDAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwtpb3RhX3N5c3RlbRpyZXF1ZXN0X2FkZF9zdGFrZV9tdWxfY29pbgAEAQIAAgEAAQMAAQQAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYDirQvhACKdDaHRezPiYmnsZdAc3yzANn6oCu5hL4mEPeDAAAAAAAAACCitmybZdloPrq9rSjiMBvdOYVLg8C1f6DTg978ICme40ifuMiIlnA6sfupU4s5KrZbF1Z0ExJB2oVmXdG2JPMPhgAAAAAAAAAgrfsbaZSu5LHsf4mMHVswUSkxaElmBc5tV7cPXMyJut2Z6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUoMAAAAAAAAAIGoJQKOO20OiScH4YPmyBaNQ2gjTfUS2/QJF0bEoTMtnD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bboAwAAAAAAAEBCDwAAAAAAAA==')
 
-    object_list = [ base64.b64decode('AAEB0nZCEQAAAAAoHBK+VCk4TQDu72EkLzrrq+rDASVJ3W+IjcEIfE0A2oCAlpgAAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAdWxm/zBGpPolm35Bn6wJKCXKBWKegYpW9ZT1L4YEUXWATDwAAAAAA')
-      , base64.b64decode('AAEB03ZCEQAAAAAoH4dv8BRDhtz06IbF3lOzJscYzBIh4czqce+KpiMaQOoALTEBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCB0/j3Uc6ljNbb1tbWgvj5PAz7MCgIO6e91iU9asLM9x2ATDwAAAAAA')
-      , base64.b64decode('AAEB1HZCEQAAAAAoqT9sRk+PuLmPs9AhEpAgYMj4XqTXHPx3d9/b115oq22Aw8kBAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAfVAIamErRVJt4BuqoZFY2dBaAKAaQzrxvVjuLcgrqZmATDwAAAAAA')
-      , base64.b64decode('AAEB1XZCEQAAAAAo6/8WtNIIGrBtHVJRyYgghkHlxQHH+ovc6ci3sJCLp2tAnHECAAAAAAAdPyZDMFdgIm5RjJtalhZTg4CN2XeXH3PeqXFUOwvkiCAuq6BxxXPwIbLsDoXWJN6/Emi0EtUzGJnln5pJL4iDYWATDwAAAAAA')
-       ]
+    object_list = [
+        base64.b64decode('AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGDAAAAAAAAACiZ6w0ahgTJisuyYISBz2R9G2nWZ5bVJhPC0TS07vBJUgDKmjsAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
@@ -908,3 +1080,4 @@ def test_sign_stake_mul_coin_gas_with_amount(backend, scenario_navigator, firmwa
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+    
