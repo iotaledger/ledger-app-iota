@@ -1,5 +1,25 @@
 # Change Log
 
+## 1.2.1
+* Fix for heap memory exception when signing transactions with many inputs
+
+## 1.2.0
+* Update hardcoded known coins
+
+## 1.1.0
+* Add swap token support
+
+## 1.0.0
+* Add token support
+* Add stacking support
+
+## 0.2.7
+* Fix bug in swap `check_address` fn
+
+## 0.2.6
+* Change address size (64 => 66) in swap params
+* Fix BE dpath endianness in swap params
+
 ## 0.2.5
 * Fix displaying of UI warning in swap mode 
 

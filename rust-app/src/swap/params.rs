@@ -1,16 +1,38 @@
-use arrayvec::ArrayVec;
+use arrayvec::{ArrayString, ArrayVec};
 use core::convert::{TryFrom, TryInto};
-use core::ffi::CStr;
 use core::mem;
-use ledger_device_sdk::libcall;
+use core::str;
 
 use crate::parser::common::IotaAddressRaw;
 use crate::swap::Error;
 
 // Max IOTA address str length is 32*2
 const IOTA_ADDRESS_STR_LENGTH: usize = 64;
+const IOTA_ADDRESS_PREFIX_STR_LENGTH: usize = 2;
+const IOTA_PREFIXED_ADDRESS_STR_LENGTH: usize =
+    IOTA_ADDRESS_STR_LENGTH + IOTA_ADDRESS_PREFIX_STR_LENGTH;
 const MAX_BIP32_PATH_LENGTH: usize = 5;
 const BIP32_PATH_SEGMENT_LEN: usize = mem::size_of::<u32>();
+
+// Should be enough for any coin ticker
+pub const MAX_SWAP_TICKER_LENGTH: usize = 15;
+// ticker length + ticker + decimals
+const COIN_CONFIG_BUF_SIZE: usize = 1 + MAX_SWAP_TICKER_LENGTH + 1;
+
+mod custom {
+    use super::COIN_CONFIG_BUF_SIZE;
+    use super::IOTA_PREFIXED_ADDRESS_STR_LENGTH;
+    use ledger_device_sdk::libcall;
+
+    pub type CheckAddressParams =
+        libcall::swap::CheckAddressParams<COIN_CONFIG_BUF_SIZE, IOTA_PREFIXED_ADDRESS_STR_LENGTH>;
+
+    pub type PrintableAmountParams =
+        libcall::swap::PrintableAmountParams<COIN_CONFIG_BUF_SIZE, IOTA_PREFIXED_ADDRESS_STR_LENGTH>;
+
+    pub type CreateTxParams =
+        libcall::swap::CreateTxParams<COIN_CONFIG_BUF_SIZE, IOTA_PREFIXED_ADDRESS_STR_LENGTH>;
+}
 
 #[derive(Debug)]
 pub struct CheckAddressParams {
@@ -18,10 +40,10 @@ pub struct CheckAddressParams {
     pub ref_address: IotaAddressRaw,
 }
 
-impl TryFrom<&libcall::swap::CheckAddressParams> for CheckAddressParams {
+impl TryFrom<&custom::CheckAddressParams> for CheckAddressParams {
     type Error = Error;
 
-    fn try_from(params: &libcall::swap::CheckAddressParams) -> Result<Self, Self::Error> {
+    fn try_from(params: &custom::CheckAddressParams) -> Result<Self, Self::Error> {
         let mut dpath = ArrayVec::from([0u32; MAX_BIP32_PATH_LENGTH]);
         let dpath_len = unpack_path(
             &params.dpath[..params.dpath_len * BIP32_PATH_SEGMENT_LEN],
@@ -36,21 +58,66 @@ impl TryFrom<&libcall::swap::CheckAddressParams> for CheckAddressParams {
 }
 
 #[derive(Debug)]
+pub struct CoinConfig {
+    pub ticker: ArrayString<MAX_SWAP_TICKER_LENGTH>,
+    pub decimals: u8,
+}
+
+impl CoinConfig {
+    pub fn try_from_bytes(buf: &[u8]) -> Result<Option<Self>, Error> {
+        if buf.is_empty() {
+            return Ok(None);
+        }
+
+        // Decoding ticker
+        let ticker_len = buf[0] as usize;
+        let buf = &buf[1..];
+
+        if ticker_len > MAX_SWAP_TICKER_LENGTH || ticker_len > buf.len() {
+            return Err(Error::BadCoinConfigTicker);
+        }
+
+        let ticker_bytes = &buf[..ticker_len];
+        let ticker_str = str::from_utf8(ticker_bytes).map_err(|_| Error::BadCoinConfigTicker)?;
+        let ticker = ArrayString::from(ticker_str).map_err(|_| Error::BadCoinConfigTicker)?;
+
+        // Decoding decimals
+        let buf = &buf[ticker_len..];
+        // Decimals is the last byte in the buffer without encoded length
+        if buf.len() != 1 {
+            return Err(Error::DecodeCoinConfig);
+        }
+        let decimals = buf[0];
+
+        Ok(Some(CoinConfig { ticker, decimals }))
+    }
+}
+
+#[derive(Debug)]
 pub struct PrintableAmountParams {
+    pub coin_config: Option<CoinConfig>,
+    pub is_fee: bool,
     pub amount: u64,
 }
 
-impl TryFrom<&libcall::swap::PrintableAmountParams> for PrintableAmountParams {
+impl TryFrom<&custom::PrintableAmountParams> for PrintableAmountParams {
     type Error = Error;
 
-    fn try_from(params: &libcall::swap::PrintableAmountParams) -> Result<Self, Self::Error> {
+    fn try_from(params: &custom::PrintableAmountParams) -> Result<Self, Self::Error> {
+        let coin_config =
+            CoinConfig::try_from_bytes(&params.coin_config[..params.coin_config_len])?;
         let amount = u64::from_be_bytes(
             params.amount[params.amount.len() - mem::size_of::<u64>()..]
                 .try_into()
                 .map_err(|_| Error::WrongAmountLength)?,
         );
+        let is_fee = params.is_fee;
 
-        Ok(PrintableAmountParams { amount })
+        Ok(PrintableAmountParams {
+            coin_config,
+            amount,
+            is_fee,
+        })
     }
 }
 
@@ -61,10 +128,10 @@ pub struct TxParams {
     pub destination_address: IotaAddressRaw,
 }
 
-impl TryFrom<&libcall::swap::CreateTxParams> for TxParams {
+impl TryFrom<&custom::CreateTxParams> for TxParams {
     type Error = Error;
 
-    fn try_from(params: &libcall::swap::CreateTxParams) -> Result<Self, Self::Error> {
+    fn try_from(params: &custom::CreateTxParams) -> Result<Self, Self::Error> {
         let amount = u64::from_be_bytes(
             params.amount[params.amount.len() - mem::size_of::<u64>()..]
                 .try_into()
@@ -93,8 +160,8 @@ fn unpack_path(buf: &[u8], out_path: &mut [u32]) -> Result<usize, Error> {
     }
 
     for i in (0..buf.len()).step_by(BIP32_PATH_SEGMENT_LEN) {
-        // For some reason IOTA coin app expects path in little endian byte order
-        let path_seg = u32::from_le_bytes([buf[i], buf[i + 1], buf[i + 2], buf[i + 3]]);
+        // For swap params, path segments are stored in big endian
+        let path_seg = u32::from_be_bytes([buf[i], buf[i + 1], buf[i + 2], buf[i + 3]]);
 
         out_path[i / BIP32_PATH_SEGMENT_LEN] = path_seg;
     }
@@ -102,19 +169,22 @@ fn unpack_path(buf: &[u8], out_path: &mut [u32]) -> Result<usize, Error> {
     Ok(buf.len() / BIP32_PATH_SEGMENT_LEN)
 }
 
+// For some reason heavy inlining + lto cause UB here, so we disable it
+#[inline(never)]
 fn address_from_hex_cstr(c_str: *const u8) -> Result<IotaAddressRaw, Error> {
-    let str = unsafe {
-        CStr::from_ptr(c_str as *const i8)
-            .to_str()
-            .map_err(|_| Error::BadAddressASCII)?
-    };
+    // Calculate C-string length in the buffer
+    let mut str_len = 0;
+    while unsafe { *c_str.add(str_len) } != b'\0' && str_len <= IOTA_PREFIXED_ADDRESS_STR_LENGTH {
+        str_len += 1;
+    }
+    let str = unsafe { core::slice::from_raw_parts(c_str, str_len) };
 
-    if str.len() < IOTA_ADDRESS_STR_LENGTH {
+    if str.len() < IOTA_PREFIXED_ADDRESS_STR_LENGTH {
         return Err(Error::BadAddressLength);
     }
 
-    // Trim zero terminator
-    let str = &str[..IOTA_ADDRESS_STR_LENGTH];
+    // Trim zero terminator and '0x' prefix
+    let str = &str[IOTA_ADDRESS_PREFIX_STR_LENGTH..IOTA_PREFIXED_ADDRESS_STR_LENGTH];
 
     let mut address = IotaAddressRaw::default();
     hex::decode_to_slice(str, &mut address).map_err(|_| Error::BadAddressHex)?;

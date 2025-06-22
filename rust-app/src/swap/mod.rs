@@ -1,4 +1,4 @@
-use core::{convert::TryInto, fmt::Write};
+use core::{convert::TryFrom, fmt::Write};
 
 use arrayvec::ArrayString;
 // #[allow(unused_imports)]
@@ -17,14 +17,14 @@ use ledger_device_sdk::libcall::{
 };
 use ledger_log::{error, trace};
 use panic_handler::{set_swap_panic_handler, swap_panic_handler};
-use params::{CheckAddressParams, PrintableAmountParams, TxParams};
+use params::{CheckAddressParams, PrintableAmountParams, TxParams, MAX_SWAP_TICKER_LENGTH};
 
-use crate::interface::IotaPubKeyAddress;
 #[cfg(not(any(target_os = "stax", target_os = "flex")))]
 use crate::main_nanos::app_main;
 #[cfg(any(target_os = "stax", target_os = "flex"))]
 use crate::main_stax::app_main;
-use crate::{ctx::RunCtx, parser::common::IOTA_COIN_DIVISOR, utils::get_amount_in_decimals};
+use crate::{ctx::RunCtx, parser::common::IOTA_COIN_DECIMALS, utils::get_amount_in_decimals};
+use crate::{implementation::is_bip_prefix_valid, interface::IotaPubKeyAddress};
 
 pub mod panic_handler;
 pub mod params;
@@ -38,6 +38,8 @@ pub enum Error {
     BadAddressASCII,
     BadAddressLength,
     BadAddressHex,
+    DecodeCoinConfig,
+    BadCoinConfigTicker,
 }
 
 impl From<CryptographyError> for Error {
@@ -50,6 +52,10 @@ pub fn check_address(params: &CheckAddressParams) -> Result<bool, Error> {
     let ref_addr = &params.ref_address;
     trace!("check_address: dpath: {:X?}", params.dpath);
     // trace!("check_address: ref: 0x{}", HexSlice(ref_addr));
+
+    if !is_bip_prefix_valid(&params.dpath) {
+        return Err(Error::DecodeDPathError);
+    }
 
     Ok(with_public_keys(
         &params.dpath,
@@ -66,12 +72,23 @@ pub fn check_address(params: &CheckAddressParams) -> Result<bool, Error> {
 // Outputs a string with the amount of IOTA.
 //
 // Max IOTA amount 10_000_000_000 IOTA.
-// So max string length is 11 (quotient) + 1 (dot) + 12 (remainder) + 4 (text) = 28
-pub fn get_printable_amount(params: &PrintableAmountParams) -> Result<ArrayString<28>, Error> {
-    let (quotient, remainder_str) = get_amount_in_decimals(params.amount, IOTA_COIN_DIVISOR);
+// So max string length is 15 (ticker) + 1 (blank) + 11 (quotient) + 1 (dot) + 12 (reminder) = 40
+pub fn get_printable_amount(params: &PrintableAmountParams) -> Result<ArrayString<40>, Error> {
+    let mut ticker = ArrayString::<MAX_SWAP_TICKER_LENGTH>::default();
+    let decimals;
 
-    let mut printable_amount = ArrayString::<28>::default();
-    write!(&mut printable_amount, "IOTA {}.{}", quotient, remainder_str)
+    if let (Some(coin_config), false) = (params.coin_config.as_ref(), params.is_fee) {
+        ticker.push_str(&coin_config.ticker);
+        decimals = coin_config.decimals;
+    } else {
+        ticker.push_str("IOTA");
+        decimals = IOTA_COIN_DECIMALS;
+    };
+
+    let (quotient, remainder_str) = get_amount_in_decimals(params.amount, decimals);
+
+    let mut printable_amount = ArrayString::default();
+    write!(&mut printable_amount, "{ticker} {quotient}.{remainder_str}")
         .expect("string always fits");
 
     trace!(
@@ -88,6 +105,8 @@ pub fn check_tx_params(expected: &TxParams, received: &TxParams) -> bool {
         && expected.destination_address == received.destination_address
 }
 
+// For some reason heavy inlining + lto cause UB here, so we disable it
+#[inline(never)]
 pub fn lib_main(arg0: u32) {
     let cmd = libcall::get_command(arg0);
 
@@ -95,12 +114,10 @@ pub fn lib_main(arg0: u32) {
         LibCallCommand::SwapCheckAddress => {
             let mut raw_params = get_check_address_params(arg0);
 
-            let result: Result<_, Error> = try {
-                let params: CheckAddressParams = (&raw_params).try_into()?;
-                trace!("{:X?}", &params);
-
-                check_address(&params)?
-            };
+            let result = CheckAddressParams::try_from(&raw_params).and_then(|params| {
+                trace!("{:X?}", params);
+                check_address(&params)
+            });
 
             let is_matched = result.unwrap_or_else(|_error| {
                 error!("Error happened during CHECK_ADDRESS libcall:  {:?}", _error);
@@ -115,12 +132,10 @@ pub fn lib_main(arg0: u32) {
         LibCallCommand::SwapGetPrintableAmount => {
             let mut raw_params = get_printable_amount_params(arg0);
 
-            let result: Result<_, Error> = try {
-                let params: PrintableAmountParams = (&raw_params).try_into()?;
-                trace!("{:X?}", &params);
-
-                get_printable_amount(&params)?
-            };
+            let result = PrintableAmountParams::try_from(&raw_params).and_then(|params| {
+                trace!("{:X?}", params);
+                get_printable_amount(&params)
+            });
 
             let amount_str = result
                 .as_ref()
@@ -142,9 +157,8 @@ pub fn lib_main(arg0: u32) {
         LibCallCommand::SwapSignTransaction => {
             let mut raw_params = sign_tx_params(arg0);
 
-            let result: Result<_, Error> = try {
-                let params = (&raw_params).try_into()?;
-                trace!("{:X?}", &params);
+            let result = TxParams::try_from(&raw_params).map(|params| {
+                trace!("{:X?}", params);
 
                 // SAFETY: at this point, the app is initialized,
                 // so we can safely set the panic handler
@@ -156,7 +170,7 @@ pub fn lib_main(arg0: u32) {
                 app_main(&ctx);
 
                 ctx.is_swap_sign_succeeded()
-            };
+            });
 
             let is_ok = result.unwrap_or_else(|_error| {
                 error!(

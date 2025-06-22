@@ -1,5 +1,5 @@
 use crate::interface::*;
-use crate::parser::common::{CoinType, IOTA_COIN_DIVISOR};
+use crate::parser::common::{CoinType, IOTA_COIN_DECIMALS};
 use crate::ui::common::*;
 use crate::utils::*;
 
@@ -60,7 +60,7 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DECIMALS);
                 &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
@@ -118,12 +118,12 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DECIMALS);
                 &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
 
-        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, IOTA_COIN_DIVISOR);
+        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, IOTA_COIN_DECIMALS);
         let amt = Field {
             name: "Stake amount",
             value: &format!("IOTA {}.{}", quotient, remainder_str.as_str()),
@@ -163,12 +163,12 @@ impl UserInterface {
             name: "Max Gas",
             value: {
                 let (quotient, remainder_str) =
-                    get_amount_in_decimals(gas_budget, IOTA_COIN_DIVISOR);
+                    get_amount_in_decimals(gas_budget, IOTA_COIN_DECIMALS);
                 &format!("IOTA {}.{}", quotient, remainder_str.as_str())
             },
         };
 
-        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, IOTA_COIN_DIVISOR);
+        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, IOTA_COIN_DECIMALS);
         let amt = Field {
             name: "Unstake amount",
             value: &format!("IOTA {}.{}", quotient, remainder_str.as_str()),

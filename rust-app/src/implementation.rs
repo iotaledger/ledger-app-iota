@@ -1,6 +1,6 @@
 use crate::ctx::RunCtx;
 use crate::interface::*;
-use crate::parser::common::{CoinType, HasObjectData, ObjectData, ObjectDigest, IOTA_COIN_ID};
+use crate::parser::common::{CoinType, HasObjectData, ObjectData, ObjectDigest};
 use crate::parser::object::{compute_object_hash, object_parser};
 use crate::parser::tx::{tx_parser, KnownTx};
 use crate::settings::*;
@@ -33,7 +33,7 @@ pub const BIP32_TESTNET_PREFIX: [u32; 5] =
 pub const BIP32_IOTA_PREFIX: [u32; 5] =
     ledger_device_sdk::ecc::make_bip32_path(b"m/44'/4218'/123'/0'/0'");
 
-fn is_bip_prefix_valid(path: &[u32]) -> bool {
+pub fn is_bip_prefix_valid(path: &[u32]) -> bool {
     path.starts_with(&BIP32_TESTNET_PREFIX[0..2]) || path.starts_with(&BIP32_IOTA_PREFIX[0..2])
 }
 
@@ -152,9 +152,6 @@ pub async fn sign_apdu(io: HostIO, ctx: &RunCtx, settings: Settings, ui: UserInt
             };
 
             if ctx.is_swap() {
-                if coin_type.0 != IOTA_COIN_ID {
-                    reject::<()>(SyscallError::NotSupported as u16).await;
-                }
                 let expected = ctx.get_swap_tx_params();
                 check_tx_params(expected, &tx_params).await;
             } else {
