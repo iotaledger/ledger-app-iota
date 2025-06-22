@@ -82,8 +82,8 @@ struct KnownCoin<'a> {
 
 use hex_literal::hex;
 
-const KNOWN_COINS: [KnownCoin; 2] = [
-    // Mainnet stIOTA
+const KNOWN_COINS: [KnownCoin; 4] = [
+    // Mainnet Swirl stIOTA
     KnownCoin {
         coin_id: hex!("346778989a9f57480ec3fee15f2cd68409c73a62112d40a3efd13987997be68c"),
         module: "cert",
@@ -91,12 +91,28 @@ const KNOWN_COINS: [KnownCoin; 2] = [
         divisor: 9,
         ticker: "stIOTA",
     },
-    // Testnet stIOTA
+    // Testnet Swirl stIOTA
     KnownCoin {
         coin_id: hex!("1461ef74f97e83eb024a448ab851f980f4e577a97877069c72b44b5fe9929ee3"),
         module: "cert",
         function: "CERT",
         divisor: 9,
         ticker: "stIOTA",
+    },
+    // Mainnet Virtue USD
+    KnownCoin {
+        coin_id: hex!("d3b63e603a78786facf65ff22e79701f3e824881a12fa3268d62a75530fe904f"),
+        module: "vusd",
+        function: "VUSD",
+        divisor: 6,
+        ticker: "VUSD",
+    },
+    // Testnet Virtue USD
+    KnownCoin {
+        coin_id: hex!("929065320c756b8a4a841deeed013bd748ee45a28629c4aaafc56d8948ebb081"),
+        module: "vusd",
+        function: "VUSD",
+        divisor: 6,
+        ticker: "VUSD",
     },
 ];
