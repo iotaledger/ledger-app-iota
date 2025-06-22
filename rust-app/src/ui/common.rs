@@ -17,8 +17,8 @@ pub fn get_coin_and_amount_fields(
     (ArrayString<32>, ArrayString<32>),
     Either<ArrayString<8>, (ArrayString<4>, ArrayString<256>)>,
 ) {
-    if let Some((ticker, divisor)) = get_known_coin_ticker(&coin_type) {
-        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, divisor);
+    if let Some((ticker, decimals)) = get_known_coin_ticker(&coin_type) {
+        let (quotient, remainder_str) = get_amount_in_decimals(total_amount, decimals);
         let v1 = format!(
             "{} {}.{}",
             ticker.as_str(),
@@ -66,7 +66,7 @@ fn get_known_coin_ticker(coin_type: &CoinType) -> Option<(ArrayString<8>, u8)> {
         let _ = function.try_extend_from_slice(k.function.as_bytes());
 
         if *coin_type == (k.coin_id, module, function) {
-            return Some((ArrayString::from(k.ticker).unwrap(), k.divisor));
+            return Some((ArrayString::from(k.ticker).unwrap(), k.decimals));
         }
     }
     None
@@ -76,7 +76,7 @@ struct KnownCoin<'a> {
     coin_id: [u8; 32],
     module: &'a str,
     function: &'a str,
-    divisor: u8,
+    decimals: u8,
     ticker: &'a str,
 }
 
@@ -88,7 +88,7 @@ const KNOWN_COINS: [KnownCoin; 4] = [
         coin_id: hex!("346778989a9f57480ec3fee15f2cd68409c73a62112d40a3efd13987997be68c"),
         module: "cert",
         function: "CERT",
-        divisor: 9,
+        decimals: 9,
         ticker: "stIOTA",
     },
     // Testnet Swirl stIOTA
@@ -96,7 +96,7 @@ const KNOWN_COINS: [KnownCoin; 4] = [
         coin_id: hex!("1461ef74f97e83eb024a448ab851f980f4e577a97877069c72b44b5fe9929ee3"),
         module: "cert",
         function: "CERT",
-        divisor: 9,
+        decimals: 9,
         ticker: "stIOTA",
     },
     // Mainnet Virtue USD
@@ -104,7 +104,7 @@ const KNOWN_COINS: [KnownCoin; 4] = [
         coin_id: hex!("d3b63e603a78786facf65ff22e79701f3e824881a12fa3268d62a75530fe904f"),
         module: "vusd",
         function: "VUSD",
-        divisor: 6,
+        decimals: 6,
         ticker: "VUSD",
     },
     // Testnet Virtue USD
@@ -112,7 +112,7 @@ const KNOWN_COINS: [KnownCoin; 4] = [
         coin_id: hex!("929065320c756b8a4a841deeed013bd748ee45a28629c4aaafc56d8948ebb081"),
         module: "vusd",
         function: "VUSD",
-        divisor: 6,
+        decimals: 6,
         ticker: "VUSD",
     },
 ];
