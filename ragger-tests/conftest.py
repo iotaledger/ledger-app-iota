@@ -21,9 +21,9 @@ pytest_plugins = ("ragger.conftest.base_conftest", )
 # 3. The scope should be the same as the one configured by BACKEND_SCOPE in 
 # ragger/conftest/configuration.py
 # @pytest.fixture(scope="class", autouse=True)
-# def clear_pending_review(firmware, navigator):
+# def clear_pending_review(device, navigator):
 #     # Press a button to clear the pending review
-#     if firmware.device.startswith("nano"):
+#     if device.is_nano:
 #         print("Clearing pending review")
 #         instructions = [
 #             NavInsID.BOTH_CLICK,

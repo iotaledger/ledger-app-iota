@@ -1,31 +1,141 @@
-import pytest
-import concurrent.futures
-import time
-import base64
+# THIS IS A GENERATED FILE
+# DO NOT EDIT MANUALLY
+# ----------------------------------------
+# This file contains tests for the IOTA Ledger App.
 
-from application_client.client import Client, Errors
+import base64
+import pytest
+
+from application_client.client import Client
 from contextlib import contextmanager
 from ragger.error import ExceptionRAPDU
 from ragger.navigator import NavIns, NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_nav_tasks_concurrently
 
-# can sign a simple IOTA transfer transaction
-def test_sign_tx_iota_transfer(backend, scenario_navigator, firmware, navigator):
+#
+# Used Objects in these tests:
+# ----------------------------
+# ObjectID: 0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: GasCoin
+# Balance: 58985094000
+# Version: 340540910
+# Digest: DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz
+# BCS: AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA=
+#
+# ObjectID: 0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: GasCoin
+# Balance: 3000000000
+# Version: 134
+# Digest: ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty
+# BCS: AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
+#
+# ObjectID: 0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: GasCoin
+# Balance: 2000000000
+# Version: 134
+# Digest: Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE
+# BCS: AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
+#
+# ObjectID: 0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x2::coin::Coin<0x929065320c756b8a4a841deeed013bd748ee45a28629c4aaafc56d8948ebb081::vusd::VUSD>
+# Balance: 15000000
+# Version: 338244725
+# Digest: 74sxR2hccsGSP9Shbeuhs3Fawx9k1fZcnfMfvsYGdg1A
+# BCS: AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKLxt08qhiTCQls8xg3hsm7jZfYnQGF7CNiFOvSzBTxMZwOHkAAAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA==
+#
+
+# test_sign_tx_iota_transfer
+# --------------------------
+# Can sign a simple IOTA transfer transaction
+#
+# TransactionData:
+# {
+#   "version": 2,
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
+#   },
+#   "inputs": [
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "AMqaOwAAAAA="
+#       },
+#       "$kind": "Pure"
+#     }
+#   ],
+#   "commands": [
+#     {
+#       "SplitCoins": {
+#         "coin": {
+#           "GasCoin": true,
+#           "$kind": "GasCoin"
+#         },
+#         "amounts": [
+#           {
+#             "Input": 1,
+#             "$kind": "Input"
+#           }
+#         ]
+#       },
+#       "$kind": "SplitCoins"
+#     },
+#     {
+#       "TransferObjects": {
+#         "objects": [
+#           {
+#             "Result": 0,
+#             "$kind": "Result"
+#           }
+#         ],
+#         "address": {
+#           "Input": 0,
+#           "$kind": "Input"
+#         }
+#       },
+#       "$kind": "TransferObjects"
+#     }
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       }
+#     ]
+#   }
+# }
+def test_sign_tx_iota_transfer(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/4218'/0'/0'/0'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = bytes.fromhex('000000000002000840420f000000000000204f2370b2a4810ad6c8e1cfd92cc8c8818fef8f59e3a80cea17871f78d850ba4b0202000101000001010200000101006fb21feead027da4873295affd6c4f3618fe176fa2fbf3e7b5ef1d9463b31e210112a6d0c44edc630d2724b1f57fea4f93308b1d22164402c65778bd99379c4733070000000000000020f2fd3c87b227f1015182fe4348ed680d7ed32bcd3269704252c03e1d0b13d30d6fb21feead027da4873295affd6c4f3618fe176fa2fbf3e7b5ef1d9463b31e2101000000000000000c0400000000000000')
+    transaction = base64.b64decode('AAAAAAACACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAIAMqaOwAAAAACAgABAQEAAQECAAABAAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtgFIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzD4YAAAAAAAAAIK37G2mUruSx7H+JjB1bMFEpMWhJZgXObVe3D1zMibrdD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bboAwAAAAAAAEBCDwAAAAAAAA==')
+
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
+                instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
                                , NavInsID.RIGHT_CLICK # Amount
@@ -33,7 +143,7 @@ def test_sign_tx_iota_transfer(backend, scenario_navigator, firmware, navigator)
                                , NavInsID.BOTH_CLICK
                               ]
                 , timeout=10
-                , test_case_name="test_sign_tx_iota_transfer"
+                , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
                 , screen_change_after_last_instruction=False
@@ -47,191 +157,25 @@ def test_sign_tx_iota_transfer(backend, scenario_navigator, firmware, navigator)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
 
-# can blind sign an unknown transaction
-def test_sign_tx_blind_sign(backend, scenario_navigator, firmware, navigator):
+# test_sign_tx_blind_sign
+# -----------------------
+# Can blind sign an unknown transaction
+#
+def test_sign_tx_blind_sign(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/4218'/0'/0'/0'"
-
-    _, public_key, _, _ = client.get_public_key(path=path)
-
-    transaction = bytes.fromhex('00000000050205546e7f126d2f40331a543b9608439b582fd0d103000000000000002080fdabcc90498e7eb8413b140c4334871eeafa5a86203fd9cfdb032f604f49e1284af431cf032b5d85324135bf9a3073e920d7f5020000000000000020a06f410c175e828c24cee84cb3bd95cff25c33fbbdcb62c6596e8e423784ffe702d08074075c7097f361e8b443e2075a852a2292e8a08074075c7097f361e8b443e2075a852a2292e80180969800000000001643fb2578ff7191c643079a62c1cca8ec2752bc05546e7f126d2f40331a543b9608439b582fd0d103000000000000002080fdabcc90498e7eb8413b140c4334871eeafa5a86203fd9cfdb032f604f49e101000000000000002c01000000000000')
-
-    def apdu_task():
-        return client.sign_tx(path=path, transaction=transaction)
-
-    def nav_task():
-        if firmware.device.startswith("nano"):
-            navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Warning...
-                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Transaction Hash
-                               , NavInsID.BOTH_CLICK]
-                , timeout=10
-                , path=scenario_navigator.screenshot_path
-                , test_case_name="test_sign_tx_blind_sign"
-                , screen_change_before_first_instruction=False
-                , screen_change_after_last_instruction=False
-            )
-        else:
-            # Dismiss the "Blind signing ahead" screen
-            navigator.navigate_and_compare(
-                instructions=[NavInsID.USE_CASE_CHOICE_REJECT]
-                , timeout=20
-                , path=scenario_navigator.screenshot_path
-                , test_case_name="test_sign_tx_blind_sign_1"
-                , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=True
-            )
-            # Below is similar to scenario_navigator.review_approve()
-            # But screen_change_before_first_instruction=True causes hang
-            navigator.navigate_until_text_and_compare(
-                navigate_instruction=NavInsID.SWIPE_CENTER_TO_LEFT
-                , validation_instructions=[NavInsID.USE_CASE_REVIEW_CONFIRM, NavInsID.USE_CASE_STATUS_DISMISS]
-                , text="^Hold to sign$"
-                , timeout=20
-                , path=scenario_navigator.screenshot_path
-                , test_case_name="test_sign_tx_blind_sign_2"
-                , screen_change_before_first_instruction=False
-                , screen_change_after_last_instruction=True
-            )
-
-    def check_result(result):
-        assert len(result) == 64
-        assert check_signature_validity(public_key, result, transaction)
-
-    with blind_sign_enabled(firmware, navigator):
-        run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-# Transaction signature refused test
-# The test will ask for a transaction signature that will be refused on screen
-def test_sign_tx_refused(backend, scenario_navigator, firmware, navigator):
-    client = Client(backend, use_block_protocol=True)
-    path = "m/44'/4218'/0'/0'/0'"
-
-    transaction = bytes.fromhex('000000000002000840420f000000000000204f2370b2a4810ad6c8e1cfd92cc8c8818fef8f59e3a80cea17871f78d850ba4b0202000101000001010200000101006fb21feead027da4873295affd6c4f3618fe176fa2fbf3e7b5ef1d9463b31e210112a6d0c44edc630d2724b1f57fea4f93308b1d22164402c65778bd99379c4733070000000000000020f2fd3c87b227f1015182fe4348ed680d7ed32bcd3269704252c03e1d0b13d30d6fb21feead027da4873295affd6c4f3618fe176fa2fbf3e7b5ef1d9463b31e2101000000000000000c0400000000000000')
-
-    def apdu_task():
-        return client.sign_tx(path=path, transaction=transaction)
-
-    def nav_task():
-        if firmware.device.startswith("nano"):
-            navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
-                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
-                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
-                               , NavInsID.RIGHT_CLICK # Amount
-                               , NavInsID.RIGHT_CLICK # Max Gas
-                               , NavInsID.RIGHT_CLICK # Confirm
-                               , NavInsID.BOTH_CLICK
-                              ]
-                , timeout=10
-                , test_case_name="test_sign_tx_refused"
-                , path=scenario_navigator.screenshot_path
-                , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
-            )
-        else:
-            scenario_navigator.review_reject()
-
-    def check_result(result):
-        pytest.fail('should not happen')
-
-    with pytest.raises(ExceptionRAPDU) as e:
-        run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-    assert len(e.value.data) == 0
-
-# should reject signing a non-IOTA coin transaction, if blind signing is not enabled
-def test_sign_tx_non_iota_transfer_rejected(backend, scenario_navigator, firmware, navigator):
-    client = Client(backend, use_block_protocol=True)
-    path = "m/44'/4218'/0'/0'/0'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAADAQAe2uv1Mds+xCVK5Jv/Dv5cgEl/9DthDcpbjWcsmFpzbs6BNQAAAAAAIKPD8GQqgBpJZRV+nFDRE7rqR0Za8x0pyfLusVdpPPVRAAgADl+jHAAAAAAg5y3MHATlk+Ik5cPIdEz5iPANs1jcXZHVGjh4Mb16lwkCAgEAAAEBAQABAQIAAAECAF/sd27xyQe/W+gY4WRtPlQro1siWQu79s0pxbbCSRafAfnjaU5yJSFFDJznsAaBqbkiR9CB8DJqWki8fn8AUZeQz4E1AAAAAAAgTRU/MsawTJirpVwjDF8gyiEbaT0+7J0V8ifUEGGBkcVf7Hdu8ckHv1voGOFkbT5UK6NbIlkLu/bNKcW2wkkWn+gDAAAAAAAA8NdGAAAAAAAA')
+    transaction = base64.b64decode('AAAAAAUCBVRufxJtL0AzGlQ7lghDm1gv0NEDAAAAAAAAACCA/avMkEmOfrhBOxQMQzSHHur6WoYgP9nP2wMvYE9J4ShK9DHPAytdhTJBNb+aMHPpINf1AgAAAAAAAAAgoG9BDBdegowkzuhMs72Vz/JcM/u9y2LGWW6OQjeE/+cC0IB0B1xwl/Nh6LRD4gdahSoikuiggHQHXHCX82HotEPiB1qFKiKS6AGAlpgAAAAAABZD+yV4/3GRxkMHmmLBzKjsJ1K8BVRufxJtL0AzGlQ7lghDm1gv0NEDAAAAAAAAACCA/avMkEmOfrhBOxQMQzSHHur6WoYgP9nP2wMvYE9J4QEAAAAAAAAALAEAAAAAAAA=')
+
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
-            navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
-                , timeout=10
-                , test_case_name="test_sign_tx_non_iota_transfer_rejected"
-                , path=scenario_navigator.screenshot_path
-                , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
-            )
-        else:
-            # Dismiss the "Enable Blind signing" screen
-            navigator.navigate([NavInsID.USE_CASE_CHOICE_REJECT],
-                            screen_change_before_first_instruction=False,
-                            screen_change_after_last_instruction=False)
-
-    def check_result(result):
-        pytest.fail('should not happen')
-
-    with pytest.raises(ExceptionRAPDU) as e:
-        run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-    assert len(e.value.data) == 0
-
-# should reject signing an unknown transaction, if blind signing is not enabled
-def test_sign_tx_unknown_tx_rejected(backend, scenario_navigator, firmware, navigator):
-    client = Client(backend, use_block_protocol=True)
-    path = "m/44'/4218'/0'/0'/0'"
-
-    _, public_key, _, _ = client.get_public_key(path=path)
-    assert len(public_key) == 32
-
-    transaction = bytes.fromhex('00000000050205546e7f126d2f40331a543b9608439b582fd0d103000000000000002080fdabcc90498e7eb8413b140c4334871eeafa5a86203fd9cfdb032f604f49e1284af431cf032b5d85324135bf9a3073e920d7f5020000000000000020a06f410c175e828c24cee84cb3bd95cff25c33fbbdcb62c6596e8e423784ffe702d08074075c7097f361e8b443e2075a852a2292e8a08074075c7097f361e8b443e2075a852a2292e80180969800000000001643fb2578ff7191c643079a62c1cca8ec2752bc05546e7f126d2f40331a543b9608439b582fd0d103000000000000002080fdabcc90498e7eb8413b140c4334871eeafa5a86203fd9cfdb032f604f49e101000000000000002c01000000000000')
-
-    def apdu_task():
-        return client.sign_tx(path=path, transaction=transaction)
-
-    def nav_task():
-        if firmware.device.startswith("nano"):
-            navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
-                , timeout=10
-                , test_case_name="test_sign_tx_unknown_tx_rejected"
-                , path=scenario_navigator.screenshot_path
-                , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
-            )
-        else:
-            # Dismiss the "Enable Blind signing" screen
-            navigator.navigate([NavInsID.USE_CASE_CHOICE_REJECT],
-                            screen_change_before_first_instruction=False,
-                            screen_change_after_last_instruction=False)
-
-    def check_result(result):
-        pytest.fail('should not happen')
-
-    with pytest.raises(ExceptionRAPDU) as e:
-        run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-    assert len(e.value.data) == 0
-
-# can blind sign a transfer transaction with too many inputs
-def test_sign_tx_blind_sign_big_transfer_tx(backend, scenario_navigator, firmware, navigator):
-    client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'"
-
-    _, public_key, _, _ = client.get_public_key(path=path)
-
-    transaction = base64.b64decode('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')
-
-    object_list = [base64.b64decode('AAEB5GnMHAAAAAAoGu9dC9x/iHFmP5B06NH7uhnS631EJAItcFa6j95/TBic4wYAAAAAAAASVdCTBMXMgkue9P2RlvW46WFntPsCZvcN02gprVGdXSCMWQXAJLoXR3VqNIzOUarpAW+dd5yJz4WVe+HOMs0HBGATDwAAAAAA')
-      , base64.b64decode('AAEBBxVYHgAAAAAowLuWuvD/ZgyVhOly/Cz9ja8Gsh3Ggpe5Ly6aAM/wKO0i+gMNAAAAAAASVdCTBMXMgkue9P2RlvW46WFntPsCZvcN02gprVGdXSCz/wDyVt9e0DZ6dGsI7AOxGIB/ghCPBinKM6ZMFqQPLmATDwAAAAAA')
-                   ]
-
-    def apdu_task():
-        return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
-
-    def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Warning...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Transaction Hash
@@ -267,21 +211,736 @@ def test_sign_tx_blind_sign_big_transfer_tx(backend, scenario_navigator, firmwar
         assert len(result) == 64
         assert check_signature_validity(public_key, result, transaction)
 
-    with blind_sign_enabled(firmware, navigator):
+    with blind_sign_enabled(device, navigator):
         run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+
+# test_sign_tx_refused
+# --------------------
+# The test will ask for a transaction signature that will be refused on screen
+# Same Tx as test_sign_tx_iota_transfer, but with a different navigation flow
+#
+# TransactionData:
+# {
+#   "version": 2,
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
+#   },
+#   "inputs": [
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "AMqaOwAAAAA="
+#       },
+#       "$kind": "Pure"
+#     }
+#   ],
+#   "commands": [
+#     {
+#       "SplitCoins": {
+#         "coin": {
+#           "GasCoin": true,
+#           "$kind": "GasCoin"
+#         },
+#         "amounts": [
+#           {
+#             "Input": 1,
+#             "$kind": "Input"
+#           }
+#         ]
+#       },
+#       "$kind": "SplitCoins"
+#     },
+#     {
+#       "TransferObjects": {
+#         "objects": [
+#           {
+#             "Result": 0,
+#             "$kind": "Result"
+#           }
+#         ],
+#         "address": {
+#           "Input": 0,
+#           "$kind": "Input"
+#         }
+#       },
+#       "$kind": "TransferObjects"
+#     }
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       }
+#     ]
+#   }
+# }
+def test_sign_tx_refused(backend, scenario_navigator, device, navigator):
+    client = Client(backend, use_block_protocol=True)
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
+
+    _, public_key, _, _ = client.get_public_key(path=path)
+    assert len(public_key) == 32
+
+    transaction = base64.b64decode('AAAAAAACACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAIAMqaOwAAAAACAgABAQEAAQECAAABAAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtgFIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzD4YAAAAAAAAAIK37G2mUruSx7H+JjB1bMFEpMWhJZgXObVe3D1zMibrdD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bboAwAAAAAAAEBCDwAAAAAAAA==')
+
+
+    def apdu_task():
+        return client.sign_tx(path=path, transaction=transaction)
+
+    def nav_task():
+        if device.is_nano:
+            navigator.navigate_and_compare(
+                instructions=[ NavInsID.RIGHT_CLICK # Transfer IOTA
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
+                               , NavInsID.RIGHT_CLICK # Amount
+                               , NavInsID.RIGHT_CLICK # Max Gas
+                               , NavInsID.RIGHT_CLICK # Confirm
+                               , NavInsID.BOTH_CLICK
+                              ]
+                , timeout=10
+                , test_case_name=scenario_navigator.test_name
+                , path=scenario_navigator.screenshot_path
+                , screen_change_before_first_instruction=True
+                , screen_change_after_last_instruction=False
+            )
+        else:
+            scenario_navigator.review_reject()
+
+    def check_result(result):
+        pytest.fail('should not happen')
+
+    with pytest.raises(ExceptionRAPDU) as e:
+        run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+
+    assert len(e.value.data) == 0
+
+# test_sign_tx_non_iota_transfer_rejected
+# ---------------------------------------
+# Should reject signing a non-IOTA coin transaction, if blind signing is not enabled
+#
+# TransactionData:
+# {
+#   "version": 2,
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
+#   },
+#   "inputs": [
+#     {
+#       "Object": {
+#         "ImmOrOwnedObject": {
+#           "objectId": "0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319",
+#           "version": "338244725",
+#           "digest": "74sxR2hccsGSP9Shbeuhs3Fawx9k1fZcnfMfvsYGdg1A"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "QEIPAAAAAAA="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     }
+#   ],
+#   "commands": [
+#     {
+#       "SplitCoins": {
+#         "coin": {
+#           "Input": 0,
+#           "$kind": "Input"
+#         },
+#         "amounts": [
+#           {
+#             "Input": 1,
+#             "$kind": "Input"
+#           }
+#         ]
+#       },
+#       "$kind": "SplitCoins"
+#     },
+#     {
+#       "TransferObjects": {
+#         "objects": [
+#           {
+#             "NestedResult": [
+#               0,
+#               0
+#             ],
+#             "$kind": "NestedResult"
+#           }
+#         ],
+#         "address": {
+#           "Input": 2,
+#           "$kind": "Input"
+#         }
+#       },
+#       "$kind": "TransferObjects"
+#     }
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#         "version": "340540910",
+#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
+#       }
+#     ]
+#   }
+# }
+def test_sign_tx_non_iota_transfer_rejected(backend, scenario_navigator, device, navigator):
+    client = Client(backend, use_block_protocol=True)
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
+
+    _, public_key, _, _ = client.get_public_key(path=path)
+    assert len(public_key) == 32
+
+    transaction = base64.b64decode('AAAAAAADAQC8bdPKoYkwkJbPMYN4bJu42X2J0BhewjYhTr0swU8TGXU0KRQAAAAAIFoker34YuFsSnGq+bXwfYo91Y8ZNApPdPgrfBte2xN1AAhAQg8AAAAAAAAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4CAgEAAAEBAQABAQMAAAAAAQIAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYBE6uE80piJELVwLp/c8eRObD9ZciK3L4mVSlwsUQa5kruPUwUAAAAACDA+bJF/W52RAtRpqZmqU251Y0dDGWKjCAI+ri22feUPQ9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W26AMAAAAAAABAQg8AAAAAAAA=')
+
+
+    def apdu_task():
+        return client.sign_tx(path=path, transaction=transaction)
+
+    def nav_task():
+        if device.is_nano:
+            navigator.navigate_and_compare(
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                , timeout=10
+                , test_case_name=scenario_navigator.test_name
+                , path=scenario_navigator.screenshot_path
+                , screen_change_before_first_instruction=True
+                , screen_change_after_last_instruction=False
+            )
+        else:
+            # Dismiss the "Enable Blind signing" screen
+            navigator.navigate_and_compare(
+                instructions=[NavInsID.USE_CASE_CHOICE_REJECT]
+                , test_case_name=scenario_navigator.test_name
+                , path=scenario_navigator.screenshot_path
+                , screen_change_before_first_instruction=True
+                , screen_change_after_last_instruction=False
+            )
+
+    def check_result(result):
+        pytest.fail('should not happen')
+
+    with pytest.raises(ExceptionRAPDU) as e:
+        run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+
+    assert len(e.value.data) == 0
+
+# test_sign_tx_unknown_tx_rejected
+# --------------------------------
+# Should reject signing an unknown transaction, if blind signing is not enabled
+#
+def test_sign_tx_unknown_tx_rejected(backend, scenario_navigator, device, navigator):
+    client = Client(backend, use_block_protocol=True)
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
+
+    _, public_key, _, _ = client.get_public_key(path=path)
+    assert len(public_key) == 32
+
+    transaction = base64.b64decode('AAAAAAUCBVRufxJtL0AzGlQ7lghDm1gv0NEDAAAAAAAAACCA/avMkEmOfrhBOxQMQzSHHur6WoYgP9nP2wMvYE9J4ShK9DHPAytdhTJBNb+aMHPpINf1AgAAAAAAAAAgoG9BDBdegowkzuhMs72Vz/JcM/u9y2LGWW6OQjeE/+cC0IB0B1xwl/Nh6LRD4gdahSoikuiggHQHXHCX82HotEPiB1qFKiKS6AGAlpgAAAAAABZD+yV4/3GRxkMHmmLBzKjsJ1K8BVRufxJtL0AzGlQ7lghDm1gv0NEDAAAAAAAAACCA/avMkEmOfrhBOxQMQzSHHur6WoYgP9nP2wMvYE9J4QEAAAAAAAAALAEAAAAAAAA=')
+
+
+    def apdu_task():
+        return client.sign_tx(path=path, transaction=transaction)
+
+    def nav_task():
+        if device.is_nano:
+            navigator.navigate_and_compare(
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                , timeout=10
+                , test_case_name=scenario_navigator.test_name
+                , path=scenario_navigator.screenshot_path
+                , screen_change_before_first_instruction=True
+                , screen_change_after_last_instruction=False
+            )
+        else:
+            # Dismiss the "Enable Blind signing" screen
+            navigator.navigate_and_compare(
+                instructions=[NavInsID.USE_CASE_CHOICE_REJECT]
+                , test_case_name=scenario_navigator.test_name
+                , path=scenario_navigator.screenshot_path
+                , screen_change_before_first_instruction=True
+                , screen_change_after_last_instruction=False
+            )
+
+    def check_result(result):
+        pytest.fail('should not happen')
+
+    with pytest.raises(ExceptionRAPDU) as e:
+        run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+
+    assert len(e.value.data) == 0
+
+# test_sign_tx_blind_sign_big_transfer_tx
+# ---------------------------------------
+# can blind sign a transfer transaction with too many inputs
+#
+# TransactionData:
+# {
+#   "version": 2,
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
+#   },
+#   "inputs": [
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     }
+#   ],
+#   "commands": [
+#     {
+#       "TransferObjects": {
+#         "objects": [
+#           {
+#             "GasCoin": true,
+#             "$kind": "GasCoin"
+#           }
+#         ],
+#         "address": {
+#           "Input": 0,
+#           "$kind": "Input"
+#         }
+#       },
+#       "$kind": "TransferObjects"
+#     }
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#         "version": "134",
+#         "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#       },
+#       {
+#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#         "version": "134",
+#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#       }
+#     ]
+#   }
+# }
+def test_sign_tx_blind_sign_big_transfer_tx(backend, scenario_navigator, device, navigator):
+    client = Client(backend, use_block_protocol=True)
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
+
+    _, public_key, _, _ = client.get_public_key(path=path)
+    assert len(public_key) == 32
+
+    transaction = base64.b64decode('AAAAAAA2ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4AIBs2aeMhiT7knDh6CPwlHb//N80qmB5sRzpbKv3hnTY+AQEBAAEAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2Ah7sbDLvNkZzMft7CItKyxzkb3NjVDCOA/9s6ROkJzTihgAAAAAAAAAgx+vGxEMLPPfljXWrU925GAJ03vY7GrVhn723CWzb1xJIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzD4YAAAAAAAAAIK37G2mUruSx7H+JjB1bMFEpMWhJZgXObVe3D1zMibrdD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bboAwAAAAAAAEBCDwAAAAAAAA==')
+
+    object_list = [
+        base64.b64decode('AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+        base64.b64decode('AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA='),
+    ]
+
+    def apdu_task():
+        return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
+
+    def nav_task():
+        if device.is_nano:
+            navigator.navigate_and_compare(
+                instructions=[ NavInsID.RIGHT_CLICK # Warning...
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Transaction Hash
+                               , NavInsID.BOTH_CLICK]
+                , timeout=10
+                , path=scenario_navigator.screenshot_path
+                , test_case_name=scenario_navigator.test_name
+                , screen_change_before_first_instruction=False
+                , screen_change_after_last_instruction=False
+            )
+        else:
+            # Dismiss the "Blind signing ahead" screen
+            navigator.navigate(
+                instructions=[NavInsID.USE_CASE_CHOICE_REJECT]
+                , timeout=20
+                , screen_change_before_first_instruction=True
+                , screen_change_after_last_instruction=True
+            )
+            # Below is similar to scenario_navigator.review_approve()
+            # But screen_change_before_first_instruction=True causes hang
+            navigator.navigate_until_text_and_compare(
+                navigate_instruction=NavInsID.SWIPE_CENTER_TO_LEFT
+                , validation_instructions=[NavInsID.USE_CASE_REVIEW_CONFIRM, NavInsID.USE_CASE_STATUS_DISMISS]
+                , text="^Hold to sign$"
+                , timeout=20
+                , path=scenario_navigator.screenshot_path
+                , test_case_name=scenario_navigator.test_name
+                , screen_change_before_first_instruction=False
+                , screen_change_after_last_instruction=True
+            )
+
+    def check_result(result):
+        assert len(result) == 64
+        assert check_signature_validity(public_key, result, transaction)
+
+    with blind_sign_enabled(device, navigator):
+        run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+
 @contextmanager
-def blind_sign_enabled(firmware, navigator):
-    toggle_blind_sign(firmware, navigator)
+def blind_sign_enabled(device, navigator):
+    toggle_blind_sign(device, navigator)
     try:
         yield
     except:
         # Don't re-enable if we hit an exception
         raise
     else:
-        toggle_blind_sign(firmware, navigator)
+        toggle_blind_sign(device, navigator)
 
-def toggle_blind_sign(firmware, navigator):
-    if firmware.device.startswith("nano"):
+def toggle_blind_sign(device, navigator):
+    if device.is_nano:
         navigator.navigate(
             instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK, NavInsID.BOTH_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK, NavInsID.LEFT_CLICK, NavInsID.LEFT_CLICK]
             , timeout=10
@@ -294,3 +953,4 @@ def toggle_blind_sign(firmware, navigator):
                             timeout=10,
                             screen_change_before_first_instruction=False,
                             screen_change_after_last_instruction=False)
+    

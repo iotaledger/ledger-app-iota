@@ -1,61 +1,112 @@
-# Covers various scenarios for token transfer txs supported by the app
+# THIS IS A GENERATED FILE
+# DO NOT EDIT MANUALLY
+# ----------------------------------------
+# This file contains tests for the IOTA Ledger App.
 
-import pytest
-import concurrent.futures
-import time
 import base64
+import pytest
 
-from application_client.client import Client, Errors
+from application_client.client import Client
 from contextlib import contextmanager
 from ragger.error import ExceptionRAPDU
 from ragger.navigator import NavIns, NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_nav_tasks_concurrently
 
-# The Txs are built from mainnet data, and contains valid object data for all
-# coins, and as such does not belong to the Ledger account used for signing them
-# in these tests
-# But as we currently don't check that the sender matches the ledger address
-# these can be used as it is for the purpose of testing
+#
+# Used Objects in these tests:
+# ----------------------------
+# ObjectID: 0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: GasCoin
+# Balance: 58985094000
+# Version: 340540910
+# Digest: DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz
+# BCS: AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA=
+#
+# ObjectID: 0x16cd400cb71dfaacd5027d18e3770c39558481502411b175c1ba44c400b294c8
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x2::coin::Coin<0x929065320c756b8a4a841deeed013bd748ee45a28629c4aaafc56d8948ebb081::vusd::VUSD>
+# Balance: 28000000
+# Version: 338244725
+# Digest: 7JpuxUnmu64AB5aukFtQRwYF1E3kj1Rn2uN8UyjMXXom
+# BCS: AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKBbNQAy3Hfqs1QJ9GON3DDlVhIFQJBGxdcG6RMQAspTIAD+rAQAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA==
+#
+# ObjectID: 0x1bc1e43b319a9bf12353fb14c3f4b9342841d172e9e5b9cdb0510c2296accb77
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x2::coin::Coin<0x929065320c756b8a4a841deeed013bd748ee45a28629c4aaafc56d8948ebb081::vusd::VUSD>
+# Balance: 7000000
+# Version: 338244725
+# Digest: ENjWCBi7D3vqp9hta1fabNSQ49pBQh2psB14xuwS9PJ9
+# BCS: AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKBvB5DsxmpvxI1P7FMP0uTQoQdFy6eW5zbBRDCKWrMt3wM9qAAAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA==
+#
+# ObjectID: 0x2d9482356f5c02694cc98ac72b517e24eaf54ef3a7662f8cee81ce6ca822c739
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x2::coin::Coin<0x1ec8ca48b9b39f721510dc717d7f077c9bc84eca28e784ba8dc0b913e23ed5ca::deposit_test_coin::DEPOSIT_TEST_COIN>
+# Balance: 1000000000
+# Version: 292323579
+# Digest: 79ScvbUk9oVCR64kuvZSDQjGFqwi5Kq6QdH3oUfENT7c
+# BCS: AAMHHsjKSLmzn3IVENxxfX8HfJvITsoo54S6jcC5E+I+1coRZGVwb3NpdF90ZXN0X2NvaW4RREVQT1NJVF9URVNUX0NPSU4A+4BsEQAAAAAoLZSCNW9cAmlMyYrHK1F+JOr1TvOnZi+M7oHObKgixzkAypo7AAAAAAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtiABHefVakVH8AxQKTp2EY6phZ6YqPIOvu3YHdqPQaxWa9ATFwAAAAAA
+#
+# ObjectID: 0x57a524205644363fed2c495e6a4c9df0b23347987176ea54b08d9eedb5e2abdb
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x2::coin::Coin<0x1461ef74f97e83eb024a448ab851f980f4e577a97877069c72b44b5fe9929ee3::cert::CERT>
+# Balance: 4676174571
+# Version: 340540901
+# Digest: 8gWVVowMMtRakSYTLCyco233PMmLoXkvK7FvySg9D636
+# BCS: AAMHFGHvdPl+g+sCSkSKuFH5gPTld6l4dwaccrRLX+mSnuMEY2VydARDRVJUAOU9TBQAAAAAKFelJCBWRDY/7SxJXmpMnfCyM0eYcXbqVLCNnu214qvb68K4FgEAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYgPtVht5QLbaiJTmN0p92D3yCv1lNJblfPGRO2elW1FznwDxQAAAAAAA==
+#
+# ObjectID: 0x78084fe4b7cb74d2054e426c2654085dd0cbdfa488717974259e2e1870ac5cab
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x2::coin::Coin<0x1461ef74f97e83eb024a448ab851f980f4e577a97877069c72b44b5fe9929ee3::cert::CERT>
+# Balance: 935234914
+# Version: 340540910
+# Digest: AMkvwZn1oYF6iNbzmBotZaTYa15H1yN1PRkWdaCFjbNd
+# BCS: AAMHFGHvdPl+g+sCSkSKuFH5gPTld6l4dwaccrRLX+mSnuMEY2VydARDRVJUAO49TBQAAAAAKHgIT+S3y3TSBU5CbCZUCF3Qy9+kiHF5dCWeLhhwrFyrYo2+NwAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYguKlUaKTBNNc/LtiCIMGrIyu7ih1a6fdgTQ8/qHwqNkDwDxQAAAAAAA==
+#
+# ObjectID: 0x7832ee1651ef144281b3d785bc8b7501f37aa46ba96a32be95d5d0071e501950
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x2::coin::Coin<0x1461ef74f97e83eb024a448ab851f980f4e577a97877069c72b44b5fe9929ee3::cert::CERT>
+# Balance: 14028523715
+# Version: 340540909
+# Digest: 2B2NSgS2JJUuXgfNckxheig2zrScjQQtKN1RyPMBd8fU
+# BCS: AAMHFGHvdPl+g+sCSkSKuFH5gPTld6l4dwaccrRLX+mSnuMEY2VydARDRVJUAO09TBQAAAAAKHgy7hZR7xRCgbPXhbyLdQHzeqRrqWoyvpXV0AceUBlQw0gqRAMAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYgAZWKkwQ2s+uvbZ3YacRydwI3n61B9lVfr8UWyjZnE1vwDxQAAAAAAA==
+#
+# ObjectID: 0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319
+# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# ObjectType: 0x2::coin::Coin<0x929065320c756b8a4a841deeed013bd748ee45a28629c4aaafc56d8948ebb081::vusd::VUSD>
+# Balance: 15000000
+# Version: 338244725
+# Digest: 74sxR2hccsGSP9Shbeuhs3Fawx9k1fZcnfMfvsYGdg1A
+# BCS: AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKLxt08qhiTCQls8xg3hsm7jZfYnQGF7CNiFOvSzBTxMZwOHkAAAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA==
+#
 
-# Balances of objects used in these tests
-# 0xd3baa97a46a20d65f1be60cbaa160856e6aae5078e16545071e2fd3e314105b9 USDC  100023 (0.100023 USDC)
-# 0x8ba6495be346c1be89e5c35cdabab145ea18990f48f2b0629ff016024c9ded45 USDC  123393 (0.123393 USDC)
-# 0x8ebf87449ed242216a3c94de4935c21792618850fc781222e866dc60bb1bc8d2 USDC  121601 (0.121601 USDC)
-# 0x2bf6f455be6dca289d0c6d3c65b14b36da4a4029b1d6718768a469594b32ab73 wUSDC 3 (0.000003 wUSDC)
-
-# {"data":{"objects":{"nodes":[{"digest":"BWyUBdTBr7uMyQ1nRsQkkB5RXLNL6QWprGaqJ7atMJTC","bcs":"AAMH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAF2L6QdAAAAACjTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFubeGAQAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1ICV9oiz28QN2+VFgs3VVcob35zoaZgQf5WcAe9gWdNyWoC0UAAAAAAA="}]}}}
-
-# built_tx AAACAQDTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFuXYvpB0AAAAAIJxCj+NcqbGRfo0O7b01nRHCGKviMzj24EOLiWE+lIpDACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAQEAAAEBAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1Ae+2Pou4IgmffYeLesUVRWnuzodmRG3dWvuFZguvoBGHjtGpHQAAAAAgV3AuVVb8MkmvL1ZcHG8rmJiVWgdISLE76Ts2Bzamx54PL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9e4CAAAAAAAAaComAAAAAAAA
-# Transaction Commands: {
+# test_sign_tx_stiota_whole_coin
+# ------------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x0f2f8dd49e269da066f37624d33a8b4ed1b262d6a5fdf2b735be39f8d7c5acf5",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "2501224",
-#     "price": "750",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xefb63e8bb822099f7d878b7ac5154569eece8766446ddd5afb85660bafa01187",
-#         "version": "497668494",
-#         "digest": "6tKgd63ZMmb4CA74EjWN7Wv4yx3hCiBqo2PnKTU4hr9T"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xd3baa97a46a20d65f1be60cbaa160856e6aae5078e16545071e2fd3e314105b9",
-#           "version": "497299318",
-#           "digest": "BWyUBdTBr7uMyQ1nRsQkkB5RXLNL6QWprGaqJ7atMJTC"
-#         }
-#       }
+#           "objectId": "0x57a524205644363fed2c495e6a4c9df0b23347987176ea54b08d9eedb5e2abdb",
+#           "version": "340540901",
+#           "digest": "8gWVVowMMtRakSYTLCyco233PMmLoXkvK7FvySg9D636"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "b7If7q0CfaSHMpWv/WxPNhj+F2+i+/Pnte8dlGOzHiE="
-#       }
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
@@ -63,40 +114,50 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #       "TransferObjects": {
 #         "objects": [
 #           {
-#             "Input": 0
+#             "Input": 0,
+#             "$kind": "Input"
 #           }
 #         ],
 #         "address": {
-#           "Input": 1
+#           "Input": 1,
+#           "$kind": "Input"
 #         }
-#       }
+#       },
+#       "$kind": "TransferObjects"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#         "version": "340540910",
+#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
+#       }
+#     ]
+#   }
 # }
-# {
-#   dataType: 'moveObject',
-#   type: '0x2::coin::Coin<0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC>',
-#   hasPublicTransfer: true,
-#   version: 497299318,
-#   bcsBytes: '07qpekaiDWXxvmDLqhYIVuaq5QeOFlRQceL9PjFBBbm3hgEAAAAAAA=='
-# }
-
-def test_sign_tx_usdc_whole_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_stiota_whole_coin(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/0'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAACAQDTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFuXYvpB0AAAAAIJxCj+NcqbGRfo0O7b01nRHCGKviMzj24EOLiWE+lIpDACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAQEAAAEBAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1Ae+2Pou4IgmffYeLesUVRWnuzodmRG3dWvuFZguvoBGHjtGpHQAAAAAgV3AuVVb8MkmvL1ZcHG8rmJiVWgdISLE76Ts2Bzamx54PL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9e4CAAAAAAAAaComAAAAAAAA')
+    transaction = base64.b64decode('AAAAAAACAQBXpSQgVkQ2P+0sSV5qTJ3wsjNHmHF26lSwjZ7tteKr2+U9TBQAAAAAIHIgzlTp2lDccQR2TBqspDxfa6/RSgYLaG5cQr3cf/EtACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgEBAQEAAAEBAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2AROrhPNKYiRC1cC6f3PHkTmw/WXIity+JlUpcLFEGuZK7j1MFAAAAAAgwPmyRf1udkQLUaamZqlNudWNHQxliowgCPq4ttn3lD0PWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtugDAAAAAAAAQEIPAAAAAAAA')
 
-    object_list = [base64.b64decode('AAMH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAF2L6QdAAAAACjTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFubeGAQAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1ICV9oiz28QN2+VFgs3VVcob35zoaZgQf5WcAe9gWdNyWoC0UAAAAAAA=')]
+    object_list = [
+        base64.b64decode('AAMHFGHvdPl+g+sCSkSKuFH5gPTld6l4dwaccrRLX+mSnuMEY2VydARDRVJUAOU9TBQAAAAAKFelJCBWRDY/7SxJXmpMnfCyM0eYcXbqVLCNnu214qvb68K4FgEAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYgPtVht5QLbaiJTmN0p92D3yCv1lNJblfPGRO2elW1FznwDxQAAAAAAA=='),
+        base64.b64decode('AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -120,38 +181,33 @@ def test_sign_tx_usdc_whole_coin(backend, scenario_navigator, firmware, navigato
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
 
-# {"data":{"objects":{"nodes":[{"digest":"2uQ3BCM51Km8pf7PCqiCBy1KFv5rZmpbkXEwu7KeS61C","bcs":"AAMHXUswJQZkXDf/EzuYxLUKWuFIQWWXONbXM9WdDSF6k78EY29pbgRDT0lOAAHH2GQcAAAAACgr9vRVvm3KKJ0MbTxlsUs22kpAKbHWcYdopGlZSzKrcwMAAAAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1IPCmh/QdnSazrWlro9Zp1vvv08RlqS3ABJXMdPtQZjnIoC0UAAAAAAA="}]}}}
-# built_tx AAACAQAr9vRVvm3KKJ0MbTxlsUs22kpAKbHWcYdopGlZSzKrc8fYZBwAAAAAIBxH8AZqM4yJjDK6SsqpgGiylfKUNUZzw90sis725pe3ACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAQEAAAEBAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1Ae+2Pou4IgmffYeLesUVRWnuzodmRG3dWvuFZguvoBGHjtGpHQAAAAAgV3AuVVb8MkmvL1ZcHG8rmJiVWgdISLE76Ts2Bzamx54PL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9e4CAAAAAAAAaComAAAAAAAA
-# Transaction Commands: {
+# test_sign_tx_vusd_whole_coin
+# ----------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x0f2f8dd49e269da066f37624d33a8b4ed1b262d6a5fdf2b735be39f8d7c5acf5",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "2501224",
-#     "price": "750",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xefb63e8bb822099f7d878b7ac5154569eece8766446ddd5afb85660bafa01187",
-#         "version": "497668494",
-#         "digest": "6tKgd63ZMmb4CA74EjWN7Wv4yx3hCiBqo2PnKTU4hr9T"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0x2bf6f455be6dca289d0c6d3c65b14b36da4a4029b1d6718768a469594b32ab73",
-#           "version": "476371143",
-#           "digest": "2uQ3BCM51Km8pf7PCqiCBy1KFv5rZmpbkXEwu7KeS61C"
-#         }
-#       }
+#           "objectId": "0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319",
+#           "version": "338244725",
+#           "digest": "74sxR2hccsGSP9Shbeuhs3Fawx9k1fZcnfMfvsYGdg1A"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "b7If7q0CfaSHMpWv/WxPNhj+F2+i+/Pnte8dlGOzHiE="
-#       }
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
@@ -159,40 +215,50 @@ def test_sign_tx_usdc_whole_coin(backend, scenario_navigator, firmware, navigato
 #       "TransferObjects": {
 #         "objects": [
 #           {
-#             "Input": 0
+#             "Input": 0,
+#             "$kind": "Input"
 #           }
 #         ],
 #         "address": {
-#           "Input": 1
+#           "Input": 1,
+#           "$kind": "Input"
 #         }
-#       }
+#       },
+#       "$kind": "TransferObjects"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#         "version": "340540910",
+#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
+#       }
+#     ]
+#   }
 # }
-# {
-#   dataType: 'moveObject',
-#   type: '0x2::coin::Coin<0x5d4b302506645c37ff133b98c4b50a5ae14841659738d6d733d59d0d217a93bf::coin::COIN>',
-#   hasPublicTransfer: true,
-#   version: 476371143,
-#   bcsBytes: 'K/b0Vb5tyiidDG08ZbFLNtpKQCmx1nGHaKRpWUsyq3MDAAAAAAAAAA=='
-# }
-
-def test_sign_tx_wusdc_whole_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_vusd_whole_coin(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/0'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAACAQAr9vRVvm3KKJ0MbTxlsUs22kpAKbHWcYdopGlZSzKrc8fYZBwAAAAAIBxH8AZqM4yJjDK6SsqpgGiylfKUNUZzw90sis725pe3ACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAQEAAAEBAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1Ae+2Pou4IgmffYeLesUVRWnuzodmRG3dWvuFZguvoBGHjtGpHQAAAAAgV3AuVVb8MkmvL1ZcHG8rmJiVWgdISLE76Ts2Bzamx54PL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9e4CAAAAAAAAaComAAAAAAAA')
+    transaction = base64.b64decode('AAAAAAACAQC8bdPKoYkwkJbPMYN4bJu42X2J0BhewjYhTr0swU8TGXU0KRQAAAAAIFoker34YuFsSnGq+bXwfYo91Y8ZNApPdPgrfBte2xN1ACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgEBAQEAAAEBAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2AROrhPNKYiRC1cC6f3PHkTmw/WXIity+JlUpcLFEGuZK7j1MFAAAAAAgwPmyRf1udkQLUaamZqlNudWNHQxliowgCPq4ttn3lD0PWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtugDAAAAAAAAQEIPAAAAAAAA')
 
-    object_list = [base64.b64decode('AAMHXUswJQZkXDf/EzuYxLUKWuFIQWWXONbXM9WdDSF6k78EY29pbgRDT0lOAAHH2GQcAAAAACgr9vRVvm3KKJ0MbTxlsUs22kpAKbHWcYdopGlZSzKrcwMAAAAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1IPCmh/QdnSazrWlro9Zp1vvv08RlqS3ABJXMdPtQZjnIoC0UAAAAAAA=')]
+    object_list = [
+        base64.b64decode('AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKLxt08qhiTCQls8xg3hsm7jZfYnQGF7CNiFOvSzBTxMZwOHkAAAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA=='),
+        base64.b64decode('AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -216,57 +282,55 @@ def test_sign_tx_wusdc_whole_coin(backend, scenario_navigator, firmware, navigat
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
 
-# {"data":{"objects":{"nodes":[{"digest":"5DEmU82eeP1wJ6L7q8V7bLbAr4Vbjat2XkT3nbf5NmSN","bcs":"AAMH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAE1MqYdAAAAACiLpklb40bBvonlw1zaurFF6hiZD0jysGKf8BYCTJ3tRQHiAQAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1IOV7R/YfpK7xICsKift4S9G6tE2+t4MyPAX4gSGmkRIYoC0UAAAAAAA="}]}}}
-# {"data":{"objects":{"nodes":[{"digest":"GMyhw5NFFz4FNZHqaU1tbnzx6EYRa2pEzbGvKL4f6SFd","bcs":"AAMH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAHmeaQdAAAAACiOv4dEntJCIWo8lN5JNcIXkmGIUPx4EiLoZtxguxvI0gHbAQAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1IK02+4bxem3JcKC41NNAanTDoQBzwHsLO6uVhtAiJfqCoC0UAAAAAAA="}]}}}
-# built_tx AAAEAQDTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFuXYvpB0AAAAAIJxCj+NcqbGRfo0O7b01nRHCGKviMzj24EOLiWE+lIpDAQCLpklb40bBvonlw1zaurFF6hiZD0jysGKf8BYCTJ3tRTUyph0AAAAAID6RSJBTwuLCyFHo8Wr624IT/QLOofOgJMYDmGxMFJY3AQCOv4dEntJCIWo8lN5JNcIXkmGIUPx4EiLoZtxguxvI0uZ5pB0AAAAAIOQ/CZZSDz1bJFP7ynAKkMqm7brpDXAdHJsO5qFAXW6cACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAwEAAAEBAAECAAEDAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1Ae+2Pou4IgmffYeLesUVRWnuzodmRG3dWvuFZguvoBGHjtGpHQAAAAAgV3AuVVb8MkmvL1ZcHG8rmJiVWgdISLE76Ts2Bzamx54PL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9e4CAAAAAAAAuJEmAAAAAAAA
-# Transaction Commands: {
+# test_sign_tx_three_stiota_whole_coin
+# ------------------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x0f2f8dd49e269da066f37624d33a8b4ed1b262d6a5fdf2b735be39f8d7c5acf5",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "2527672",
-#     "price": "750",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xefb63e8bb822099f7d878b7ac5154569eece8766446ddd5afb85660bafa01187",
-#         "version": "497668494",
-#         "digest": "6tKgd63ZMmb4CA74EjWN7Wv4yx3hCiBqo2PnKTU4hr9T"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xd3baa97a46a20d65f1be60cbaa160856e6aae5078e16545071e2fd3e314105b9",
-#           "version": "497299318",
-#           "digest": "BWyUBdTBr7uMyQ1nRsQkkB5RXLNL6QWprGaqJ7atMJTC"
-#         }
-#       }
+#           "objectId": "0x57a524205644363fed2c495e6a4c9df0b23347987176ea54b08d9eedb5e2abdb",
+#           "version": "340540901",
+#           "digest": "8gWVVowMMtRakSYTLCyco233PMmLoXkvK7FvySg9D636"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0x8ba6495be346c1be89e5c35cdabab145ea18990f48f2b0629ff016024c9ded45",
-#           "version": "497431093",
-#           "digest": "5DEmU82eeP1wJ6L7q8V7bLbAr4Vbjat2XkT3nbf5NmSN"
-#         }
-#       }
+#           "objectId": "0x78084fe4b7cb74d2054e426c2654085dd0cbdfa488717974259e2e1870ac5cab",
+#           "version": "340540910",
+#           "digest": "AMkvwZn1oYF6iNbzmBotZaTYa15H1yN1PRkWdaCFjbNd"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0x8ebf87449ed242216a3c94de4935c21792618850fc781222e866dc60bb1bc8d2",
-#           "version": "497318374",
-#           "digest": "GMyhw5NFFz4FNZHqaU1tbnzx6EYRa2pEzbGvKL4f6SFd"
-#         }
-#       }
+#           "objectId": "0x7832ee1651ef144281b3d785bc8b7501f37aa46ba96a32be95d5d0071e501950",
+#           "version": "340540909",
+#           "digest": "2B2NSgS2JJUuXgfNckxheig2zrScjQQtKN1RyPMBd8fU"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "b7If7q0CfaSHMpWv/WxPNhj+F2+i+/Pnte8dlGOzHiE="
-#       }
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
@@ -274,42 +338,60 @@ def test_sign_tx_wusdc_whole_coin(backend, scenario_navigator, firmware, navigat
 #       "TransferObjects": {
 #         "objects": [
 #           {
-#             "Input": 0
+#             "Input": 0,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Input": 1
+#             "Input": 1,
+#             "$kind": "Input"
 #           },
 #           {
-#             "Input": 2
+#             "Input": 2,
+#             "$kind": "Input"
 #           }
 #         ],
 #         "address": {
-#           "Input": 3
+#           "Input": 3,
+#           "$kind": "Input"
 #         }
-#       }
+#       },
+#       "$kind": "TransferObjects"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#         "version": "340540910",
+#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
+#       }
+#     ]
+#   }
 # }
-
-def test_sign_tx_three_usdc_whole_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_three_stiota_whole_coin(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/0'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAAEAQDTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFuXYvpB0AAAAAIJxCj+NcqbGRfo0O7b01nRHCGKviMzj24EOLiWE+lIpDAQCLpklb40bBvonlw1zaurFF6hiZD0jysGKf8BYCTJ3tRTUyph0AAAAAID6RSJBTwuLCyFHo8Wr624IT/QLOofOgJMYDmGxMFJY3AQCOv4dEntJCIWo8lN5JNcIXkmGIUPx4EiLoZtxguxvI0uZ5pB0AAAAAIOQ/CZZSDz1bJFP7ynAKkMqm7brpDXAdHJsO5qFAXW6cACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAwEAAAEBAAECAAEDAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1Ae+2Pou4IgmffYeLesUVRWnuzodmRG3dWvuFZguvoBGHjtGpHQAAAAAgV3AuVVb8MkmvL1ZcHG8rmJiVWgdISLE76Ts2Bzamx54PL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9e4CAAAAAAAAuJEmAAAAAAAA')
+    transaction = base64.b64decode('AAAAAAAEAQBXpSQgVkQ2P+0sSV5qTJ3wsjNHmHF26lSwjZ7tteKr2+U9TBQAAAAAIHIgzlTp2lDccQR2TBqspDxfa6/RSgYLaG5cQr3cf/EtAQB4CE/kt8t00gVOQmwmVAhd0MvfpIhxeXQlni4YcKxcq+49TBQAAAAAIIsKeGhpR5qy63EhY+R+eOwURcd0M3HNmFm812IOKCY+AQB4Mu4WUe8UQoGz14W8i3UB83qka6lqMr6V1dAHHlAZUO09TBQAAAAAIBFtCzLdLe5IVl3ThYf4LhZniW0NvLhdhLCyCRi9+sbzACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgEBAwEAAAEBAAECAAEDAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2AROrhPNKYiRC1cC6f3PHkTmw/WXIity+JlUpcLFEGuZK7j1MFAAAAAAgwPmyRf1udkQLUaamZqlNudWNHQxliowgCPq4ttn3lD0PWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtugDAAAAAAAAQEIPAAAAAAAA')
 
-    object_list = [base64.b64decode('AAMH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAF2L6QdAAAAACjTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFubeGAQAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1ICV9oiz28QN2+VFgs3VVcob35zoaZgQf5WcAe9gWdNyWoC0UAAAAAAA='),
-                   base64.b64decode('AAMH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAE1MqYdAAAAACiLpklb40bBvonlw1zaurFF6hiZD0jysGKf8BYCTJ3tRQHiAQAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1IOV7R/YfpK7xICsKift4S9G6tE2+t4MyPAX4gSGmkRIYoC0UAAAAAAA='),
-                   base64.b64decode('AAMH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAHmeaQdAAAAACiOv4dEntJCIWo8lN5JNcIXkmGIUPx4EiLoZtxguxvI0gHbAQAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1IK02+4bxem3JcKC41NNAanTDoQBzwHsLO6uVhtAiJfqCoC0UAAAAAAA=')
-                   ]
+    object_list = [
+        base64.b64decode('AAMHFGHvdPl+g+sCSkSKuFH5gPTld6l4dwaccrRLX+mSnuMEY2VydARDRVJUAOU9TBQAAAAAKFelJCBWRDY/7SxJXmpMnfCyM0eYcXbqVLCNnu214qvb68K4FgEAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYgPtVht5QLbaiJTmN0p92D3yCv1lNJblfPGRO2elW1FznwDxQAAAAAAA=='),
+        base64.b64decode('AAMHFGHvdPl+g+sCSkSKuFH5gPTld6l4dwaccrRLX+mSnuMEY2VydARDRVJUAO49TBQAAAAAKHgIT+S3y3TSBU5CbCZUCF3Qy9+kiHF5dCWeLhhwrFyrYo2+NwAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYguKlUaKTBNNc/LtiCIMGrIyu7ih1a6fdgTQ8/qHwqNkDwDxQAAAAAAA=='),
+        base64.b64decode('AAMHFGHvdPl+g+sCSkSKuFH5gPTld6l4dwaccrRLX+mSnuMEY2VydARDRVJUAO09TBQAAAAAKHgy7hZR7xRCgbPXhbyLdQHzeqRrqWoyvpXV0AceUBlQw0gqRAMAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYgAZWKkwQ2s+uvbZ3YacRydwI3n61B9lVfr8UWyjZnE1vwDxQAAAAAAA=='),
+        base64.b64decode('AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -333,56 +415,189 @@ def test_sign_tx_three_usdc_whole_coin(backend, scenario_navigator, firmware, na
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
 
-# built_tx AAADAQDTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFuXYvpB0AAAAAIJxCj+NcqbGRfo0O7b01nRHCGKviMzj24EOLiWE+lIpDAAiAOAEAAAAAAAAgb7If7q0CfaSHMpWv/WxPNhj+F2+i+/Pnte8dlGOzHiECAgEAAAEBAQABAQMAAAAAAQIADy+N1J4mnaBm83Yk0zqLTtGyYtal/fK3Nb45+NfFrPUB77Y+i7giCZ99h4t6xRVFae7Oh2ZEbd1a+4VmC6+gEYeO0akdAAAAACBXcC5VVvwySa8vVlwcbyuYmJVaB0hIsTvpOzYHNqbHng8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz17gIAAAAAAAAIWDoAAAAAAAA=
-# Transaction Commands: {
+# test_sign_tx_three_vusd_whole_coin
+# ----------------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x0f2f8dd49e269da066f37624d33a8b4ed1b262d6a5fdf2b735be39f8d7c5acf5",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "3823624",
-#     "price": "750",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xefb63e8bb822099f7d878b7ac5154569eece8766446ddd5afb85660bafa01187",
-#         "version": "497668494",
-#         "digest": "6tKgd63ZMmb4CA74EjWN7Wv4yx3hCiBqo2PnKTU4hr9T"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0xd3baa97a46a20d65f1be60cbaa160856e6aae5078e16545071e2fd3e314105b9",
-#           "version": "497299318",
-#           "digest": "BWyUBdTBr7uMyQ1nRsQkkB5RXLNL6QWprGaqJ7atMJTC"
+#           "objectId": "0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319",
+#           "version": "338244725",
+#           "digest": "74sxR2hccsGSP9Shbeuhs3Fawx9k1fZcnfMfvsYGdg1A"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
+#     },
+#     {
+#       "Object": {
+#         "ImmOrOwnedObject": {
+#           "objectId": "0x1bc1e43b319a9bf12353fb14c3f4b9342841d172e9e5b9cdb0510c2296accb77",
+#           "version": "338244725",
+#           "digest": "ENjWCBi7D3vqp9hta1fabNSQ49pBQh2psB14xuwS9PJ9"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
+#     },
+#     {
+#       "Object": {
+#         "ImmOrOwnedObject": {
+#           "objectId": "0x16cd400cb71dfaacd5027d18e3770c39558481502411b175c1ba44c400b294c8",
+#           "version": "338244725",
+#           "digest": "7JpuxUnmu64AB5aukFtQRwYF1E3kj1Rn2uN8UyjMXXom"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     }
+#   ],
+#   "commands": [
+#     {
+#       "TransferObjects": {
+#         "objects": [
+#           {
+#             "Input": 0,
+#             "$kind": "Input"
+#           },
+#           {
+#             "Input": 1,
+#             "$kind": "Input"
+#           },
+#           {
+#             "Input": 2,
+#             "$kind": "Input"
+#           }
+#         ],
+#         "address": {
+#           "Input": 3,
+#           "$kind": "Input"
 #         }
+#       },
+#       "$kind": "TransferObjects"
+#     }
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#         "version": "340540910",
+#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
 #       }
+#     ]
+#   }
+# }
+def test_sign_tx_three_vusd_whole_coin(backend, scenario_navigator, device, navigator):
+    client = Client(backend, use_block_protocol=True)
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
+
+    _, public_key, _, _ = client.get_public_key(path=path)
+    assert len(public_key) == 32
+
+    transaction = base64.b64decode('AAAAAAAEAQC8bdPKoYkwkJbPMYN4bJu42X2J0BhewjYhTr0swU8TGXU0KRQAAAAAIFoker34YuFsSnGq+bXwfYo91Y8ZNApPdPgrfBte2xN1AQAbweQ7MZqb8SNT+xTD9Lk0KEHRcunluc2wUQwilqzLd3U0KRQAAAAAIMa5L4nBRHry8L3SdIN6wkhVUfU8zesw552W/4Woer4KAQAWzUAMtx36rNUCfRjjdww5VYSBUCQRsXXBukTEALKUyHU0KRQAAAAAIF23K7cqumqYsACp3Vrs1f5sAvEHlvhxTEITbRV6J0GAACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgEBAwEAAAEBAAECAAEDAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2AROrhPNKYiRC1cC6f3PHkTmw/WXIity+JlUpcLFEGuZK7j1MFAAAAAAgwPmyRf1udkQLUaamZqlNudWNHQxliowgCPq4ttn3lD0PWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtugDAAAAAAAAQEIPAAAAAAAA')
+
+    object_list = [
+        base64.b64decode('AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKLxt08qhiTCQls8xg3hsm7jZfYnQGF7CNiFOvSzBTxMZwOHkAAAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA=='),
+        base64.b64decode('AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKBvB5DsxmpvxI1P7FMP0uTQoQdFy6eW5zbBRDCKWrMt3wM9qAAAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA=='),
+        base64.b64decode('AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKBbNQAy3Hfqs1QJ9GON3DDlVhIFQJBGxdcG6RMQAspTIAD+rAQAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA=='),
+        base64.b64decode('AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA='),
+    ]
+
+    def apdu_task():
+        return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
+
+    def nav_task():
+        if device.is_nano:
+            navigator.navigate_and_compare(
+                instructions=[ NavInsID.RIGHT_CLICK # Review transfer
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
+                               , NavInsID.RIGHT_CLICK # Amount
+                               , NavInsID.RIGHT_CLICK # Max Gas
+                               , NavInsID.BOTH_CLICK
+                              ]
+                , timeout=10
+                , test_case_name=scenario_navigator.test_name
+                , path=scenario_navigator.screenshot_path
+                , screen_change_before_first_instruction=True
+                , screen_change_after_last_instruction=False
+            )
+        else:
+            scenario_navigator.review_approve()
+
+    def check_result(result):
+        assert len(result) == 64
+        assert check_signature_validity(public_key, result, transaction)
+
+    run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+
+# test_sign_tx_vusd_split_coin
+# ----------------------------
+# TransactionData:
+# {
+#   "version": 2,
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
+#   },
+#   "inputs": [
+#     {
+#       "Object": {
+#         "ImmOrOwnedObject": {
+#           "objectId": "0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319",
+#           "version": "338244725",
+#           "digest": "74sxR2hccsGSP9Shbeuhs3Fawx9k1fZcnfMfvsYGdg1A"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "gDgBAAAAAAA="
-#       }
+#         "bytes": "oCUmAAAAAAA="
+#       },
+#       "$kind": "Pure"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "b7If7q0CfaSHMpWv/WxPNhj+F2+i+/Pnte8dlGOzHiE="
-#       }
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
 #     }
 #   ],
 #   "commands": [
 #     {
 #       "SplitCoins": {
 #         "coin": {
-#           "Input": 0
+#           "Input": 0,
+#           "$kind": "Input"
 #         },
 #         "amounts": [
 #           {
-#             "Input": 1
+#             "Input": 1,
+#             "$kind": "Input"
 #           }
 #         ]
-#       }
+#       },
+#       "$kind": "SplitCoins"
 #     },
 #     {
 #       "TransferObjects": {
@@ -391,39 +606,50 @@ def test_sign_tx_three_usdc_whole_coin(backend, scenario_navigator, firmware, na
 #             "NestedResult": [
 #               0,
 #               0
-#             ]
+#             ],
+#             "$kind": "NestedResult"
 #           }
 #         ],
 #         "address": {
-#           "Input": 2
+#           "Input": 2,
+#           "$kind": "Input"
 #         }
-#       }
+#       },
+#       "$kind": "TransferObjects"
 #     }
-#   ]
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#         "version": "340540910",
+#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
+#       }
+#     ]
+#   }
 # }
-# {
-#   dataType: 'moveObject',
-#   type: '0x2::coin::Coin<0xdba34672e30cb065b1f93e3ab55318768fd6fef66c15942c9f7cb846e2f900e7::usdc::USDC>',
-#   hasPublicTransfer: true,
-#   version: 497299318,
-#   bcsBytes: '07qpekaiDWXxvmDLqhYIVuaq5QeOFlRQceL9PjFBBbm3hgEAAAAAAA=='
-# }
-def test_sign_tx_usdc_split_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_vusd_split_coin(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/0'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAADAQDTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFuXYvpB0AAAAAIJxCj+NcqbGRfo0O7b01nRHCGKviMzj24EOLiWE+lIpDAAiAOAEAAAAAAAAgb7If7q0CfaSHMpWv/WxPNhj+F2+i+/Pnte8dlGOzHiECAgEAAAEBAQABAQMAAAAAAQIADy+N1J4mnaBm83Yk0zqLTtGyYtal/fK3Nb45+NfFrPUB77Y+i7giCZ99h4t6xRVFae7Oh2ZEbd1a+4VmC6+gEYeO0akdAAAAACBXcC5VVvwySa8vVlwcbyuYmJVaB0hIsTvpOzYHNqbHng8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz17gIAAAAAAAAIWDoAAAAAAAA=')
+    transaction = base64.b64decode('AAAAAAADAQC8bdPKoYkwkJbPMYN4bJu42X2J0BhewjYhTr0swU8TGXU0KRQAAAAAIFoker34YuFsSnGq+bXwfYo91Y8ZNApPdPgrfBte2xN1AAigJSYAAAAAAAAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4CAgEAAAEBAQABAQMAAAAAAQIAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYBE6uE80piJELVwLp/c8eRObD9ZciK3L4mVSlwsUQa5kruPUwUAAAAACDA+bJF/W52RAtRpqZmqU251Y0dDGWKjCAI+ri22feUPQ9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W26AMAAAAAAABAQg8AAAAAAAA=')
 
-    object_list = [base64.b64decode('AAMH26NGcuMMsGWx+T46tVMYdo/W/vZsFZQsn3y4RuL5AOcEdXNkYwRVU0RDAAF2L6QdAAAAACjTuql6RqINZfG+YMuqFghW5qrlB44WVFBx4v0+MUEFubeGAQAAAAAAAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1ICV9oiz28QN2+VFgs3VVcob35zoaZgQf5WcAe9gWdNyWoC0UAAAAAAA=')]
+    object_list = [
+        base64.b64decode('AAMHkpBlMgx1a4pKhB3u7QE710juRaKGKcSqr8VtiUjrsIEEdnVzZARWVVNEAHU0KRQAAAAAKLxt08qhiTCQls8xg3hsm7jZfYnQGF7CNiFOvSzBTxMZwOHkAAAAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYg+IoPFKZUYrotPBXnn3FJ9G/LaZ70lkkdB9cvK1Clb9/wDxQAAAAAAA=='),
+        base64.b64decode('AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -447,37 +673,158 @@ def test_sign_tx_usdc_split_coin(backend, scenario_navigator, firmware, navigato
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
 
-# built_tx AAACAQAl2pb6fxLL9X+shfBLjCm9ldGecSNTxvRQ+Lu4pvLIQ6d2ZxwAAAAAIFQCzwkzjdDT/z8SxH21mdVkCljCe1cOGGqYLppob8NUACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAQEAAAEBAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1Ae+2Pou4IgmffYeLesUVRWnuzodmRG3dWvuFZguvoBGHv0GqHQAAAAAgGT+sWlGna1S+/DUWLOV4sUtGm3TqNlwLgzE03ikr8NwPL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9e4CAAAAAAAAmCsmAAAAAAAA
-# Transaction Commands: {
+# test_sign_tx_stiota_split_coin
+# ------------------------------
+# TransactionData:
+# {
 #   "version": 2,
-#   "sender": "0x0f2f8dd49e269da066f37624d33a8b4ed1b262d6a5fdf2b735be39f8d7c5acf5",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "2501528",
-#     "price": "750",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0xefb63e8bb822099f7d878b7ac5154569eece8766446ddd5afb85660bafa01187",
-#         "version": "497697215",
-#         "digest": "2hZWK92WKpHjLxxzsEseGzYtS6oU6WTBCimcuxp7wHCo"
-#       }
-#     ]
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
 #   },
 #   "inputs": [
 #     {
 #       "Object": {
 #         "ImmOrOwnedObject": {
-#           "objectId": "0x25da96fa7f12cbf57fac85f04b8c29bd95d19e712353c6f450f8bbb8a6f2c843",
-#           "version": "476542631",
-#           "digest": "6ewjNycgiXo5TuKZCN2fQRdwyuqKawffYyFfpsDQBFSs"
-#         }
-#       }
+#           "objectId": "0x7832ee1651ef144281b3d785bc8b7501f37aa46ba96a32be95d5d0071e501950",
+#           "version": "340540909",
+#           "digest": "2B2NSgS2JJUuXgfNckxheig2zrScjQQtKN1RyPMBd8fU"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     },
 #     {
 #       "Pure": {
-#         "bytes": "b7If7q0CfaSHMpWv/WxPNhj+F2+i+/Pnte8dlGOzHiE="
+#         "bytes": "AHhBywIAAAA="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     }
+#   ],
+#   "commands": [
+#     {
+#       "SplitCoins": {
+#         "coin": {
+#           "Input": 0,
+#           "$kind": "Input"
+#         },
+#         "amounts": [
+#           {
+#             "Input": 1,
+#             "$kind": "Input"
+#           }
+#         ]
+#       },
+#       "$kind": "SplitCoins"
+#     },
+#     {
+#       "TransferObjects": {
+#         "objects": [
+#           {
+#             "NestedResult": [
+#               0,
+#               0
+#             ],
+#             "$kind": "NestedResult"
+#           }
+#         ],
+#         "address": {
+#           "Input": 2,
+#           "$kind": "Input"
+#         }
+#       },
+#       "$kind": "TransferObjects"
+#     }
+#   ],
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#         "version": "340540910",
+#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
 #       }
+#     ]
+#   }
+# }
+def test_sign_tx_stiota_split_coin(backend, scenario_navigator, device, navigator):
+    client = Client(backend, use_block_protocol=True)
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
+
+    _, public_key, _, _ = client.get_public_key(path=path)
+    assert len(public_key) == 32
+
+    transaction = base64.b64decode('AAAAAAADAQB4Mu4WUe8UQoGz14W8i3UB83qka6lqMr6V1dAHHlAZUO09TBQAAAAAIBFtCzLdLe5IVl3ThYf4LhZniW0NvLhdhLCyCRi9+sbzAAgAeEHLAgAAAAAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4CAgEAAAEBAQABAQMAAAAAAQIAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYBE6uE80piJELVwLp/c8eRObD9ZciK3L4mVSlwsUQa5kruPUwUAAAAACDA+bJF/W52RAtRpqZmqU251Y0dDGWKjCAI+ri22feUPQ9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W26AMAAAAAAABAQg8AAAAAAAA=')
+
+    object_list = [
+        base64.b64decode('AAMHFGHvdPl+g+sCSkSKuFH5gPTld6l4dwaccrRLX+mSnuMEY2VydARDRVJUAO09TBQAAAAAKHgy7hZR7xRCgbPXhbyLdQHzeqRrqWoyvpXV0AceUBlQw0gqRAMAAAAAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYgAZWKkwQ2s+uvbZ3YacRydwI3n61B9lVfr8UWyjZnE1vwDxQAAAAAAA=='),
+        base64.b64decode('AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA='),
+    ]
+
+    def apdu_task():
+        return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
+
+    def nav_task():
+        if device.is_nano:
+            navigator.navigate_and_compare(
+                instructions=[ NavInsID.RIGHT_CLICK # Review transfer
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
+                               , NavInsID.RIGHT_CLICK # Amount
+                               , NavInsID.RIGHT_CLICK # Max Gas
+                               , NavInsID.BOTH_CLICK
+                              ]
+                , timeout=10
+                , test_case_name=scenario_navigator.test_name
+                , path=scenario_navigator.screenshot_path
+                , screen_change_before_first_instruction=True
+                , screen_change_after_last_instruction=False
+            )
+        else:
+            scenario_navigator.review_approve()
+
+    def check_result(result):
+        assert len(result) == 64
+        assert check_signature_validity(public_key, result, transaction)
+
+    run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+
+# test_sign_tx_unrecognized_coin
+# ------------------------------
+# TransactionData:
+# {
+#   "version": 2,
+#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#   "expiration": {
+#     "None": true,
+#     "$kind": "None"
+#   },
+#   "inputs": [
+#     {
+#       "Pure": {
+#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#       },
+#       "$kind": "Pure"
+#     },
+#     {
+#       "Object": {
+#         "ImmOrOwnedObject": {
+#           "objectId": "0x2d9482356f5c02694cc98ac72b517e24eaf54ef3a7662f8cee81ce6ca822c739",
+#           "version": "292323579",
+#           "digest": "79ScvbUk9oVCR64kuvZSDQjGFqwi5Kq6QdH3oUfENT7c"
+#         },
+#         "$kind": "ImmOrOwnedObject"
+#       },
+#       "$kind": "Object"
 #     }
 #   ],
 #   "commands": [
@@ -485,133 +832,55 @@ def test_sign_tx_usdc_split_coin(backend, scenario_navigator, firmware, navigato
 #       "TransferObjects": {
 #         "objects": [
 #           {
-#             "Input": 0
+#             "Input": 1,
+#             "$kind": "Input"
 #           }
 #         ],
 #         "address": {
-#           "Input": 1
+#           "Input": 0,
+#           "$kind": "Input"
 #         }
-#       }
-#     }
-#   ]
-# }
-# {
-#   dataType: 'moveObject',
-#   type: '0x2::coin::Coin<0x8993129d72e733985f7f1a00396cbd055bad6f817fee36576ce483c8bbb8b87b::sudeng::SUDENG>',
-#   hasPublicTransfer: true,
-#   version: 476542631,
-#   bcsBytes: 'JdqW+n8Sy/V/rIXwS4wpvZXRnnEjU8b0UPi7uKbyyENDjFkYAAAAAA=='
-# }
-# {"data":{"objects":{"nodes":[{"digest":"6ewjNycgiXo5TuKZCN2fQRdwyuqKawffYyFfpsDQBFSs","bcs":"AAMHiZMSnXLnM5hffxoAOWy9BVutb4F/7jZXbOSDyLu4uHsGc3VkZW5nBlNVREVORwABp3ZnHAAAAAAoJdqW+n8Sy/V/rIXwS4wpvZXRnnEjU8b0UPi7uKbyyENDjFkYAAAAAAAPL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9SClNBIS+ZkxFHxisw25kf37mBCLpipUHR8VhNn5c0lmk2CkFAAAAAAA"}]}}}
-# balance: 408521795
-def test_sign_tx_HIPPO_coin(backend, scenario_navigator, firmware, navigator):
-    client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/0'"
-
-    _, public_key, _, _ = client.get_public_key(path=path)
-    assert len(public_key) == 32
-
-    transaction = base64.b64decode('AAAAAAACAQAl2pb6fxLL9X+shfBLjCm9ldGecSNTxvRQ+Lu4pvLIQ6d2ZxwAAAAAIFQCzwkzjdDT/z8SxH21mdVkCljCe1cOGGqYLppob8NUACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAQEAAAEBAA8vjdSeJp2gZvN2JNM6i07RsmLWpf3ytzW+OfjXxaz1Ae+2Pou4IgmffYeLesUVRWnuzodmRG3dWvuFZguvoBGHv0GqHQAAAAAgGT+sWlGna1S+/DUWLOV4sUtGm3TqNlwLgzE03ikr8NwPL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9e4CAAAAAAAAmCsmAAAAAAAA')
-
-    object_list = [base64.b64decode('AAMHiZMSnXLnM5hffxoAOWy9BVutb4F/7jZXbOSDyLu4uHsGc3VkZW5nBlNVREVORwABp3ZnHAAAAAAoJdqW+n8Sy/V/rIXwS4wpvZXRnnEjU8b0UPi7uKbyyENDjFkYAAAAAAAPL43UniadoGbzdiTTOotO0bJi1qX98rc1vjn418Ws9SClNBIS+ZkxFHxisw25kf37mBCLpipUHR8VhNn5c0lmk2CkFAAAAAAA')]
-
-    def apdu_task():
-        return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
-
-    def nav_task():
-        if firmware.device.startswith("nano"):
-            navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Review transfer
-                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
-                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
-                               , NavInsID.RIGHT_CLICK # Amount
-                               , NavInsID.RIGHT_CLICK # Max Gas
-                               , NavInsID.BOTH_CLICK
-                              ]
-                , timeout=10
-                , test_case_name=scenario_navigator.test_name
-                , path=scenario_navigator.screenshot_path
-                , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
-            )
-        else:
-            scenario_navigator.review_approve()
-
-    def check_result(result):
-        assert len(result) == 64
-        assert check_signature_validity(public_key, result, transaction)
-
-    run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-
-# built_tx AAACAQAkOlErOjssUas7B1ipByHf2etJJYdwBbMTSEy5doj0VgHzIR4AAAAAIN8vTwL8rbbLzRfsdy1PyOXvcrij9n34ovKk2/o0N3wNACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAQEAAAEBAG02HZIA+4tmm1GrxPh4dKNj3Fry/X/O0WxUh1ovpxisAQkHEsRdw5dbbdY9esFx0S8xZ3rE61Q5gJ3SV2OdlnYVFxwwHgAAAAAgDI4TkhHnVDhJiSloJl/c9O1pBEyKpv0JUSJ/mmyKbuVtNh2SAPuLZptRq8T4eHSjY9xa8v1/ztFsVIdaL6cYrOkCAAAAAAAA8AMmAAAAAAAA
-# Transaction Commands: {
-#   "version": 2,
-#   "sender": "0x6d361d9200fb8b669b51abc4f87874a363dc5af2fd7fced16c54875a2fa718ac",
-#   "expiration": null,
-#   "gasData": {
-#     "budget": "2491376",
-#     "price": "745",
-#     "owner": null,
-#     "payment": [
-#       {
-#         "objectId": "0x090712c45dc3975b6dd63d7ac171d12f31677ac4eb5439809dd257639d967615",
-#         "version": "506469399",
-#         "digest": "r1Ye5Jfy67g4rgqQUybYzXFAQFApgsry1YL3u1uczKN"
-#       }
-#     ]
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x243a512b3a3b2c51ab3b0758a90721dfd9eb4925877005b313484cb97688f456",
-#           "version": "505541377",
-#           "digest": "G2DktCyX91sGmyLDFbvuRJdk9PpJnAFhowHCQenc2kpc"
-#         }
-#       }
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "b7If7q0CfaSHMpWv/WxPNhj+F2+i+/Pnte8dlGOzHiE="
-#       }
+#       },
+#       "$kind": "TransferObjects"
 #     }
 #   ],
-#   "commands": [
-#     {
-#       "TransferObjects": {
-#         "objects": [
-#           {
-#             "Input": 0
-#           }
-#         ],
-#         "address": {
-#           "Input": 1
-#         }
+#   "gasData": {
+#     "budget": "1000000",
+#     "price": "1000",
+#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "payment": [
+#       {
+#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#         "version": "340540910",
+#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
 #       }
-#     }
-#   ]
+#     ]
+#   }
 # }
-def test_sign_tx_unrecognized_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_unrecognized_coin(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/0'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AAAAAAACAQAkOlErOjssUas7B1ipByHf2etJJYdwBbMTSEy5doj0VgHzIR4AAAAAIN8vTwL8rbbLzRfsdy1PyOXvcrij9n34ovKk2/o0N3wNACBvsh/urQJ9pIcyla/9bE82GP4Xb6L78+e17x2UY7MeIQEBAQEAAAEBAG02HZIA+4tmm1GrxPh4dKNj3Fry/X/O0WxUh1ovpxisAQkHEsRdw5dbbdY9esFx0S8xZ3rE61Q5gJ3SV2OdlnYVFxwwHgAAAAAgDI4TkhHnVDhJiSloJl/c9O1pBEyKpv0JUSJ/mmyKbuVtNh2SAPuLZptRq8T4eHSjY9xa8v1/ztFsVIdaL6cYrOkCAAAAAAAA8AMmAAAAAAAA')
+    transaction = base64.b64decode('AAAAAAACACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgEALZSCNW9cAmlMyYrHK1F+JOr1TvOnZi+M7oHObKgixzn7gGwRAAAAACBbT7xnnhHP0679qpTId7IICMKeSKS+kCiu/GQnMjihvwEBAQEBAAEAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2AROrhPNKYiRC1cC6f3PHkTmw/WXIity+JlUpcLFEGuZK7j1MFAAAAAAgwPmyRf1udkQLUaamZqlNudWNHQxliowgCPq4ttn3lD0PWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtugDAAAAAAAAQEIPAAAAAAAA')
 
-    object_list = [base64.b64decode('AAMHkOjF9XYq+mdulvsw4s0Mm/3IQNQy7OWHk/VPQtmYGwkFa2lsbGEFS0lMTEEAAQHzIR4AAAAAKCQ6USs6OyxRqzsHWKkHId/Z60klh3AFsxNITLl2iPRW5Rb4fgVVAAAAbTYdkgD7i2abUavE+Hh0o2PcWvL9f87RbFSHWi+nGKwgeQhHBdsHFvOvjCyMxNjkg1Ue4ypBA1B5GpIVylbqy2UAaRQAAAAAAA==')]
+    object_list = [
+        base64.b64decode('AAMHHsjKSLmzn3IVENxxfX8HfJvITsoo54S6jcC5E+I+1coRZGVwb3NpdF90ZXN0X2NvaW4RREVQT1NJVF9URVNUX0NPSU4A+4BsEQAAAAAoLZSCNW9cAmlMyYrHK1F+JOr1TvOnZi+M7oHObKgixzkAypo7AAAAAAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtiABHefVakVH8AxQKTp2EY6phZ6YqPIOvu3YHdqPQaxWa9ATFwAAAAAA'),
+        base64.b64decode('AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA='),
+    ]
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # To ...
-                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Coin
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Coin ...
                                , NavInsID.RIGHT_CLICK # Amount
                                , NavInsID.RIGHT_CLICK # Max Gas
                                , NavInsID.BOTH_CLICK
@@ -630,3 +899,4 @@ def test_sign_tx_unrecognized_coin(backend, scenario_navigator, firmware, naviga
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
+

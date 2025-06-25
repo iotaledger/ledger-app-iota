@@ -7,7 +7,6 @@ from ragger.error import ExceptionRAPDU
 from ragger.navigator import NavInsID, NavIns
 from utils import ROOT_SCREENSHOT_PATH, run_apdu_and_nav_tasks_concurrently
 
-
 # In this test we check that the GET_PUBLIC_KEY works in non-confirmation mode
 def test_get_public_key_no_confirm(backend):
     for path in [ "m/44'/4218'/0'/0'/0'" ]:
@@ -19,7 +18,7 @@ def test_get_public_key_no_confirm(backend):
 
 
 # In this test we check that the GET_PUBLIC_KEY works in confirmation mode
-def test_get_public_key_confirm_accepted(backend, scenario_navigator, firmware, navigator):
+def test_get_public_key_confirm_accepted(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/0'"
 

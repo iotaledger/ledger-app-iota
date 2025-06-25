@@ -1,10 +1,15 @@
+# THIS IS A GENERATED FILE
+# DO NOT EDIT MANUALLY
+# ----------------------------------------
+# This file contains tests for the IOTA Ledger App.
+
 import base64
 import pytest
 
 from application_client.client import Client
 from contextlib import contextmanager
 from ragger.error import ExceptionRAPDU
-from ragger.navigator import NavInsID
+from ragger.navigator import NavIns, NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_nav_tasks_concurrently
 
 #
@@ -203,8 +208,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #     ]
 #   }
 # }
-
-def test_sign_stake_mul_coin_gas_merge_split(backend, scenario_navigator, firmware, navigator):
+def test_sign_stake_mul_coin_gas_merge_split(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
@@ -224,7 +228,7 @@ def test_sign_stake_mul_coin_gas_merge_split(backend, scenario_navigator, firmwa
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -247,7 +251,7 @@ def test_sign_stake_mul_coin_gas_merge_split(backend, scenario_navigator, firmwa
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-    
+
 # test_sign_unstake_whole_coin
 # ----------------------------
 # TransactionData:
@@ -326,8 +330,7 @@ def test_sign_stake_mul_coin_gas_merge_split(backend, scenario_navigator, firmwa
 #     ]
 #   }
 # }
-
-def test_sign_unstake_whole_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_unstake_whole_coin(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
@@ -347,7 +350,7 @@ def test_sign_unstake_whole_coin(backend, scenario_navigator, firmware, navigato
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -369,7 +372,7 @@ def test_sign_unstake_whole_coin(backend, scenario_navigator, firmware, navigato
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-    
+
 # test_sign_unstake_split_coin
 # ----------------------------
 # TransactionData:
@@ -473,8 +476,7 @@ def test_sign_unstake_whole_coin(backend, scenario_navigator, firmware, navigato
 #     ]
 #   }
 # }
-
-def test_sign_unstake_split_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_unstake_split_coin(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
@@ -494,7 +496,7 @@ def test_sign_unstake_split_coin(backend, scenario_navigator, firmware, navigato
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -516,7 +518,7 @@ def test_sign_unstake_split_coin(backend, scenario_navigator, firmware, navigato
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-    
+
 # test_sign_unstake_staked_coin
 # -----------------------------
 # TransactionData:
@@ -585,8 +587,7 @@ def test_sign_unstake_split_coin(backend, scenario_navigator, firmware, navigato
 #     ]
 #   }
 # }
-
-def test_sign_unstake_staked_coin(backend, scenario_navigator, firmware, navigator):
+def test_sign_unstake_staked_coin(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
@@ -604,7 +605,7 @@ def test_sign_unstake_staked_coin(backend, scenario_navigator, firmware, navigat
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -626,4 +627,4 @@ def test_sign_unstake_staked_coin(backend, scenario_navigator, firmware, navigat
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-    
+

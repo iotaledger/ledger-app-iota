@@ -1,10 +1,15 @@
+# THIS IS A GENERATED FILE
+# DO NOT EDIT MANUALLY
+# ----------------------------------------
+# This file contains tests for the IOTA Ledger App.
+
 import base64
 import pytest
 
 from application_client.client import Client
 from contextlib import contextmanager
 from ragger.error import ExceptionRAPDU
-from ragger.navigator import NavInsID
+from ragger.navigator import NavIns, NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_nav_tasks_concurrently
 
 #
@@ -17,13 +22,6 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # Version: 134
 # Digest: ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty
 # BCS: AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
-#
-# ObjectID: 0x2b47a0dca64a7c783224e27125e5a9d337d0a6595bace34d65e4c7bbc0a71ee3
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
-# ObjectType: 0x0000000000000000000000000000000000000000000000000000000000000003::staking_pool::StakedIota
-# Version: 2301
-# Digest: 61tD4mkae65faomciPtSo1xvxZ7SjrdpWvFfauTLJBPH
-# BCS: AAL9CAAAAAAAAFArR6Dcpkp8eDIk4nEl5anTN9CmWVus401l5Me7wKce43c1muAQnbWuHwT18qo25ZHVvQhRRYmrDZMmRzf8bQl0/AgAAAAAAAAAERAkAQAAAAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtiBG3FEWr6ouKxc3xTULBPfGkpGRFsFoOzuwIg0NBJhPnTCZEwAAAAAA
 #
 # ObjectID: 0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f
 # Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
@@ -172,8 +170,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #     ]
 #   }
 # }
-
-def test_sign_tx_iota_two_split_transfer(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_two_split_transfer(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
@@ -192,7 +189,7 @@ def test_sign_tx_iota_two_split_transfer(backend, scenario_navigator, firmware, 
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -215,7 +212,7 @@ def test_sign_tx_iota_two_split_transfer(backend, scenario_navigator, firmware, 
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-    
+
 # test_sign_tx_iota_split_merge
 # -----------------------------
 # TransactionData:
@@ -328,8 +325,7 @@ def test_sign_tx_iota_two_split_transfer(backend, scenario_navigator, firmware, 
 #     ]
 #   }
 # }
-
-def test_sign_tx_iota_split_merge(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_split_merge(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
@@ -348,7 +344,7 @@ def test_sign_tx_iota_split_merge(backend, scenario_navigator, firmware, navigat
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -371,7 +367,7 @@ def test_sign_tx_iota_split_merge(backend, scenario_navigator, firmware, navigat
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-    
+
 # test_sign_tx_iota_split_merge_to_gas
 # ------------------------------------
 # TransactionData:
@@ -475,8 +471,7 @@ def test_sign_tx_iota_split_merge(backend, scenario_navigator, firmware, navigat
 #     ]
 #   }
 # }
-
-def test_sign_tx_iota_split_merge_to_gas(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_split_merge_to_gas(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
@@ -495,7 +490,7 @@ def test_sign_tx_iota_split_merge_to_gas(backend, scenario_navigator, firmware, 
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -518,7 +513,7 @@ def test_sign_tx_iota_split_merge_to_gas(backend, scenario_navigator, firmware, 
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-    
+
 # test_sign_tx_iota_two_split_merge_to_gas
 # ----------------------------------------
 # TransactionData:
@@ -672,8 +667,7 @@ def test_sign_tx_iota_split_merge_to_gas(backend, scenario_navigator, firmware, 
 #     ]
 #   }
 # }
-
-def test_sign_tx_iota_two_split_merge_to_gas(backend, scenario_navigator, firmware, navigator):
+def test_sign_tx_iota_two_split_merge_to_gas(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
     path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
@@ -693,7 +687,7 @@ def test_sign_tx_iota_two_split_merge_to_gas(backend, scenario_navigator, firmwa
         return client.sign_tx(path=path, transaction=transaction, object_list=object_list)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review transfer
                                , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # From ...
@@ -716,4 +710,4 @@ def test_sign_tx_iota_two_split_merge_to_gas(backend, scenario_navigator, firmwa
         assert check_signature_validity(public_key, result, transaction)
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
-    
+
