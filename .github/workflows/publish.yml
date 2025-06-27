@@ -38,11 +38,7 @@ jobs:
 
       - name: Create release archives
         run: |
-          mkdir nanos nanosplus nanox
-          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/iota nanos/
-          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/iota.hex  nanos/
-          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanos/release/app_nanos.json  nanos/
-          cp rust-app/iota.gif nanos/
+          mkdir nanosplus nanox
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota.hex nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/app_nanosplus.json nanosplus/
@@ -51,7 +47,6 @@ jobs:
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota.hex nanox/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/app_nanox.json nanox/
           cp rust-app/iota-small.gif nanox/
-          tar cfzv nanos.tar.gz nanos
           tar cfzv nanosplus.tar.gz nanosplus
           tar cfzv nanox.tar.gz nanox
 
@@ -59,7 +54,6 @@ jobs:
         run: |
           echo "|Asset|SHA-256 checksum|" >> ./.github/workflows/release/release-text.txt
           echo "|---|---|"  >> ./.github/workflows/release/release-text.txt
-          echo "|nanos.tar.gz|$(shasum -a 256 nanos.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
           echo "|nanosplus.tar.gz|$(shasum -a 256 nanosplus.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
           echo "|nanox.tar.gz|$(shasum -a 256 nanox.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
 
@@ -76,6 +70,5 @@ jobs:
           draft: true
           prerelease: true
           files: |
-            nanos.tar.gz
             nanosplus.tar.gz
             nanox.tar.gz
