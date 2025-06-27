@@ -146,12 +146,12 @@ def test_sign_tx_vusd_and_stiota(backend, scenario_navigator, device, navigator)
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen
@@ -265,12 +265,12 @@ def test_sign_tx_vusd_and_iota(backend, scenario_navigator, device, navigator):
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen

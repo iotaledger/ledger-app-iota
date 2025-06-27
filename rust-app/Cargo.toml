@@ -25,7 +25,7 @@ either = { version = "1.14.0", default-features = false }
 # Pass --features speculos,ledger-log/log_info (or log_trace, etc) to enable
 # speculos logging and change log level.
 [features]
-default = []
+default = [ "ledger_device_sdk/nano_nbgl" ]
 # Pass --features speculos,ledger-log/log_info (or log_trace, etc) to enable speculos logging and change log level.
 speculos = [
     "ledger_device_sdk/speculos",
@@ -40,9 +40,6 @@ pending_review_screen = []
 [target.'cfg(target_family = "bolos")'.dependencies]
 ledger_device_sdk = "1.22.9"
 ledger_secure_sdk_sys = "1.8.2"
-
-[target.'cfg(any(target_os = "nanosplus", target_os = "nanox"))'.dependencies]
-ledger-prompts-ui = { git = "https://github.com/alamgu/ledger-prompts-ui" }
 
 [target.'cfg(target_family = "bolos")'.dev-dependencies.ledger_device_sdk]
 version = "1.22.9"
@@ -67,7 +64,7 @@ lto = "fat"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [
-    'cfg(target_os, values("nanos", "flex", "stax"))',
+    'cfg(target_os, values("nanos", "nanox", "flex", "stax"))',
 ] }
 
 [package.metadata.ledger]

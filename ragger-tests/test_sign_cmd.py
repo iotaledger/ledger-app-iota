@@ -128,7 +128,6 @@ def test_sign_tx_iota_transfer(backend, scenario_navigator, device, navigator):
 
     transaction = base64.b64decode('AAAAAAACACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAIAMqaOwAAAAACAgABAQEAAQECAAABAAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtgFIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzD4YAAAAAAAAAIK37G2mUruSx7H+JjB1bMFEpMWhJZgXObVe3D1zMibrdD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bboAwAAAAAAAEBCDwAAAAAAAA==')
 
-
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction)
 
@@ -170,15 +169,14 @@ def test_sign_tx_blind_sign(backend, scenario_navigator, device, navigator):
 
     transaction = base64.b64decode('AAAAAAUCBVRufxJtL0AzGlQ7lghDm1gv0NEDAAAAAAAAACCA/avMkEmOfrhBOxQMQzSHHur6WoYgP9nP2wMvYE9J4ShK9DHPAytdhTJBNb+aMHPpINf1AgAAAAAAAAAgoG9BDBdegowkzuhMs72Vz/JcM/u9y2LGWW6OQjeE/+cC0IB0B1xwl/Nh6LRD4gdahSoikuiggHQHXHCX82HotEPiB1qFKiKS6AGAlpgAAAAAABZD+yV4/3GRxkMHmmLBzKjsJ1K8BVRufxJtL0AzGlQ7lghDm1gv0NEDAAAAAAAAACCA/avMkEmOfrhBOxQMQzSHHur6WoYgP9nP2wMvYE9J4QEAAAAAAAAALAEAAAAAAAA=')
 
-
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Warning...
-                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Transaction Hash
+                instructions=[ NavInsID.BOTH_CLICK # Warning...
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Transaction Hash
                                , NavInsID.BOTH_CLICK]
                 , timeout=10
                 , path=scenario_navigator.screenshot_path
@@ -294,7 +292,6 @@ def test_sign_tx_refused(backend, scenario_navigator, device, navigator):
     assert len(public_key) == 32
 
     transaction = base64.b64decode('AAAAAAACACAbNmnjIYk+5Jw4egj8JR2//zfNKpgebEc6Wyr94Z02PgAIAMqaOwAAAAACAgABAQEAAQECAAABAAAPWOsTUUVNYjpqQ2YZjWzVqkoSoSo8rvtQFHbgbYvVtgFIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzD4YAAAAAAAAAIK37G2mUruSx7H+JjB1bMFEpMWhJZgXObVe3D1zMibrdD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bboAwAAAAAAAEBCDwAAAAAAAA==')
-
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction)
@@ -421,19 +418,18 @@ def test_sign_tx_non_iota_transfer_rejected(backend, scenario_navigator, device,
 
     transaction = base64.b64decode('AAAAAAADAQC8bdPKoYkwkJbPMYN4bJu42X2J0BhewjYhTr0swU8TGXU0KRQAAAAAIFoker34YuFsSnGq+bXwfYo91Y8ZNApPdPgrfBte2xN1AAhAQg8AAAAAAAAgGzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4CAgEAAAEBAQABAQMAAAAAAQIAD1jrE1FFTWI6akNmGY1s1apKEqEqPK77UBR24G2L1bYBE6uE80piJELVwLp/c8eRObD9ZciK3L4mVSlwsUQa5kruPUwUAAAAACDA+bJF/W52RAtRpqZmqU251Y0dDGWKjCAI+ri22feUPQ9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W26AMAAAAAAABAQg8AAAAAAAA=')
 
-
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen
@@ -466,19 +462,18 @@ def test_sign_tx_unknown_tx_rejected(backend, scenario_navigator, device, naviga
 
     transaction = base64.b64decode('AAAAAAUCBVRufxJtL0AzGlQ7lghDm1gv0NEDAAAAAAAAACCA/avMkEmOfrhBOxQMQzSHHur6WoYgP9nP2wMvYE9J4ShK9DHPAytdhTJBNb+aMHPpINf1AgAAAAAAAAAgoG9BDBdegowkzuhMs72Vz/JcM/u9y2LGWW6OQjeE/+cC0IB0B1xwl/Nh6LRD4gdahSoikuiggHQHXHCX82HotEPiB1qFKiKS6AGAlpgAAAAAABZD+yV4/3GRxkMHmmLBzKjsJ1K8BVRufxJtL0AzGlQ7lghDm1gv0NEDAAAAAAAAACCA/avMkEmOfrhBOxQMQzSHHur6WoYgP9nP2wMvYE9J4QEAAAAAAAAALAEAAAAAAAA=')
 
-
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen
@@ -891,8 +886,8 @@ def test_sign_tx_blind_sign_big_transfer_tx(backend, scenario_navigator, device,
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[ NavInsID.RIGHT_CLICK # Warning...
-                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Transaction Hash
+                instructions=[ NavInsID.BOTH_CLICK # Warning...
+                               , NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK # Transaction Hash
                                , NavInsID.BOTH_CLICK]
                 , timeout=10
                 , path=scenario_navigator.screenshot_path
@@ -942,7 +937,7 @@ def blind_sign_enabled(device, navigator):
 def toggle_blind_sign(device, navigator):
     if device.is_nano:
         navigator.navigate(
-            instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK, NavInsID.BOTH_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK, NavInsID.LEFT_CLICK, NavInsID.LEFT_CLICK]
+            instructions=[NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK, NavInsID.BOTH_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK, NavInsID.LEFT_CLICK]
             , timeout=10
             , screen_change_before_first_instruction=False
         )

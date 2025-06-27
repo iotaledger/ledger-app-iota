@@ -160,12 +160,12 @@ def test_sign_tx_iota_multi_recipient(backend, scenario_navigator, device, navig
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen
@@ -252,12 +252,12 @@ def test_sign_tx_iota_whole_gas_coin_missing_object(backend, scenario_navigator,
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen
@@ -361,12 +361,12 @@ def test_sign_tx_iota_whole_input_coin_missing_object(backend, scenario_navigato
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen
@@ -523,12 +523,12 @@ def test_sign_tx_iota_and_move_call(backend, scenario_navigator, device, navigat
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen
@@ -693,12 +693,12 @@ def test_sign_multiple_move_call(backend, scenario_navigator, device, navigator)
     def nav_task():
         if device.is_nano:
             navigator.navigate_and_compare(
-                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK]
+                instructions=[NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.RIGHT_CLICK, NavInsID.BOTH_CLICK]
                 , timeout=10
                 , test_case_name=scenario_navigator.test_name
                 , path=scenario_navigator.screenshot_path
                 , screen_change_before_first_instruction=True
-                , screen_change_after_last_instruction=False
+                , screen_change_after_last_instruction=True
             )
         else:
             # Dismiss the "Enable Blind signing" screen

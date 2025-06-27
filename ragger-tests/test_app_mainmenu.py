@@ -8,9 +8,16 @@ def test_app_mainmenu(device, navigator, test_name):
     if device.is_nano:
         instructions = [
             NavInsID.RIGHT_CLICK,
+            NavInsID.BOTH_CLICK,
+            NavInsID.BOTH_CLICK,
+            NavInsID.RIGHT_CLICK,
+            NavInsID.BOTH_CLICK,
+            NavInsID.RIGHT_CLICK,
+            NavInsID.BOTH_CLICK,
             NavInsID.RIGHT_CLICK,
             NavInsID.RIGHT_CLICK,
-            NavInsID.RIGHT_CLICK
+            NavInsID.BOTH_CLICK,
+            NavInsID.RIGHT_CLICK,
         ]
     else:
         instructions = [

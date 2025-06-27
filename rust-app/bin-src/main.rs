@@ -4,11 +4,7 @@
 #[cfg(not(target_family = "bolos"))]
 fn main() {}
 
-#[cfg(not(any(target_os = "stax", target_os = "flex")))]
-use iota::main_nanos::app_main;
-
-#[cfg(any(target_os = "stax", target_os = "flex"))]
-use iota::main_stax::*;
+use iota::app_main::app_main;
 
 use iota::{
     ctx::RunCtx,
