@@ -11,9 +11,9 @@ from ragger.error import ExceptionRAPDU
 from ragger.navigator import NavIns, NavInsID
 from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_nav_tasks_concurrently
 
-def test_sign_short_ascii_message(backend, scenario_navigator, firmware, navigator):
+def test_sign_short_ascii_message(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
@@ -24,7 +24,7 @@ def test_sign_short_ascii_message(backend, scenario_navigator, firmware, navigat
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review message
                                , NavInsID.RIGHT_CLICK # Message ...
@@ -45,9 +45,9 @@ def test_sign_short_ascii_message(backend, scenario_navigator, firmware, navigat
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
 
-def test_sign_short_non_ascii_message(backend, scenario_navigator, firmware, navigator):
+def test_sign_short_non_ascii_message(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
@@ -58,7 +58,7 @@ def test_sign_short_non_ascii_message(backend, scenario_navigator, firmware, nav
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review message
                                , NavInsID.RIGHT_CLICK # Message ...
@@ -79,9 +79,9 @@ def test_sign_short_non_ascii_message(backend, scenario_navigator, firmware, nav
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
 
-def test_sign_long_ascii_message(backend, scenario_navigator, firmware, navigator):
+def test_sign_long_ascii_message(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
@@ -92,7 +92,7 @@ def test_sign_long_ascii_message(backend, scenario_navigator, firmware, navigato
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review message
                                , NavInsID.RIGHT_CLICK # Message ...
@@ -137,9 +137,9 @@ def test_sign_long_ascii_message(backend, scenario_navigator, firmware, navigato
 
     run_apdu_and_nav_tasks_concurrently(apdu_task, nav_task, check_result)
 
-def test_sign_short_utf8_message(backend, scenario_navigator, firmware, navigator):
+def test_sign_short_utf8_message(backend, scenario_navigator, device, navigator):
     client = Client(backend, use_block_protocol=True)
-    path = "m/44'/784'/0'/0'/1'"
+    path = "m/44'/4218'/0'/0'/1'" # 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6
 
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
@@ -150,7 +150,7 @@ def test_sign_short_utf8_message(backend, scenario_navigator, firmware, navigato
         return client.sign_tx(path=path, transaction=transaction)
 
     def nav_task():
-        if firmware.device.startswith("nano"):
+        if device.is_nano:
             navigator.navigate_and_compare(
                 instructions=[ NavInsID.RIGHT_CLICK # Review message
                                , NavInsID.RIGHT_CLICK # Message ...
