@@ -1,7 +1,7 @@
 # Change Log
 
 ## 1.0.0
-* Add clear-sign support for token transfers and staking.
+* Add clear-sign support for token transfers, staking, unstaking and personal messages.
 * Add swap token support.
 
 ## 0.9.3
