@@ -72,7 +72,7 @@ name = "IOTA"
 # Testnet, IOTA
 path = ["44'/1'", "44'/4218'"]
 curve = ["ed25519"]
-flags = "0x800"
+flags = "0"
 
 [package.metadata.ledger.nanox]
 icon = "iota-small.gif"
