@@ -27,8 +27,10 @@ mod custom {
     pub type CheckAddressParams =
         libcall::swap::CheckAddressParams<COIN_CONFIG_BUF_SIZE, IOTA_PREFIXED_ADDRESS_STR_LENGTH>;
 
-    pub type PrintableAmountParams =
-        libcall::swap::PrintableAmountParams<COIN_CONFIG_BUF_SIZE, IOTA_PREFIXED_ADDRESS_STR_LENGTH>;
+    pub type PrintableAmountParams = libcall::swap::PrintableAmountParams<
+        COIN_CONFIG_BUF_SIZE,
+        IOTA_PREFIXED_ADDRESS_STR_LENGTH,
+    >;
 
     pub type CreateTxParams =
         libcall::swap::CreateTxParams<COIN_CONFIG_BUF_SIZE, IOTA_PREFIXED_ADDRESS_STR_LENGTH>;

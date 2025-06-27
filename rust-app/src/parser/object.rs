@@ -115,11 +115,7 @@ impl<BS: Clone + Readable> AsyncParser<ObjectDataSchema, BS> for DefaultInterp {
 pub const fn move_object_parser<BS: Clone + Readable>(
 ) -> impl AsyncParser<MoveObject, BS, Output = CoinData> {
     Action(
-        (
-            DefaultInterp,
-            DefaultInterp,
-            SubInterp(DefaultInterp),
-        ),
+        (DefaultInterp, DefaultInterp, SubInterp(DefaultInterp)),
         |(object_type, _sequence_number, d): (_, _, ArrayVec<u8, OBJECT_CONTENTS_LEN>)| {
             info!("SequenceNumber {}", _sequence_number);
 

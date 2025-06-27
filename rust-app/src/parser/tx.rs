@@ -22,7 +22,7 @@ pub struct TransactionDataSchema;
 
 pub type TransactionDataV1 = (
     TransactionKindSchema,
-    IotaAddress,            // sender
+    IotaAddress,           // sender
     GasDataSchema,         // gas_data
     TransactionExpiration, // expiration
 );
@@ -38,7 +38,7 @@ pub struct CallArgSchema;
 pub const MAX_GAS_COIN_COUNT: usize = 32;
 pub type GasDataSchema = (
     Vec<ObjectRefSchema, MAX_GAS_COIN_COUNT>, // payment
-    IotaAddress,                               // owner
+    IotaAddress,                              // owner
     Amount,                                   // price
     Amount,                                   // budget
 );

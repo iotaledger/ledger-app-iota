@@ -24,7 +24,9 @@ use ledger_crypto_helpers::eddsa::ed25519_public_key_bytes;
 use ledger_crypto_helpers::hasher::{Blake2b, Hasher};
 use ledger_device_sdk::io::SyscallError;
 
-impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>> for IotaPubKeyAddress {
+impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
+    for IotaPubKeyAddress
+{
     fn get_address(
         key: &ledger_device_sdk::ecc::ECPublicKey<65, 'E'>,
     ) -> Result<Self, SyscallError> {
