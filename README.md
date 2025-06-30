@@ -14,3 +14,7 @@ This application is compatible with
 
 Note: Compatibility with Ledger Nano X is only possible to check on [Speculos](https://github.com/ledgerHQ/speculos/) emulator,
 because the Nano X does not support side-loading apps under development.
+
+## How to build the app
+
+To compile the app and run the tests you can use the official [Ledger VS Code Extension](https://developers.ledger.com/docs/device-app/beginner/vscode-extension).
