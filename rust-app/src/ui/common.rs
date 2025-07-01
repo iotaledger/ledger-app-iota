@@ -78,10 +78,10 @@ fn get_known_coin_ticker(coin_type: &CoinType) -> Option<(ArrayString<8>, u8)> {
         let mut module = ArrayVec::new();
         let _ = module.try_extend_from_slice(k.module.as_bytes());
 
-        let mut function = ArrayVec::new();
-        let _ = function.try_extend_from_slice(k.function.as_bytes());
+        let mut witness = ArrayVec::new();
+        let _ = witness.try_extend_from_slice(k.witness.as_bytes());
 
-        if *coin_type == (k.coin_id, module, function) {
+        if *coin_type == (k.coin_id, module, witness) {
             return Some((ArrayString::from(k.ticker).unwrap(), k.decimals));
         }
     }
@@ -91,7 +91,7 @@ fn get_known_coin_ticker(coin_type: &CoinType) -> Option<(ArrayString<8>, u8)> {
 struct KnownCoin<'a> {
     coin_id: [u8; 32],
     module: &'a str,
-    function: &'a str,
+    witness: &'a str,
     decimals: u8,
     ticker: &'a str,
 }
@@ -103,7 +103,7 @@ const KNOWN_COINS: [KnownCoin; 4] = [
     KnownCoin {
         coin_id: hex!("346778989a9f57480ec3fee15f2cd68409c73a62112d40a3efd13987997be68c"),
         module: "cert",
-        function: "CERT",
+        witness: "CERT",
         decimals: 9,
         ticker: "stIOTA",
     },
@@ -111,7 +111,7 @@ const KNOWN_COINS: [KnownCoin; 4] = [
     KnownCoin {
         coin_id: hex!("1461ef74f97e83eb024a448ab851f980f4e577a97877069c72b44b5fe9929ee3"),
         module: "cert",
-        function: "CERT",
+        witness: "CERT",
         decimals: 9,
         ticker: "stIOTA",
     },
@@ -119,7 +119,7 @@ const KNOWN_COINS: [KnownCoin; 4] = [
     KnownCoin {
         coin_id: hex!("d3b63e603a78786facf65ff22e79701f3e824881a12fa3268d62a75530fe904f"),
         module: "vusd",
-        function: "VUSD",
+        witness: "VUSD",
         decimals: 6,
         ticker: "VUSD",
     },
@@ -127,7 +127,7 @@ const KNOWN_COINS: [KnownCoin; 4] = [
     KnownCoin {
         coin_id: hex!("929065320c756b8a4a841deeed013bd748ee45a28629c4aaafc56d8948ebb081"),
         module: "vusd",
-        function: "VUSD",
+        witness: "VUSD",
         decimals: 6,
         ticker: "VUSD",
     },
