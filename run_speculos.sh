@@ -55,7 +55,15 @@ else
     fi
     
     # Build the app for the specified device
-    docker run --rm -v "$(pwd -P):/app" ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest bash -c "cd ./rust-app/ && cargo ledger build $DEVICE_TYPE -- -Zunstable-options --artifact-dir build/$DEVICE_TYPE/bin && mv build/$DEVICE_TYPE/bin/iota build/$DEVICE_TYPE/bin/app.elf && mv build/$DEVICE_TYPE/bin/iota.apdu build/$DEVICE_TYPE/bin/app.apdu"
+    docker run \
+        --rm \
+        -v "$(pwd -P):/app" \
+        ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest \
+        bash -c "cd ./rust-app/ && \
+            cargo ledger build $DEVICE_TYPE -- -Zunstable-options --artifact-dir build/$DEVICE_TYPE/bin && \
+            mkdir -p /app/build/$DEVICE_TYPE/bin && \
+            mv target/$DEVICE_TYPE/release/iota /app/build/$DEVICE_TYPE/bin/app.elf && \
+            mv target/$DEVICE_TYPE/release/iota.apdu /app/build/$DEVICE_TYPE/bin/app.apdu"
     
     # Verify build was successful
     if [[ ! -f "$BUILD_PATH" ]]; then
@@ -65,6 +73,9 @@ else
     echo "Build completed successfully"
 fi
 
+echo "Running xhost +local:docker to allow X11 forwarding for Docker..."
+xhost +local:docker
+
 # Run speculos with the built app
 echo "Starting Speculos for $DEVICE_TYPE..."
 # Map nanosplus to nanosp for speculos command
@@ -72,4 +83,17 @@ SPECULOS_MODEL="$DEVICE_TYPE"
 if [[ "$DEVICE_TYPE" == "nanosplus" ]]; then
     SPECULOS_MODEL="nanosp"
 fi
-docker run --rm -it --privileged -v "$(pwd -P):/app" --publish 5001:5001 --publish 9999:9999 -e DISPLAY='host.docker.internal:0' -v '/tmp/.X11-unix:/tmp/.X11-unix' ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest bash -c "speculos --model $SPECULOS_MODEL /app/build/$DEVICE_TYPE/bin/app.elf --apdu-port 9999 --api-port 5001"
+
+docker run --rm -it \
+    --privileged \
+    -v "$(pwd -P):/app" \
+    --publish 5001:5001 \
+    --publish 9999:9999 \
+    -e DISPLAY='host.docker.internal:0' \
+    -v '/tmp/.X11-unix:/tmp/.X11-unix' \
+    ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest \
+    bash -c "speculos \
+                --model $SPECULOS_MODEL \
+                /app/build/$DEVICE_TYPE/bin/app.elf \
+                --apdu-port 9999 \
+                --api-port 5001"
