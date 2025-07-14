@@ -26,7 +26,6 @@ either = { version = "1.14.0", default-features = false }
 # speculos logging and change log level.
 [features]
 default = [ "ledger_device_sdk/nano_nbgl" ]
-# Pass --features speculos,ledger-log/log_info (or log_trace, etc) to enable speculos logging and change log level.
 speculos = [
     "ledger_device_sdk/speculos",
     "ledger_device_sdk/debug",
