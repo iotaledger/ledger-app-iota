@@ -84,12 +84,19 @@ if [[ "$DEVICE_TYPE" == "nanosplus" ]]; then
     SPECULOS_MODEL="nanosp"
 fi
 
+# Set DISPLAY based on OS
+if [[ "$(uname)" == "Darwin" ]]; then
+    DISPLAY_VAR="host.docker.internal:0"
+else
+    DISPLAY_VAR="$DISPLAY"
+fi
+
 docker run --rm -it \
     --privileged \
     -v "$(pwd -P):/app" \
     --publish 5001:5001 \
     --publish 9999:9999 \
-    -e DISPLAY='host.docker.internal:0' \
+    -e DISPLAY="$DISPLAY_VAR" \
     -v '/tmp/.X11-unix:/tmp/.X11-unix' \
     ghcr.io/ledgerhq/ledger-app-builder/ledger-app-dev-tools:latest \
     bash -c "speculos \
