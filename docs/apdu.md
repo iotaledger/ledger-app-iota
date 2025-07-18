@@ -131,10 +131,10 @@ Sign a Transaction, using the key for the given derivation path
 
 ##### Parameter 3 (required only for clear signing of certain transactions)
 
-For clear signing of certain transactions in which the coin type and amount being transferred cannot be obtained from the transaction itself, the object data of the objects referenced in the transaction are required. In those cases the object data should be provided as the third parameter by appending the length prefixed data of each of object as described below. The order of objects in this list is irrelevant. Any object which cannot be parsed, or which is not required for obtaining the information will be ignored.
+For clear signing of certain transactions in which the coin type and amount being transferred cannot be obtained from the transaction itself, the object data of the objects referenced in the transaction are required. In those cases the object data should be provided as the third parameter by appending the length prefixed data of each object as described below. The order of objects in this list is irrelevant. Any object which cannot be parsed, or which is not required for obtaining the information will be ignored.
 
 It is advisable to provide the object data of all the coin type objects referenced in "gas_payment" and "inputs" of the transaction.
-In the abscence of this info the user may get a blind signing prompt.
+In the absence of this info the user may get a blind signing prompt.
 
 | Length             | Name               | Description                     |
 |--------------------|--------------------|---------------------------------|

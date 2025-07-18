@@ -983,7 +983,7 @@ async fn handle_move_call<OD: HasObjectData>(
         };
 
         // The stake_amount can be optionally specified by the user
-        // In the abscence of this the entire amount of 'stakes' will be staked
+        // In the absence of this the entire amount of 'stakes' will be staked
         match get_arg_input(2) {
             Some(InputValue::OptionalAmount(Some(amt))) => {
                 total_amt.total_amount = *amt;
