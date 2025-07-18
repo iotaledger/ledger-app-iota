@@ -1,6 +1,6 @@
 [package]
 name = "iota"
-version = "0.9.2"
+version = "1.0.0"
 authors = ["IOTA Foundation <info@iota.org>"]
 edition = "2018"
 autobins = false
@@ -16,15 +16,19 @@ zeroize = { version = "1.5.2", default-features = false }
 num_enum = { version = "0.5", default-features = false }
 pin-cell = "0.2.0"
 pin-project = "1.0.10"
-include_gif = "1.2.0"
+include_gif = "1.2.2"
+hex = { version = "0.4.3", default-features = false }
+hex-literal = { version = "0.4.1" }
+defer = "0.2.1"
+either = { version = "1.14.0", default-features = false }
 
 # Pass --features speculos,ledger-log/log_info (or log_trace, etc) to enable
 # speculos logging and change log level.
 [features]
-default = []
-# Pass --features speculos,ledger-log/log_info (or log_trace, etc) to enable speculos logging and change log level.
+default = [ "ledger_device_sdk/nano_nbgl" ]
 speculos = [
     "ledger_device_sdk/speculos",
+    "ledger_device_sdk/debug",
     "ledger-log/speculos",
     "ledger-log/log_error",
     "ledger-parser-combinators/logging",
@@ -33,13 +37,12 @@ extra_debug = ["ledger-log/log_trace"]
 pending_review_screen = []
 
 [target.'cfg(target_family = "bolos")'.dependencies]
-ledger_device_sdk = "1.22.5"
-ledger_secure_sdk_sys = "1.8.1"
-ledger-prompts-ui = { git = "https://github.com/alamgu/ledger-prompts-ui" }
+ledger_device_sdk = "1.22.13"
+ledger_secure_sdk_sys = "1.8.2"
 
 [target.'cfg(target_family = "bolos")'.dev-dependencies.ledger_device_sdk]
-version = "1.22.5"
-features = ["speculos"]
+version = "1.22.13"
+features = [ "speculos" ]
 
 [[bin]]
 name = "iota"
@@ -52,13 +55,15 @@ opt-level = 3
 # This is needed to avoid this error while doing 'cargo stack-sizes'
 #    error: undefined symbol: core::panicking::panic::
 overflow-checks = false
+lto = "fat"
 [profile.release]
 opt-level = 3
 overflow-checks = false
+lto = "fat"
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = [
-    'cfg(target_os, values("nanos"))',
+    'cfg(target_os, values("nanos", "nanox", "flex", "stax"))',
 ] }
 
 [package.metadata.ledger]
@@ -73,3 +78,9 @@ icon = "iota-small.gif"
 
 [package.metadata.ledger.nanosplus]
 icon = "iota-small.gif"
+
+[package.metadata.ledger.stax]
+icon = "iota_32x32.gif"
+
+[package.metadata.ledger.flex]
+icon = "iota_40x40.gif"

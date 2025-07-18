@@ -1,9 +1,12 @@
 target
 app.json
-Cargo.nix
 
 result
 result-*
 
 .vscode
+__pycache__
+snapshots-tmp
 docker-outputs
+rust-app/build
+.DS_Store

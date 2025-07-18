@@ -1,78 +1,51 @@
+use crate::parser::common::*;
 use core::convert::TryFrom;
+use core::marker::ConstParamTy;
 use ledger_device_sdk::io::{ApduHeader, StatusWords};
-use ledger_parser_combinators::bcs::async_parser::{Vec, ULEB128};
-use ledger_parser_combinators::core_parsers::{Array, Byte, DArray, U16, U32, U64};
-use ledger_parser_combinators::endianness::Endianness;
+use ledger_parser_combinators::core_parsers::*;
+use ledger_parser_combinators::endianness::*;
 use num_enum::TryFromPrimitive;
+
+#[derive(ConstParamTy, PartialEq, Eq)]
+#[repr(u8)]
+pub enum ParseChecks {
+    None,
+    PromptUser,
+    CheckSwapTx,
+}
 
 // Payload for a public key request
 pub type Bip32Key = DArray<Byte, U32<{ Endianness::Little }>, 10>;
 
-pub type SignParameters = (IntentMessage<true>, Bip32Key);
+pub struct IotaPubKeyAddress(IotaAddressRaw);
 
-// Iota Types
-pub type IntentMessage<const PROMPT: bool> = (Intent, TransactionData<PROMPT>);
+use ledger_crypto_helpers::common::{Address, HexSlice};
+use ledger_crypto_helpers::eddsa::ed25519_public_key_bytes;
+use ledger_crypto_helpers::hasher::{Blake2b, Hasher};
+use ledger_device_sdk::io::SyscallError;
 
-pub struct TransactionData<const PROMPT: bool>;
+impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
+    for IotaPubKeyAddress
+{
+    fn get_address(
+        key: &ledger_device_sdk::ecc::ECPublicKey<65, 'E'>,
+    ) -> Result<Self, SyscallError> {
+        let key_bytes = ed25519_public_key_bytes(key);
+        let mut hasher: Blake2b = Hasher::new();
+        hasher.update(key_bytes);
+        let hash: [u8; IOTA_ADDRESS_LENGTH] = hasher.finalize();
+        Ok(IotaPubKeyAddress(hash))
+    }
+    fn get_binary_address(&self) -> &[u8] {
+        &self.0
+    }
+}
 
-pub type TransactionDataV1<const PROMPT: bool> = (
-    TransactionKind<PROMPT>,
-    IotaAddress,           // sender
-    GasData<PROMPT>,       // gas_data
-    TransactionExpiration, // expiration
-);
-
-pub struct TransactionKind<const PROMPT: bool>;
-
-pub struct ProgrammableTransaction<const PROMPT: bool>;
-
-pub struct CommandSchema;
-pub struct ArgumentSchema;
-pub struct CallArgSchema;
-
-pub type GasData<const PROMPT: bool> = (
-    Vec<ObjectRef, { usize::MAX }>, // payment
-    IotaAddress,                    // owner
-    Amount,                         // price
-    Amount,                         // budget
-);
-
-pub struct TransactionExpiration;
-pub type EpochId = U64<{ Endianness::Little }>;
-
-pub type ObjectRef = (ObjectID, SequenceNumber, ObjectDigest);
-
-pub type SharedObject = (
-    ObjectID,       // id
-    SequenceNumber, // initial_shared_version
-    bool,           // mutable
-);
-
-pub type AccountAddress = IotaAddress;
-pub type ObjectID = AccountAddress;
-pub type SequenceNumber = U64LE;
-pub type ObjectDigest = SHA3_256_HASH;
-
-pub const IOTA_ADDRESS_LENGTH: usize = 32;
-pub type IotaAddress = Array<Byte, IOTA_ADDRESS_LENGTH>;
-
-pub type Coins = Vec<ObjectRef, { usize::MAX }>;
-
-pub type Recipient = IotaAddress;
-
-pub type Amount = U64LE;
-
-pub type U64LE = U64<{ Endianness::Little }>;
-pub type U16LE = U16<{ Endianness::Little }>;
-
-pub type Intent = (IntentVersion, IntentScope, AppId);
-pub type IntentVersion = ULEB128;
-pub type IntentScope = ULEB128;
-pub type AppId = ULEB128;
-
-// TODO: confirm if 33 is indeed ok for all uses of SHA3_256_HASH
-#[allow(non_camel_case_types)]
-pub type SHA3_256_HASH = Array<Byte, 33>;
+impl core::fmt::Display for IotaPubKeyAddress {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        write!(f, "0x{}", HexSlice(&self.0))
+    }
+}
 
 #[repr(u8)]
 #[derive(Debug, TryFromPrimitive)]
@@ -81,6 +54,7 @@ pub enum Ins {
     VerifyAddress = 1,
     GetPubkey = 2,
     Sign = 3,
+    GetVersionStr = 0xfe,
     Exit = 0xff,
 }
 
@@ -98,3 +72,6 @@ impl TryFrom<ApduHeader> for Ins {
         }
     }
 }
+
+// Status word used when swap transaction parameters check failed
+pub const SW_SWAP_TX_PARAM_MISMATCH: u16 = 0x6e05;
