@@ -9,13 +9,6 @@ rustflags = [
   "-C", "embed-bitcode",
 ]
 
-[target.nanos]
-rustflags = [
-  "-C", "codegen-units=1",
-  "-C", "save-temps", # Fixes incremental builds by keeping .bc and .ll files
-  "-C", "embed-bitcode",
-]
-
 [target.nanox]
 rustflags = [
   "-C", "codegen-units=1",
