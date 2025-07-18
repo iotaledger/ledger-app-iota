@@ -73,7 +73,7 @@ jobs:
           echo "|flex.tar.gz|$(shasum -a 256 flex.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
           echo "|nanosplus.tar.gz|$(shasum -a 256 nanosplus.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
           echo "|nanox.tar.gz|$(shasum -a 256 nanox.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
-          echo "|stax.tar.gz|$(shasum -a 256 staxx.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
+          echo "|stax.tar.gz|$(shasum -a 256 stax.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
 
       # upload binary to the GH release
       - name: upload release assets
