@@ -144,7 +144,7 @@ def test_sign_short_utf8_message(backend, scenario_navigator, device, navigator)
     _, public_key, _, _ = client.get_public_key(path=path)
     assert len(public_key) == 32
 
-    transaction = base64.b64decode('AwAAJ0nigJltIGNvbm4=')
+    transaction = base64.b64decode('AwAAJ0knbSBjb25u')
 
     def apdu_task():
         return client.sign_tx(path=path, transaction=transaction)

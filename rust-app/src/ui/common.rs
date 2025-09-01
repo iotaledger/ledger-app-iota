@@ -17,10 +17,10 @@ pub const MESSAGE_MAX_LENGTH: usize = 1024 * 2;
 pub const MESSAGE_MAX_LENGTH: usize = 1024 * 4;
 
 pub fn is_printable_ascii(data: &ArrayVec<u8, MESSAGE_MAX_LENGTH>) -> Option<&str> {
-    if data.iter().all(|&b| b > 0) {
+    if data.iter().all(|&b| b > 0 && b.is_ascii()) {
         core::str::from_utf8(data.as_slice()).ok()
     } else {
-        info!("is_printable_ascii: input contains NUL char");
+        info!("is_printable_ascii: input contains NUL char or non-ASCII byte");
         None
     }
 }
