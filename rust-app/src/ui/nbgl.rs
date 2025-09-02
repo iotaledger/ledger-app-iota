@@ -16,10 +16,12 @@ use ledger_crypto_helpers::hasher::HexHash;
 use ledger_device_sdk::nbgl::*;
 
 #[cfg(any(target_os = "stax", target_os = "flex"))]
-pub const APP_ICON: NbglGlyph = NbglGlyph::from_include(include_gif!("iota_64x64.gif", NBGL));
+pub const APP_ICON: NbglGlyph =
+    NbglGlyph::from_include(include_gif!("glyphs/iota_64x64.gif", NBGL));
 
 #[cfg(not(any(target_os = "stax", target_os = "flex")))]
-pub const APP_ICON: NbglGlyph = NbglGlyph::from_include(include_gif!("iota-small.gif", NBGL));
+pub const APP_ICON: NbglGlyph =
+    NbglGlyph::from_include(include_gif!("glyphs/home_nano_nbgl.png", NBGL));
 
 #[derive(Copy, Clone)]
 pub struct UserInterface {

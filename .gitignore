@@ -10,3 +10,6 @@ snapshots-tmp
 docker-outputs
 rust-app/build
 .DS_Store
+
+# Automatic generated NBGL glyphs
+rust-app/glyphs/home_nano_nbgl.png
