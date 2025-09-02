@@ -42,28 +42,28 @@ jobs:
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/flex/release/iota flex/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/flex/release/iota.hex  flex/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/flex/release/app_flex.json  flex/
-          cp rust-app/iota_40x40.gif flex/
+          cp rust-app/icons/iota_40x40.gif flex/icons/
           tar cfzv flex.tar.gz flex
 
           mkdir nanosplus
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota.hex nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/app_nanosplus.json nanosplus/
-          cp rust-app/iota-small.gif nanosplus/
+          cp rust-app/icons/iota_14x14.gif nanosplus/icons/
           tar cfzv nanosplus.tar.gz nanosplus
 
           mkdir nanox
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota nanox/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota.hex nanox/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/app_nanox.json nanox/
-          cp rust-app/iota-small.gif nanox/
+          cp rust-app/icons/iota_14x14.gif nanox/icons/
           tar cfzv nanox.tar.gz nanox
           
           mkdir stax
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/stax/release/iota stax/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/stax/release/iota.hex  stax/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/stax/release/app_stax.json  stax/
-          cp rust-app/iota_64x64.gif stax/
+          cp rust-app/icons/iota_32x32.gif stax/icons/
           tar cfzv stax.tar.gz stax
 
       - name: Add SHA-256 checksums to release
