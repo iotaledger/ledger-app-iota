@@ -5,6 +5,6 @@ Command: `speculos nanosplus/iota` where `iota` is the binary.
 
 First install ledgerctl https://github.com/LedgerHQ/ledgerctl?tab=readme-ov-file#install.
 
-Then download the *.tar.gz file for your device, unpack it and install it with the following commands (replace `nanosplus` with `nanox` if needed):
+Then download the *.tar.gz file for your device, unpack it and install it with the following commands (replace `nanosplus` with `nanox`/`flex`/`stax` if needed):
 `tar -xvzf nanosplus.tar.gz`
 `ledgerctl install -f app_nanosplus.json`

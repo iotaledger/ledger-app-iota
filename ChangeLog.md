@@ -1,19 +1,17 @@
 # Change Log
 
-## 0.2.1
+## 1.0.0
+* Add clear-sign support for token transfers, staking, unstaking and personal messages.
+* Add swap token support.
 
-* Update SDK
-* Allow the app to auto lock for PIN, and show screensaver.
-* Make the settings persist across app restarts.
+## 0.9.3
+* Renamed app to `iota`.
 
-## 0.2.0
+## 0.9.2
+* Removed Nano S support.
 
-There are now separate APDUs for getting public keys with an without prompts.
+## 0.9.1
+* Bumped dependencies.
 
-## 0.1.1
-
-Restore prompting on device when getting public keys / addresses.
-
-## 0.1.0
-
-First version with changes in response to audit.
+## 0.9.0
+* Initial version.
