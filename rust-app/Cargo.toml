@@ -40,11 +40,11 @@ extra_debug = ["ledger-log/log_trace"]
 pending_review_screen = []
 
 [target.'cfg(target_family = "bolos")'.dependencies]
-ledger_device_sdk = "1.24.7"
-ledger_secure_sdk_sys = "1.11.1"
+ledger_device_sdk = "1.27.1"
+ledger_secure_sdk_sys = "1.11.3"
 
 [target.'cfg(target_family = "bolos")'.dev-dependencies.ledger_device_sdk]
-version = "1.24.7"
+version = "1.27.1"
 features = ["speculos"]
 
 [[bin]]
