@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.0.1
+* Add support for Nano Gen5.
+
 ## 1.0.0
 * Add clear-sign support for token transfers, staking, unstaking and personal messages.
 * Add swap token support.

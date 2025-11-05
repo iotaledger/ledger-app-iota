@@ -11,13 +11,13 @@ while [[ $# -gt 0 ]]; do
             FORCE_BUILD=true
             shift
             ;;
-        flex|stax|nanox|nanosplus)
+        apex_p|flex|stax|nanox|nanosplus)
             DEVICE_TYPE="$1"
             shift
             ;;
         *)
             echo "Error: Unknown argument '$1'"
-            echo "Usage: $0 [flex|stax|nanox|nanosplus] [--build|-b]"
+            echo "Usage: $0 [apex_p|flex|stax|nanox|nanosplus] [--build|-b]"
             echo "Default device: flex"
             echo "Options:"
             echo "  --build, -b    Force rebuild even if app.elf exists"
@@ -31,12 +31,12 @@ DEVICE_TYPE=${DEVICE_TYPE:-flex}
 
 # Validate device type
 case "$DEVICE_TYPE" in
-    flex|stax|nanox|nanosplus)
+    apex_p|flex|stax|nanox|nanosplus)
         echo "Target device: $DEVICE_TYPE"
         ;;
     *)
         echo "Error: Invalid device type '$DEVICE_TYPE'"
-        echo "Usage: $0 [flex|stax|nanox|nanosp] [--build|-b]"
+        echo "Usage: $0 [apex_p|flex|stax|nanox|nanosp] [--build|-b]"
         echo "Default device: flex"
         exit 1
         ;;

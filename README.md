@@ -9,6 +9,7 @@ This application is compatible with
 
 - Ledger Nano S+
 - Ledger Nano X
+- Ledger Nano Gen5
 - Ledger Flex
 - Ledger Stax
 
