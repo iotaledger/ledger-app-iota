@@ -7,9 +7,7 @@ autobins = false
 resolver = "2"
 
 [dependencies]
-ledger_device_sdk = "1.27.3"
-ledger_secure_sdk_sys = "1.11.5"
-include_gif = "1.2.4"
+ledger_device_sdk = { version = "1.28.0", features=["sys"]}
 arrayvec = { version = "0.7.2", default-features = false }
 ledger-crypto-helpers = { git = "https://github.com/alamgu/ledger-crypto-helpers" }
 ledger-log = { git = "https://github.com/alamgu/ledger-log" }
@@ -84,3 +82,15 @@ icon = "icons/iota_40x40.gif"
 
 [package.metadata.ledger.apex_p]
 icon = "icons/iota_32x32.png"
+
+[patch.crates-io]
+ledger_device_sdk = {path = "../../ledger-device-rust-sdk/ledger_device_sdk" }
+
+[patch."https://github.com/alamgu/ledger-crypto-helpers"]
+ledger-crypto-helpers = { path = "../../alamgu/ledger-crypto-helpers" }
+[patch."https://github.com/alamgu/ledger-log"]
+ledger-log = { path = "../../alamgu/ledger-log" }
+[patch."https://github.com/alamgu/ledger-parser-combinators"]
+ledger-parser-combinators = { path = "../../alamgu/ledger-parser-combinators" }
+[patch."https://github.com/alamgu/alamgu-async-block"]
+alamgu-async-block = { path = "../../alamgu/alamgu-async-block" }
