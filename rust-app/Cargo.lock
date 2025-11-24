@@ -38,6 +38,7 @@ dependencies = [
 [[package]]
 name = "alamgu-async-block"
 version = "0.1.2"
+source = "git+https://github.com/alamgu/alamgu-async-block?branch=y333%2Frust_sdk_single_crate#76c6848f21abcf6fd7dc4481ddb9920bfe734635"
 dependencies = [
  "arrayvec",
  "ledger-log",
@@ -561,6 +562,8 @@ checksum = "d0263a3d970d5c054ed9312c0057b4f3bde9c0b33836d3637361d4a9e6e7a408"
 [[package]]
 name = "include_gif"
 version = "1.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ed329eea6ba198654ceab2c4dd41637d4890dc3c2bba845a57b5f81dac6d6a6"
 dependencies = [
  "flate2",
  "image 0.24.9",
@@ -590,7 +593,7 @@ dependencies = [
 
 [[package]]
 name = "iota"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "alamgu-async-block",
  "arrayvec",
@@ -656,6 +659,7 @@ checksum = "03087c2bad5e1034e8cace5926dec053fb3790248370865f5117a7d0213354c8"
 [[package]]
 name = "ledger-crypto-helpers"
 version = "0.2.1"
+source = "git+https://github.com/alamgu/ledger-crypto-helpers?branch=y333%2Frust_sdk_single_crate#7d44211308a2de0ac5f7f852ad70b956574702ec"
 dependencies = [
  "arrayvec",
  "base64",
@@ -667,6 +671,7 @@ dependencies = [
 [[package]]
 name = "ledger-log"
 version = "0.2.1"
+source = "git+https://github.com/alamgu/ledger-log?branch=y333%2Frust_sdk_single_crate#08237e5dc7863262b3a353c520aec5f91d46383f"
 dependencies = [
  "arrayvec",
  "ledger_device_sdk",
@@ -675,6 +680,7 @@ dependencies = [
 [[package]]
 name = "ledger-parser-combinators"
 version = "0.1.2"
+source = "git+https://github.com/alamgu/ledger-parser-combinators?branch=y333%2Frust_sdk_single_crate#81d5c29e8eba95929f952d335be023cf0ea1d3d6"
 dependencies = [
  "arrayvec",
  "bstringify",
@@ -691,7 +697,9 @@ dependencies = [
 
 [[package]]
 name = "ledger_device_sdk"
-version = "1.28.0"
+version = "1.29.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dd619c7297c16fca15868aaa2d5ed2389486a998f44a9be8c5a5bc99c1d03678"
 dependencies = [
  "const-zero",
  "include_gif",
@@ -704,7 +712,9 @@ dependencies = [
 
 [[package]]
 name = "ledger_secure_sdk_sys"
-version = "1.11.6"
+version = "1.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "01092d78056ad8d81fb475089763153a18f99631c8e77a3c76fe822b00ffdb3c"
 dependencies = [
  "bindgen",
  "cc",
