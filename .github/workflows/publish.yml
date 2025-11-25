@@ -42,6 +42,7 @@ jobs:
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/flex/release/iota flex/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/flex/release/iota.hex  flex/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/flex/release/app_flex.json  flex/
+          mkdir -p flex/icons
           cp rust-app/icons/iota_40x40.gif flex/icons/
           tar cfzv flex.tar.gz flex
 
@@ -49,6 +50,7 @@ jobs:
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/iota.hex nanosplus/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanosplus/release/app_nanosplus.json nanosplus/
+          mkdir -p nanosplus/icons
           cp rust-app/icons/iota_14x14.gif nanosplus/icons/
           tar cfzv nanosplus.tar.gz nanosplus
 
@@ -56,15 +58,25 @@ jobs:
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota nanox/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/iota.hex nanox/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/nanox/release/app_nanox.json nanox/
+          mkdir -p nanox/icons
           cp rust-app/icons/iota_14x14.gif nanox/icons/
           tar cfzv nanox.tar.gz nanox
-          
+
           mkdir stax
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/stax/release/iota stax/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/stax/release/iota.hex  stax/
           cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/stax/release/app_stax.json  stax/
+          mkdir -p stax/icons
           cp rust-app/icons/iota_32x32.gif stax/icons/
           tar cfzv stax.tar.gz stax
+
+          mkdir apex_p
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/apex_p/release/iota apex_p/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/apex_p/release/iota.hex  apex_p/
+          cp ${{ needs.call_get_app_metadata.outputs.build_directory }}/compiled_app_binaries/apex_p/release/app_apex_p.json  apex_p/
+          mkdir -p apex_p/icons
+          cp rust-app/icons/iota_32x32.png apex_p/icons/
+          tar cfzv apex_p.tar.gz apex_p
 
       - name: Add SHA-256 checksums to release
         run: |
@@ -74,6 +86,7 @@ jobs:
           echo "|nanosplus.tar.gz|$(shasum -a 256 nanosplus.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
           echo "|nanox.tar.gz|$(shasum -a 256 nanox.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
           echo "|stax.tar.gz|$(shasum -a 256 stax.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
+          echo "|apex_p.tar.gz|$(shasum -a 256 apex_p.tar.gz | cut -f 1 -d " ")|" >> ./.github/workflows/release/release-text.txt
 
       # upload binary to the GH release
       - name: upload release assets
@@ -92,3 +105,4 @@ jobs:
             nanosplus.tar.gz
             nanox.tar.gz
             stax.tar.gz
+            apex_p.tar.gz
