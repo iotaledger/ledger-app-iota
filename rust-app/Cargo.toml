@@ -1,13 +1,13 @@
 [package]
 name = "iota"
-version = "1.0.2"
+version = "1.0.3"
 authors = ["IOTA Foundation <info@iota.org>"]
 edition = "2018"
 autobins = false
 resolver = "2"
 
 [dependencies]
-ledger_device_sdk = { version = "1.29.0", features=["sys"]}
+ledger_device_sdk = { version = "1.29.1", features=["sys"]}
 arrayvec = { version = "0.7.2", default-features = false }
 ledger-crypto-helpers = { git = "https://github.com/alamgu/ledger-crypto-helpers" }
 ledger-log = { git = "https://github.com/alamgu/ledger-log" }
@@ -82,3 +82,6 @@ icon = "icons/iota_40x40.gif"
 
 [package.metadata.ledger.apex_p]
 icon = "icons/iota_32x32.png"
+
+[patch.crates-io]
+ledger_device_sdk={path="../../ledger-device-rust-sdk/ledger_device_sdk"}
