@@ -7,7 +7,7 @@ autobins = false
 resolver = "2"
 
 [dependencies]
-ledger_device_sdk = { version = "1.29.1", features=["sys"]}
+ledger_device_sdk = { version = "1.30.0", features=["sys"]}
 arrayvec = { version = "0.7.2", default-features = false }
 ledger-crypto-helpers = { git = "https://github.com/alamgu/ledger-crypto-helpers" }
 ledger-log = { git = "https://github.com/alamgu/ledger-log" }
