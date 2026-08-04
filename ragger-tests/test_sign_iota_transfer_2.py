@@ -16,7 +16,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # Used Objects in these tests:
 # ----------------------------
 # ObjectID: 0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 3000000000
 # Version: 134
@@ -24,7 +24,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
 #
 # ObjectID: 0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 2000000000
 # Version: 134
@@ -32,7 +32,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
 #
 # ObjectID: 0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 4100000000
 # Version: 131
@@ -40,7 +40,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA=
 #
 # ObjectID: 0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 1000000000
 # Version: 131
@@ -52,111 +52,89 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # --------------------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#           "version": "131",
-#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
-#           "version": "131",
-#           "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "MergeCoins": {
-#         "destination": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "sources": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "MergeCoins"
-#     },
-#     {
-#       "MergeCoins": {
-#         "destination": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "sources": [
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
+#           },
 #           {
-#             "Input": 2,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "MergeCoins"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#             "ImmutableOrOwned": {
+#               "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#               "version": "131",
+#               "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#             }
+#           },
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#               "version": "131",
+#               "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#             }
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
 #           }
 #         ],
-#         "address": {
-#           "Input": 3,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         "commands": [
+#           {
+#             "MergeCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "coins_to_merge": [
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "MergeCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "coins_to_merge": [
+#                 {
+#                   "Input": 2
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "Input": 0
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 3
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_iota_two_merge_input_coin(backend, scenario_navigator, device, navigator):
@@ -207,111 +185,89 @@ def test_sign_tx_iota_two_merge_input_coin(backend, scenario_navigator, device, 
 # ----------------------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#           "version": "131",
-#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
-#           "version": "131",
-#           "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "MergeCoins": {
-#         "destination": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "sources": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "MergeCoins"
-#     },
-#     {
-#       "MergeCoins": {
-#         "destination": {
-#           "Input": 2,
-#           "$kind": "Input"
-#         },
-#         "sources": [
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
+#           },
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "MergeCoins"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#             "ImmutableOrOwned": {
+#               "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#               "version": "131",
+#               "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#             }
+#           },
 #           {
-#             "Input": 2,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#               "version": "131",
+#               "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#             }
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
 #           }
 #         ],
-#         "address": {
-#           "Input": 3,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         "commands": [
+#           {
+#             "MergeCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "coins_to_merge": [
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "MergeCoins": {
+#               "coin": {
+#                 "Input": 2
+#               },
+#               "coins_to_merge": [
+#                 {
+#                   "Input": 0
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "Input": 2
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 3
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_iota_two_merge_input_coin_2(backend, scenario_navigator, device, navigator):
@@ -362,79 +318,64 @@ def test_sign_tx_iota_two_merge_input_coin_2(backend, scenario_navigator, device
 # -----------------------------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#           "version": "131",
-#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "MergeCoins": {
-#         "destination": {
-#           "GasCoin": true,
-#           "$kind": "GasCoin"
-#         },
-#         "sources": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "MergeCoins"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#             "ImmutableOrOwned": {
+#               "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#               "version": "131",
+#               "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#             }
+#           },
 #           {
-#             "GasCoin": true,
-#             "$kind": "GasCoin"
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
 #           }
 #         ],
-#         "address": {
-#           "Input": 1,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#         "version": "134",
-#         "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#       },
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         "commands": [
+#           {
+#             "MergeCoins": {
+#               "coin": "Gas",
+#               "coins_to_merge": [
+#                 {
+#                   "Input": 0
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 "Gas"
+#               ],
+#               "address": {
+#                 "Input": 1
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_iota_merge_input_coin_plus_two_gas(backend, scenario_navigator, device, navigator):
@@ -484,109 +425,88 @@ def test_sign_tx_iota_merge_input_coin_plus_two_gas(backend, scenario_navigator,
 # -----------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#           "version": "131",
-#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "AMOd0AAAAAA="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "MergeCoins": {
-#         "destination": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "sources": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "MergeCoins"
-#     },
-#     {
-#       "SplitCoins": {
-#         "coin": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "amounts": [
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
+#           },
 #           {
-#             "Input": 2,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "SplitCoins"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#             "ImmutableOrOwned": {
+#               "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#               "version": "131",
+#               "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#             }
+#           },
 #           {
-#             "NestedResult": [
-#               1,
-#               0
-#             ],
-#             "$kind": "NestedResult"
+#             "Pure": "AMOd0AAAAAA="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
 #           }
 #         ],
-#         "address": {
-#           "Input": 3,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         "commands": [
+#           {
+#             "MergeCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "coins_to_merge": [
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "SplitCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "amounts": [
+#                 {
+#                   "Input": 2
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "NestedResult": [
+#                     1,
+#                     0
+#                   ]
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 3
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_iota_merge_split(backend, scenario_navigator, device, navigator):
@@ -636,91 +556,73 @@ def test_sign_tx_iota_merge_split(backend, scenario_navigator, device, navigator
 # ------------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#           "version": "131",
-#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "ImmutableOrOwned": {
+#               "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#               "version": "131",
+#               "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#             }
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
 #           }
 #         ],
-#         "address": {
-#           "Input": 1,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#         "commands": [
 #           {
-#             "Input": 2,
-#             "$kind": "Input"
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "Input": 0
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 1
+#               }
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "Input": 2
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 3
+#               }
+#             }
 #           }
-#         ],
-#         "address": {
-#           "Input": 3,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_iota_two_transfer(backend, scenario_navigator, device, navigator):
@@ -770,105 +672,86 @@ def test_sign_tx_iota_two_transfer(backend, scenario_navigator, device, navigato
 # ------------------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "APkClQAAAAA="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "AGXNHQAAAAA="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "SplitCoins": {
-#         "coin": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "amounts": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
 #           },
 #           {
-#             "Input": 2,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "SplitCoins"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
-#           {
-#             "NestedResult": [
-#               0,
-#               0
-#             ],
-#             "$kind": "NestedResult"
+#             "Pure": "APkClQAAAAA="
 #           },
 #           {
-#             "NestedResult": [
-#               0,
-#               1
-#             ],
-#             "$kind": "NestedResult"
+#             "Pure": "AGXNHQAAAAA="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
 #           }
 #         ],
-#         "address": {
-#           "Input": 3,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
-#       },
-#       {
-#         "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#         "version": "131",
-#         "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         "commands": [
+#           {
+#             "SplitCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "amounts": [
+#                 {
+#                   "Input": 1
+#                 },
+#                 {
+#                   "Input": 2
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "NestedResult": [
+#                     0,
+#                     0
+#                   ]
+#                 },
+#                 {
+#                   "NestedResult": [
+#                     0,
+#                     1
+#                   ]
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 3
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         },
+#         {
+#           "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_iota_split_transfer_two(backend, scenario_navigator, device, navigator):

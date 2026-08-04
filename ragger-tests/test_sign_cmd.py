@@ -16,7 +16,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # Used Objects in these tests:
 # ----------------------------
 # ObjectID: 0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 58985094000
 # Version: 340540910
@@ -24,7 +24,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAHuPUwUAAAAACgTq4TzSmIkQtXAun9zx5E5sP1lyIrcviZVKXCxRBrmSnAbybsNAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ILipVGikwTTXPy7YgiDBqyMru4odWun3YE0PP6h8KjZAsPUOAAAAAAA=
 #
 # ObjectID: 0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 3000000000
 # Version: 134
@@ -32,7 +32,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
 #
 # ObjectID: 0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 2000000000
 # Version: 134
@@ -40,7 +40,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
 #
 # ObjectID: 0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: 0x2::coin::Coin<0x929065320c756b8a4a841deeed013bd748ee45a28629c4aaafc56d8948ebb081::vusd::VUSD>
 # Balance: 15000000
 # Version: 338244725
@@ -54,69 +54,57 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 #
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "AMqaOwAAAAA="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "SplitCoins": {
-#         "coin": {
-#           "GasCoin": true,
-#           "$kind": "GasCoin"
-#         },
-#         "amounts": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "SplitCoins"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
 #           {
-#             "Result": 0,
-#             "$kind": "Result"
+#             "Pure": "AMqaOwAAAAA="
 #           }
 #         ],
-#         "address": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         "commands": [
+#           {
+#             "SplitCoins": {
+#               "coin": "Gas",
+#               "amounts": [
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "Result": 0
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 0
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_iota_transfer(backend, scenario_navigator, device, navigator):
@@ -219,69 +207,57 @@ def test_sign_tx_blind_sign(backend, scenario_navigator, device, navigator):
 #
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "AMqaOwAAAAA="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "SplitCoins": {
-#         "coin": {
-#           "GasCoin": true,
-#           "$kind": "GasCoin"
-#         },
-#         "amounts": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "SplitCoins"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
 #           {
-#             "Result": 0,
-#             "$kind": "Result"
+#             "Pure": "AMqaOwAAAAA="
 #           }
 #         ],
-#         "address": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         "commands": [
+#           {
+#             "SplitCoins": {
+#               "coin": "Gas",
+#               "amounts": [
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "Result": 0
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 0
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_refused(backend, scenario_navigator, device, navigator):
@@ -330,83 +306,69 @@ def test_sign_tx_refused(backend, scenario_navigator, device, navigator):
 #
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319",
-#           "version": "338244725",
-#           "digest": "74sxR2hccsGSP9Shbeuhs3Fawx9k1fZcnfMfvsYGdg1A"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "QEIPAAAAAAA="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "SplitCoins": {
-#         "coin": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "amounts": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "SplitCoins"
-#     },
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#             "ImmutableOrOwned": {
+#               "object_id": "0xbc6dd3caa189309096cf3183786c9bb8d97d89d0185ec236214ebd2cc14f1319",
+#               "version": "338244725",
+#               "digest": "74sxR2hccsGSP9Shbeuhs3Fawx9k1fZcnfMfvsYGdg1A"
+#             }
+#           },
 #           {
-#             "NestedResult": [
-#               0,
-#               0
-#             ],
-#             "$kind": "NestedResult"
+#             "Pure": "QEIPAAAAAAA="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
 #           }
 #         ],
-#         "address": {
-#           "Input": 2,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
-#         "version": "340540910",
-#         "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
+#         "commands": [
+#           {
+#             "SplitCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "amounts": [
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 {
+#                   "NestedResult": [
+#                     0,
+#                     0
+#                   ]
+#                 }
+#               ],
+#               "address": {
+#                 "Input": 2
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x13ab84f34a622442d5c0ba7f73c79139b0fd65c88adcbe26552970b1441ae64a",
+#           "version": "340540910",
+#           "digest": "DzJ7RSo7cQGWYZcn4bF886ZAavaCyAXvHxcbsHgKj8mz"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_non_iota_transfer_rejected(backend, scenario_navigator, device, navigator):
@@ -499,371 +461,206 @@ def test_sign_tx_unknown_tx_rejected(backend, scenario_navigator, device, naviga
 #
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "TransferObjects": {
-#         "objects": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "GasCoin": true,
-#             "$kind": "GasCoin"
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
+#           },
+#           {
+#             "Pure": "GzZp4yGJPuScOHoI/CUdv/83zSqYHmxHOlsq/eGdNj4="
 #           }
 #         ],
-#         "address": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         }
-#       },
-#       "$kind": "TransferObjects"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#         "version": "134",
-#         "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#       },
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         "commands": [
+#           {
+#             "TransferObjects": {
+#               "objects": [
+#                 "Gas"
+#               ],
+#               "address": {
+#                 "Input": 0
+#               }
+#             }
+#           }
+#         ]
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_tx_blind_sign_big_transfer_tx(backend, scenario_navigator, device, navigator):

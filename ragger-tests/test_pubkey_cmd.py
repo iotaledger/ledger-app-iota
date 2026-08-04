@@ -1,3 +1,8 @@
+# THIS IS A GENERATED FILE
+# DO NOT EDIT MANUALLY
+# ----------------------------------------
+# This file contains tests for the IOTA Ledger App.
+
 import pytest
 
 from application_client.client import Client, Errors

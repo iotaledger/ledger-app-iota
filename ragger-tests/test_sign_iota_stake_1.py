@@ -16,7 +16,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # Used Objects in these tests:
 # ----------------------------
 # ObjectID: 0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 3000000000
 # Version: 134
@@ -24,7 +24,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAGGAAAAAAAAACge7Gwy7zZGczH7ewiLSssc5G9zY1QwjgP/bOkTpCc04gBe0LIAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
 #
 # ObjectID: 0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 2000000000
 # Version: 134
@@ -32,7 +32,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAGGAAAAAAAAAChIn7jIiJZwOrH7qVOLOSq2WxdWdBMSQdqFZl3RtiTzDwCUNXcAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2IKfnmT3SmOEPs3P7cIufkAW+GWPG8HSyArvnp8+dddcXsPUOAAAAAAA=
 #
 # ObjectID: 0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 4100000000
 # Version: 131
@@ -40,7 +40,7 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # BCS: AAGDAAAAAAAAACiKtC+EAIp0NodF7M+Jiaexl0BzfLMA2fqgK7mEviYQ9wAJYfQAAAAAAA9Y6xNRRU1iOmpDZhmNbNWqShKhKjyu+1AUduBti9W2ICTpVSt3otatS3dUSvIsQDY5vlLHxTgzrgD1+f7Tu1OusPUOAAAAAAA=
 #
 # ObjectID: 0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952
-# Owner: Account Address ( 0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6 )
+# Owner: Address(0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6)
 # ObjectType: GasCoin
 # Balance: 1000000000
 # Version: 131
@@ -52,82 +52,71 @@ from utils import ROOT_SCREENSHOT_PATH, check_signature_validity, run_apdu_and_n
 # ------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "SharedObject": {
-#           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": "1",
-#           "mutable": true
-#         },
-#         "$kind": "SharedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "MoveCall": {
-#         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "iota_system",
-#         "function": "request_add_stake",
-#         "typeArguments": [],
-#         "arguments": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
+#             "Shared": {
+#               "object_id": "0x0000000000000000000000000000000000000000000000000000000000000005",
+#               "initial_shared_version": "1",
+#               "mutable": true
+#             }
 #           },
 #           {
-#             "GasCoin": true,
-#             "$kind": "GasCoin"
-#           },
+#             "Pure": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#           }
+#         ],
+#         "commands": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
+#             "MoveCall": {
+#               "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
+#               "module": "iota_system",
+#               "function": "request_add_stake",
+#               "type_arguments": [],
+#               "arguments": [
+#                 {
+#                   "Input": 0
+#                 },
+#                 "Gas",
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
 #           }
 #         ]
-#       },
-#       "$kind": "MoveCall"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#         "version": "134",
-#         "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#       },
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
-#       },
-#       {
-#         "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#         "version": "131",
-#         "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#       },
-#       {
-#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
-#         "version": "131",
-#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         },
+#         {
+#           "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         {
+#           "object_id": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#           "version": "131",
+#           "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_stake_gas_coin(backend, scenario_navigator, device, navigator):
@@ -178,88 +167,75 @@ def test_sign_stake_gas_coin(backend, scenario_navigator, device, navigator):
 # --------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "SharedObject": {
-#           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": "1",
-#           "mutable": true
-#         },
-#         "$kind": "SharedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "MoveCall": {
-#         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "iota_system",
-#         "function": "request_add_stake",
-#         "typeArguments": [],
-#         "arguments": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
+#             "Shared": {
+#               "object_id": "0x0000000000000000000000000000000000000000000000000000000000000005",
+#               "initial_shared_version": "1",
+#               "mutable": true
+#             }
 #           },
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
 #           },
 #           {
-#             "Input": 2,
-#             "$kind": "Input"
+#             "Pure": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#           }
+#         ],
+#         "commands": [
+#           {
+#             "MoveCall": {
+#               "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
+#               "module": "iota_system",
+#               "function": "request_add_stake",
+#               "type_arguments": [],
+#               "arguments": [
+#                 {
+#                   "Input": 0
+#                 },
+#                 {
+#                   "Input": 1
+#                 },
+#                 {
+#                   "Input": 2
+#                 }
+#               ]
+#             }
 #           }
 #         ]
-#       },
-#       "$kind": "MoveCall"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
-#       },
-#       {
-#         "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#         "version": "131",
-#         "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#       },
-#       {
-#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
-#         "version": "131",
-#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         },
+#         {
+#           "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         {
+#           "object_id": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#           "version": "131",
+#           "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_stake_whole_coin(backend, scenario_navigator, device, navigator):
@@ -310,106 +286,89 @@ def test_sign_stake_whole_coin(backend, scenario_navigator, device, navigator):
 # -------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Pure": {
-#         "bytes": "AOQLVAIAAAA="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Object": {
-#         "SharedObject": {
-#           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": "1",
-#           "mutable": true
-#         },
-#         "$kind": "SharedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "SplitCoins": {
-#         "coin": {
-#           "GasCoin": true,
-#           "$kind": "GasCoin"
-#         },
-#         "amounts": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "SplitCoins"
-#     },
-#     {
-#       "MoveCall": {
-#         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "iota_system",
-#         "function": "request_add_stake",
-#         "typeArguments": [],
-#         "arguments": [
-#           {
-#             "Input": 1,
-#             "$kind": "Input"
+#             "Pure": "AOQLVAIAAAA="
 #           },
 #           {
-#             "NestedResult": [
-#               0,
-#               0
-#             ],
-#             "$kind": "NestedResult"
+#             "Shared": {
+#               "object_id": "0x0000000000000000000000000000000000000000000000000000000000000005",
+#               "initial_shared_version": "1",
+#               "mutable": true
+#             }
 #           },
 #           {
-#             "Input": 2,
-#             "$kind": "Input"
+#             "Pure": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#           }
+#         ],
+#         "commands": [
+#           {
+#             "SplitCoins": {
+#               "coin": "Gas",
+#               "amounts": [
+#                 {
+#                   "Input": 0
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "MoveCall": {
+#               "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
+#               "module": "iota_system",
+#               "function": "request_add_stake",
+#               "type_arguments": [],
+#               "arguments": [
+#                 {
+#                   "Input": 1
+#                 },
+#                 {
+#                   "NestedResult": [
+#                     0,
+#                     0
+#                   ]
+#                 },
+#                 {
+#                   "Input": 2
+#                 }
+#               ]
+#             }
 #           }
 #         ]
-#       },
-#       "$kind": "MoveCall"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
-#       },
-#       {
-#         "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#         "version": "131",
-#         "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#       },
-#       {
-#         "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#         "version": "134",
-#         "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#       },
-#       {
-#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
-#         "version": "131",
-#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         },
+#         {
+#           "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         {
+#           "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#           "version": "134",
+#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#         },
+#         {
+#           "object_id": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#           "version": "131",
+#           "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_stake_split_gas(backend, scenario_navigator, device, navigator):
@@ -460,112 +419,93 @@ def test_sign_stake_split_gas(backend, scenario_navigator, device, navigator):
 # --------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "AC9oWQAAAAA="
-#       },
-#       "$kind": "Pure"
-#     },
-#     {
-#       "Object": {
-#         "SharedObject": {
-#           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": "1",
-#           "mutable": true
-#         },
-#         "$kind": "SharedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "SplitCoins": {
-#         "coin": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "amounts": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "SplitCoins"
-#     },
-#     {
-#       "MoveCall": {
-#         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "iota_system",
-#         "function": "request_add_stake",
-#         "typeArguments": [],
-#         "arguments": [
-#           {
-#             "Input": 2,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
 #           },
 #           {
-#             "NestedResult": [
-#               0,
-#               0
-#             ],
-#             "$kind": "NestedResult"
+#             "Pure": "AC9oWQAAAAA="
 #           },
 #           {
-#             "Input": 3,
-#             "$kind": "Input"
+#             "Shared": {
+#               "object_id": "0x0000000000000000000000000000000000000000000000000000000000000005",
+#               "initial_shared_version": "1",
+#               "mutable": true
+#             }
+#           },
+#           {
+#             "Pure": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#           }
+#         ],
+#         "commands": [
+#           {
+#             "SplitCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "amounts": [
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "MoveCall": {
+#               "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
+#               "module": "iota_system",
+#               "function": "request_add_stake",
+#               "type_arguments": [],
+#               "arguments": [
+#                 {
+#                   "Input": 2
+#                 },
+#                 {
+#                   "NestedResult": [
+#                     0,
+#                     0
+#                   ]
+#                 },
+#                 {
+#                   "Input": 3
+#                 }
+#               ]
+#             }
 #           }
 #         ]
-#       },
-#       "$kind": "MoveCall"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#         "version": "131",
-#         "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#       },
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
-#       },
-#       {
-#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
-#         "version": "131",
-#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         },
+#         {
+#           "object_id": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#           "version": "131",
+#           "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_stake_split_coin(backend, scenario_navigator, device, navigator):
@@ -616,103 +556,83 @@ def test_sign_stake_split_coin(backend, scenario_navigator, device, navigator):
 # -------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "SharedObject": {
-#           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": "1",
-#           "mutable": true
-#         },
-#         "$kind": "SharedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "MergeCoins": {
-#         "destination": {
-#           "GasCoin": true,
-#           "$kind": "GasCoin"
-#         },
-#         "sources": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "MergeCoins"
-#     },
-#     {
-#       "MoveCall": {
-#         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "iota_system",
-#         "function": "request_add_stake",
-#         "typeArguments": [],
-#         "arguments": [
-#           {
-#             "Input": 1,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
 #           },
 #           {
-#             "GasCoin": true,
-#             "$kind": "GasCoin"
+#             "Shared": {
+#               "object_id": "0x0000000000000000000000000000000000000000000000000000000000000005",
+#               "initial_shared_version": "1",
+#               "mutable": true
+#             }
 #           },
 #           {
-#             "Input": 2,
-#             "$kind": "Input"
+#             "Pure": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#           }
+#         ],
+#         "commands": [
+#           {
+#             "MergeCoins": {
+#               "coin": "Gas",
+#               "coins_to_merge": [
+#                 {
+#                   "Input": 0
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "MoveCall": {
+#               "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
+#               "module": "iota_system",
+#               "function": "request_add_stake",
+#               "type_arguments": [],
+#               "arguments": [
+#                 {
+#                   "Input": 1
+#                 },
+#                 "Gas",
+#                 {
+#                   "Input": 2
+#                 }
+#               ]
+#             }
 #           }
 #         ]
-#       },
-#       "$kind": "MoveCall"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#         "version": "131",
-#         "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#       },
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
-#       },
-#       {
-#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
-#         "version": "131",
-#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#           "version": "131",
+#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#         },
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         },
+#         {
+#           "object_id": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#           "version": "131",
+#           "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_stake_merge_gas(backend, scenario_navigator, device, navigator):
@@ -763,109 +683,89 @@ def test_sign_stake_merge_gas(backend, scenario_navigator, device, navigator):
 # ---------------------------
 # TransactionData:
 # {
-#   "version": 2,
-#   "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#   "expiration": {
-#     "None": true,
-#     "$kind": "None"
-#   },
-#   "inputs": [
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
-#           "version": "134",
-#           "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "ImmOrOwnedObject": {
-#           "objectId": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
-#           "version": "131",
-#           "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
-#         },
-#         "$kind": "ImmOrOwnedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Object": {
-#         "SharedObject": {
-#           "objectId": "0x0000000000000000000000000000000000000000000000000000000000000005",
-#           "initialSharedVersion": "1",
-#           "mutable": true
-#         },
-#         "$kind": "SharedObject"
-#       },
-#       "$kind": "Object"
-#     },
-#     {
-#       "Pure": {
-#         "bytes": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
-#       },
-#       "$kind": "Pure"
-#     }
-#   ],
-#   "commands": [
-#     {
-#       "MergeCoins": {
-#         "destination": {
-#           "Input": 0,
-#           "$kind": "Input"
-#         },
-#         "sources": [
+#   "V1": {
+#     "kind": {
+#       "Programmable": {
+#         "inputs": [
 #           {
-#             "Input": 1,
-#             "$kind": "Input"
-#           }
-#         ]
-#       },
-#       "$kind": "MergeCoins"
-#     },
-#     {
-#       "MoveCall": {
-#         "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
-#         "module": "iota_system",
-#         "function": "request_add_stake",
-#         "typeArguments": [],
-#         "arguments": [
-#           {
-#             "Input": 2,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x1eec6c32ef36467331fb7b088b4acb1ce46f736354308e03ff6ce913a42734e2",
+#               "version": "134",
+#               "digest": "ETQev8rzu1uat1pq2aARETiFTH68S5X1mC3rsoaW3kty"
+#             }
 #           },
 #           {
-#             "Input": 0,
-#             "$kind": "Input"
+#             "ImmutableOrOwned": {
+#               "object_id": "0x99eb0d1a8604c98acbb2608481cf647d1b69d66796d52613c2d134b4eef04952",
+#               "version": "131",
+#               "digest": "88vQ8xTH3uNtRUaj8t3Y39UKgvZicxsK2ZoDYFGJ3uwU"
+#             }
 #           },
 #           {
-#             "Input": 3,
-#             "$kind": "Input"
+#             "Shared": {
+#               "object_id": "0x0000000000000000000000000000000000000000000000000000000000000005",
+#               "initial_shared_version": "1",
+#               "mutable": true
+#             }
+#           },
+#           {
+#             "Pure": "hkxlGVgJRzKhInE0z3yrdYfwWjmTmIBFUlU/vAHbpOc="
+#           }
+#         ],
+#         "commands": [
+#           {
+#             "MergeCoins": {
+#               "coin": {
+#                 "Input": 0
+#               },
+#               "coins_to_merge": [
+#                 {
+#                   "Input": 1
+#                 }
+#               ]
+#             }
+#           },
+#           {
+#             "MoveCall": {
+#               "package": "0x0000000000000000000000000000000000000000000000000000000000000003",
+#               "module": "iota_system",
+#               "function": "request_add_stake",
+#               "type_arguments": [],
+#               "arguments": [
+#                 {
+#                   "Input": 2
+#                 },
+#                 {
+#                   "Input": 0
+#                 },
+#                 {
+#                   "Input": 3
+#                 }
+#               ]
+#             }
 #           }
 #         ]
-#       },
-#       "$kind": "MoveCall"
-#     }
-#   ],
-#   "gasData": {
-#     "budget": "1000000",
-#     "price": "1000",
-#     "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
-#     "payment": [
-#       {
-#         "objectId": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
-#         "version": "134",
-#         "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
-#       },
-#       {
-#         "objectId": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
-#         "version": "131",
-#         "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
 #       }
-#     ]
+#     },
+#     "sender": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#     "gas_payment": {
+#       "objects": [
+#         {
+#           "object_id": "0x489fb8c88896703ab1fba9538b392ab65b175674131241da85665dd1b624f30f",
+#           "version": "134",
+#           "digest": "Ci9cW4XFvH1PgyyAyx1b3cDRQLuZAPax2F5A5ticzvTE"
+#         },
+#         {
+#           "object_id": "0x8ab42f84008a74368745eccf8989a7b19740737cb300d9faa02bb984be2610f7",
+#           "version": "131",
+#           "digest": "BxAPGfGBtVtzWxiA2dDD3k3xwqQFNLwju5y8xZr8gubx"
+#         }
+#       ],
+#       "owner": "0x0f58eb1351454d623a6a4366198d6cd5aa4a12a12a3caefb501476e06d8bd5b6",
+#       "price": "1000",
+#       "budget": "1000000"
+#     },
+#     "expiration": "None"
 #   }
 # }
 def test_sign_stake_merge_coins(backend, scenario_navigator, device, navigator):
