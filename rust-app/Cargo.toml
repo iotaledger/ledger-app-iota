@@ -1,6 +1,6 @@
 [package]
 name = "iota"
-version = "1.0.4"
+version = "1.0.5"
 authors = ["IOTA Foundation <info@iota.org>"]
 edition = "2018"
 autobins = false
