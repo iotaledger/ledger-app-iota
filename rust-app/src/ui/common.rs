@@ -98,7 +98,7 @@ struct KnownCoin<'a> {
 
 use hex_literal::hex;
 
-const KNOWN_COINS: [KnownCoin; 4] = [
+const KNOWN_COINS: [KnownCoin; 5] = [
     // Mainnet Swirl stIOTA
     KnownCoin {
         coin_id: hex!("346778989a9f57480ec3fee15f2cd68409c73a62112d40a3efd13987997be68c"),
@@ -130,5 +130,13 @@ const KNOWN_COINS: [KnownCoin; 4] = [
         witness: "VUSD",
         decimals: 6,
         ticker: "VUSD",
+    },
+    // Mainnet USDT0
+    KnownCoin {
+        coin_id: hex!("25afeacdd3b0e757ae40aa4b9852261003e1dffeeb37d2c4f2904bb809807ac9"),
+        module: "usdt0",
+        witness: "USDT0",
+        decimals: 6,
+        ticker: "USDT0",
     },
 ];
