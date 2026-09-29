@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.0.5
+* Add USDT0 to known coins.
+
 ## 1.0.1
 * Add support for Nano Gen5.
 
