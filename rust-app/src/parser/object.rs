@@ -1,10 +1,10 @@
+#[cfg(feature = "speculos")]
+use crate::interface::HexSlice;
 use crate::parser::common::*;
 use arrayvec::ArrayVec;
 use core::convert::TryInto;
 use core::future::Future;
-#[cfg(feature = "speculos")]
-use ledger_crypto_helpers::common::HexSlice;
-use ledger_crypto_helpers::hasher::{Blake2b, Hasher, HexHash};
+use ledger_device_sdk::hash::{blake2::Blake2b_256, HashInit};
 use ledger_device_sdk::io::SyscallError;
 use ledger_log::info;
 use ledger_parser_combinators::async_parser::*;
@@ -415,21 +415,26 @@ impl<BS: Clone + Readable> AsyncParser<OwnerSchema, BS> for DefaultInterp {
     }
 }
 
-pub async fn compute_object_hash<BS: Clone + Readable>(bs: &mut BS, length: usize) -> HexHash<32> {
-    let mut hasher: Blake2b = Hasher::new();
+pub async fn compute_object_hash<BS: Clone + Readable>(
+    bs: &mut BS,
+    length: usize,
+) -> Option<[u8; 32]> {
+    let mut hasher = Blake2b_256::new();
     let salt = b"Object::";
-    hasher.update(salt);
+    let mut res = hasher.update(salt);
 
     const CHUNK_SIZE: usize = 128;
     let (chunks, rem) = (length / CHUNK_SIZE, length % CHUNK_SIZE);
     for _ in 0..chunks {
         let b: [u8; CHUNK_SIZE] = bs.read().await;
-        hasher.update(&b);
+        res = res.and(hasher.update(&b));
     }
     for _ in 0..rem {
         let b: [u8; 1] = bs.read().await;
-        hasher.update(&b);
+        res = res.and(hasher.update(&b));
     }
 
-    hasher.finalize::<HexHash<32>>()
+    let mut hash = [0u8; 32];
+    res.and(hasher.finalize(&mut hash)).ok()?;
+    Some(hash)
 }

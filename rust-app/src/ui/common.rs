@@ -4,10 +4,10 @@ use crate::utils::*;
 extern crate alloc;
 use alloc::format;
 
+use crate::interface::HexSlice;
 use arrayvec::ArrayString;
 use arrayvec::ArrayVec;
 use either::*;
-use ledger_crypto_helpers::common::HexSlice;
 use ledger_log::info;
 
 #[cfg(target_os = "nanox")]

@@ -115,12 +115,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "base64"
-version = "0.13.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
-
-[[package]]
 name = "bindgen"
 version = "0.72.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -583,7 +577,6 @@ dependencies = [
  "hex",
  "hex-literal",
  "image",
- "ledger-crypto-helpers",
  "ledger-log",
  "ledger-parser-combinators",
  "ledger_device_sdk",
@@ -635,18 +628,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "03087c2bad5e1034e8cace5926dec053fb3790248370865f5117a7d0213354c8"
 
 [[package]]
-name = "ledger-crypto-helpers"
-version = "0.2.1"
-source = "git+https://github.com/alamgu/ledger-crypto-helpers#5b3643b9a1e161f9d595617c248ac02429d98ef8"
-dependencies = [
- "arrayvec",
- "base64",
- "ledger-log",
- "ledger_device_sdk",
- "zeroize",
-]
-
-[[package]]
 name = "ledger-log"
 version = "0.2.1"
 source = "git+https://github.com/alamgu/ledger-log#4c5eda5d3bd3c59d0af75332f0a5c6960c4ed5af"
@@ -675,9 +656,9 @@ dependencies = [
 
 [[package]]
 name = "ledger_device_sdk"
-version = "1.37.0"
+version = "1.37.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "62e6b3aab652b5520456b20ef1db54982a93ed5912378100ec1d32560c55972f"
+checksum = "d93b12b37bdb91e3d901b6697bad0d48133d9cc86a548c57336bb6bb65b1207b"
 dependencies = [
  "const-zero",
  "include_gif",

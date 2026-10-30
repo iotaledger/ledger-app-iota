@@ -1,12 +1,7 @@
 use core::{convert::TryFrom, fmt::Write};
 
 use arrayvec::ArrayString;
-// #[allow(unused_imports)]
-// use ledger_crypto_helpers::common::HexSlice;
-use ledger_crypto_helpers::{
-    common::{Address, CryptographyError},
-    eddsa::with_public_keys,
-};
+use ledger_device_sdk::ecc::CxError;
 use ledger_device_sdk::libcall::{
     self,
     swap::{
@@ -20,8 +15,8 @@ use panic_handler::{set_swap_panic_handler, swap_panic_handler};
 use params::{CheckAddressParams, PrintableAmountParams, TxParams, MAX_SWAP_TICKER_LENGTH};
 
 use crate::app_main::app_main;
+use crate::implementation::{get_pubkey_and_address, is_bip_prefix_valid};
 use crate::{ctx::RunCtx, parser::common::IOTA_COIN_DECIMALS, utils::get_amount_in_decimals};
-use crate::{implementation::is_bip_prefix_valid, interface::IotaPubKeyAddress};
 
 pub mod panic_handler;
 pub mod params;
@@ -29,7 +24,7 @@ pub mod params;
 #[derive(Debug)]
 pub enum Error {
     DecodeDPathError,
-    CryptographyError(CryptographyError),
+    CxError(CxError),
     WrongAmountLength,
     WrongFeeLength,
     BadAddressASCII,
@@ -39,9 +34,9 @@ pub enum Error {
     BadCoinConfigTicker,
 }
 
-impl From<CryptographyError> for Error {
-    fn from(e: CryptographyError) -> Self {
-        Error::CryptographyError(e)
+impl From<CxError> for Error {
+    fn from(e: CxError) -> Self {
+        Error::CxError(e)
     }
 }
 
@@ -54,16 +49,11 @@ pub fn check_address(params: &CheckAddressParams) -> Result<bool, Error> {
         return Err(Error::DecodeDPathError);
     }
 
-    Ok(with_public_keys(
-        &params.dpath,
-        true,
-        |_, address: &IotaPubKeyAddress| -> Result<_, CryptographyError> {
-            trace!("check_address: der: {}", address);
-            let der_addr = address.get_binary_address();
+    let (_, address) = get_pubkey_and_address(&params.dpath)?;
+    trace!("check_address: der: {}", address);
+    let der_addr = address.get_binary_address();
 
-            Ok(ref_addr == der_addr)
-        },
-    )?)
+    Ok(ref_addr == der_addr)
 }
 
 // Outputs a string with the amount of IOTA.

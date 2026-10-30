@@ -10,16 +10,13 @@ use crate::ui::*;
 use crate::utils::*;
 use alamgu_async_block::*;
 use arrayvec::ArrayVec;
-use ledger_crypto_helpers::common::{try_option, Address};
-use ledger_crypto_helpers::eddsa::{ed25519_public_key_bytes, eddsa_sign, with_public_keys};
-use ledger_crypto_helpers::hasher::{Blake2b, Hasher, HexHash};
+use ledger_device_sdk::ecc::{CxError, Ed25519};
+use ledger_device_sdk::hash::{blake2::Blake2b_256, HashInit};
 use ledger_device_sdk::io::{StatusWords, SyscallError};
+use ledger_device_sdk::sys::{cx_edwards_compress_point_no_throw, CX_CURVE_Ed25519, CX_OK};
 use ledger_log::info;
 use ledger_parser_combinators::async_parser::*;
 use ledger_parser_combinators::interp::*;
-
-#[cfg(feature = "speculos")]
-use ledger_crypto_helpers::common::HexSlice;
 
 use core::convert::TryFrom;
 use core::future::Future;
@@ -38,6 +35,23 @@ pub fn is_bip_prefix_valid(path: &[u32]) -> bool {
     path.starts_with(&BIP32_TESTNET_PREFIX[0..2]) || path.starts_with(&BIP32_IOTA_PREFIX[0..2])
 }
 
+/// Derives the SLIP-10 Ed25519 key for `path` and returns its compressed
+/// public key along with the corresponding IOTA address.
+pub fn get_pubkey_and_address(path: &[u32]) -> Result<(Ed25519PubKey, IotaPubKeyAddress), CxError> {
+    let mut pk = Ed25519::derive_from_path_slip10(path).public_key()?;
+    let err = unsafe {
+        cx_edwards_compress_point_no_throw(CX_CURVE_Ed25519, pk.pubkey.as_mut_ptr(), pk.keylength)
+    };
+    if err != CX_OK {
+        return Err(err.into());
+    }
+    // The compressed point is prefixed with a format byte
+    let mut pubkey = Ed25519PubKey::default();
+    pubkey.copy_from_slice(&pk.pubkey[1..33]);
+    let address = IotaPubKeyAddress::from_pubkey(&pubkey).map_err(|_| CxError::GenericError)?;
+    Ok((pubkey, address))
+}
+
 pub async fn get_address_apdu(io: HostIO, ui: UserInterface, prompt: bool) {
     let input = match io.get_params::<1>() {
         Some(v) => v,
@@ -52,25 +66,23 @@ pub async fn get_address_apdu(io: HostIO, ui: UserInterface, prompt: bool) {
 
     let mut rv = ArrayVec::<u8, 220>::new();
 
-    if with_public_keys(&path, true, |key, address: &IotaPubKeyAddress| {
-        try_option(|| -> Option<()> {
+    if get_pubkey_and_address(&path)
+        .ok()
+        .and_then(|(key_bytes, address)| {
             if prompt {
-                ui.confirm_address(address)?;
+                ui.confirm_address(&address)?;
             }
 
-            let key_bytes = ed25519_public_key_bytes(key);
-
             rv.try_push(u8::try_from(key_bytes.len()).ok()?).ok()?;
-            rv.try_extend_from_slice(key_bytes).ok()?;
+            rv.try_extend_from_slice(&key_bytes).ok()?;
 
             // And we'll send the address along;
             let binary_address = address.get_binary_address();
             rv.try_push(u8::try_from(binary_address.len()).ok()?).ok()?;
             rv.try_extend_from_slice(binary_address).ok()?;
             Some(())
-        }())
-    })
-    .is_err()
+        })
+        .is_none()
     {
         reject::<()>(StatusWords::UserCancelled as u16).await;
     }
@@ -88,11 +100,12 @@ async fn prompt_tx_params(
     }: TxParams,
     coin_type: CoinType,
 ) {
-    if with_public_keys(path, true, |_, address: &IotaPubKeyAddress| {
-        try_option(ui.confirm_sign_tx(address, destination_address, amount, coin_type, fee))
-    })
-    .ok()
-    .is_none()
+    if get_pubkey_and_address(path)
+        .ok()
+        .and_then(|(_, address)| {
+            ui.confirm_sign_tx(&address, destination_address, amount, coin_type, fee)
+        })
+        .is_none()
     {
         reject::<()>(StatusWords::UserCancelled as u16).await;
     };
@@ -174,11 +187,12 @@ pub async fn sign_apdu(io: HostIO, ctx: &RunCtx, settings: Settings, ui: UserInt
                 reject::<()>(SyscallError::InvalidParameter as u16).await;
             }
 
-            if with_public_keys(&path, true, |_, address: &IotaPubKeyAddress| {
-                try_option(ui.confirm_stake_tx(address, recipient, total_amount, gas_budget))
-            })
-            .ok()
-            .is_none()
+            if get_pubkey_and_address(&path)
+                .ok()
+                .and_then(|(_, address)| {
+                    ui.confirm_stake_tx(&address, recipient, total_amount, gas_budget)
+                })
+                .is_none()
             {
                 reject::<()>(StatusWords::UserCancelled as u16).await;
             };
@@ -196,11 +210,10 @@ pub async fn sign_apdu(io: HostIO, ctx: &RunCtx, settings: Settings, ui: UserInt
                 reject::<()>(SyscallError::InvalidParameter as u16).await;
             }
 
-            if with_public_keys(&path, true, |_, address: &IotaPubKeyAddress| {
-                try_option(ui.confirm_unstake_tx(address, total_amount, gas_budget))
-            })
-            .ok()
-            .is_none()
+            if get_pubkey_and_address(&path)
+                .ok()
+                .and_then(|(_, address)| ui.confirm_unstake_tx(&address, total_amount, gas_budget))
+                .is_none()
             {
                 reject::<()>(StatusWords::UserCancelled as u16).await;
             };
@@ -249,21 +262,25 @@ pub async fn sign_apdu(io: HostIO, ctx: &RunCtx, settings: Settings, ui: UserInt
     };
 
     NoinlineFut(async move {
-        let mut hasher: Blake2b = Hasher::new();
+        let mut hasher = Blake2b_256::new();
+        let mut hash = [0u8; 32];
+        let mut hash_res = Ok(());
         {
             let mut txn = input[0].clone();
             const CHUNK_SIZE: usize = 128;
             let (chunks, rem) = (length / CHUNK_SIZE, length % CHUNK_SIZE);
             for _ in 0..chunks {
                 let b: [u8; CHUNK_SIZE] = txn.read().await;
-                hasher.update(&b);
+                hash_res = hash_res.and(hasher.update(&b));
             }
             for _ in 0..rem {
                 let b: [u8; 1] = txn.read().await;
-                hasher.update(&b);
+                hash_res = hash_res.and(hasher.update(&b));
             }
         }
-        let hash: HexHash<32> = hasher.finalize();
+        if hash_res.and(hasher.finalize(&mut hash)).is_err() {
+            reject::<()>(SyscallError::Unspecified as u16).await;
+        }
         if blind_signing_required {
             // Show prompts after all inputs have been parsed
             if ui.confirm_blind_sign_tx(&hash).is_none() {
@@ -274,8 +291,8 @@ pub async fn sign_apdu(io: HostIO, ctx: &RunCtx, settings: Settings, ui: UserInt
         if !is_bip_prefix_valid(&path) {
             reject::<()>(SyscallError::InvalidParameter as u16).await;
         }
-        if let Some(sig) = { eddsa_sign(&path, true, &hash.0).ok() } {
-            io.result_final(&sig.0[0..]).await;
+        if let Some((sig, _)) = { Ed25519::derive_from_path_slip10(&path).sign(&hash).ok() } {
+            io.result_final(&sig).await;
         } else {
             reject::<()>(SyscallError::Unspecified as u16).await;
         }
@@ -310,7 +327,7 @@ impl HasObjectData for WithObjectData {
 
                         let hash = NoinlineFut(compute_object_hash(&mut bs, length)).await;
 
-                        if hash.0 == digest[1..33] {
+                        if hash.is_some_and(|h| h == digest[1..33]) {
                             info!(
                                 "get_object_data: found object with digest {}",
                                 HexSlice(digest)

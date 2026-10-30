@@ -10,8 +10,6 @@ use alloc::string::ToString;
 use arrayvec::ArrayVec;
 use core::cell::RefCell;
 use either::*;
-use ledger_crypto_helpers::common::HexSlice;
-use ledger_crypto_helpers::hasher::HexHash;
 use ledger_device_sdk::include_gif;
 use ledger_device_sdk::nbgl::*;
 
@@ -250,11 +248,11 @@ impl UserInterface {
         }
     }
 
-    pub fn confirm_blind_sign_tx(&self, hash: &HexHash<32>) -> Option<()> {
+    pub fn confirm_blind_sign_tx(&self, hash: &[u8; 32]) -> Option<()> {
         self.do_refresh.replace(true);
         let tx_fields = [Field {
             name: "Transaction hash",
-            value: &format!("0x{hash}"),
+            value: &format!("0x{}", HexSlice(hash)),
         }];
 
         let success = NbglReview::new()

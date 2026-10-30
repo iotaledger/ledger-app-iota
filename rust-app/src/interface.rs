@@ -19,24 +19,20 @@ pub type Bip32Key = DArray<Byte, U32<{ Endianness::Little }>, 10>;
 
 pub struct IotaPubKeyAddress(IotaAddressRaw);
 
-use ledger_crypto_helpers::common::{Address, HexSlice};
-use ledger_crypto_helpers::eddsa::ed25519_public_key_bytes;
-use ledger_crypto_helpers::hasher::{Blake2b, Hasher};
-use ledger_device_sdk::io::SyscallError;
+use ledger_device_sdk::hash::{blake2::Blake2b_256, HashError, HashInit};
 
-impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
-    for IotaPubKeyAddress
-{
-    fn get_address(
-        key: &ledger_device_sdk::ecc::ECPublicKey<65, 'E'>,
-    ) -> Result<Self, SyscallError> {
-        let key_bytes = ed25519_public_key_bytes(key);
-        let mut hasher: Blake2b = Hasher::new();
-        hasher.update(key_bytes);
-        let hash: [u8; IOTA_ADDRESS_LENGTH] = hasher.finalize();
+/// Compressed Ed25519 public key
+pub type Ed25519PubKey = [u8; 32];
+
+impl IotaPubKeyAddress {
+    pub fn from_pubkey(pubkey: &Ed25519PubKey) -> Result<Self, HashError> {
+        let mut hasher = Blake2b_256::new();
+        let mut hash = IotaAddressRaw::default();
+        hasher.update(pubkey)?;
+        hasher.finalize(&mut hash)?;
         Ok(IotaPubKeyAddress(hash))
     }
-    fn get_binary_address(&self) -> &[u8] {
+    pub fn get_binary_address(&self) -> &[u8] {
         &self.0
     }
 }
@@ -44,6 +40,18 @@ impl Address<IotaPubKeyAddress, ledger_device_sdk::ecc::ECPublicKey<65, 'E'>>
 impl core::fmt::Display for IotaPubKeyAddress {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         write!(f, "0x{}", HexSlice(&self.0))
+    }
+}
+
+/// Displays a byte slice as lowercase hex
+pub struct HexSlice<'a>(pub &'a [u8]);
+
+impl core::fmt::Display for HexSlice<'_> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        for byte in self.0 {
+            write!(f, "{:02x}", byte)?;
+        }
+        Ok(())
     }
 }
 
